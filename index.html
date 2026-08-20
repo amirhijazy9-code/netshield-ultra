@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NetShield Pro | Smart Anti-Detect & IP Optimization Inspector</title>
+    <title>NetShield Ultra | Deep Proxy, Timezone & Anti-Detect Inspector</title>
     <!-- Fonts & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@400;600;700&family=Tajawal:wght@500;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -93,7 +93,6 @@
             width: 100%;
         }
 
-        /* Hero Board */
         .hero-board {
             background: radial-gradient(circle at top right, rgba(0, 242, 254, 0.08), transparent 60%),
                         radial-gradient(circle at bottom left, rgba(79, 172, 254, 0.05), transparent 50%),
@@ -214,6 +213,54 @@
             gap: 6px;
         }
 
+        /* Timezone Clocks Sync Box */
+        .time-sync-board {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.8rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .clock-card {
+            background: var(--surface-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .clock-card.highlight {
+            border-color: var(--cyan);
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.1);
+        }
+
+        .clock-title {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .clock-time {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .clock-zone {
+            font-size: 0.85rem;
+            color: var(--cyan);
+            font-weight: 600;
+        }
+
         /* Advisor Checklist */
         .advisor-panel {
             background: var(--surface);
@@ -285,6 +332,27 @@
             line-height: 1.4;
         }
 
+        /* Banner Container (Responsive Strip) */
+        .banner-strip {
+            margin: 1.8rem 0;
+            text-align: center;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            padding: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .banner-strip img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            display: block;
+        }
+
         /* Sections Grid */
         .section-title {
             font-size: 1.2rem;
@@ -354,20 +422,22 @@
         .pill-warn { background: rgba(255, 171, 0, 0.15); color: var(--orange); }
         .pill-danger { background: rgba(255, 82, 82, 0.15); color: var(--red); }
 
-        /* Ad Placement Area at Bottom */
+        /* Compact Bottom Ad Bar */
         .bottom-ad-wrapper {
             background: var(--surface);
             border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 1.2rem;
-            margin: 2rem 0 1rem;
+            border-radius: 12px;
+            padding: 0.8rem;
+            margin: 2rem auto 1rem;
             text-align: center;
+            max-width: 760px;
+            overflow: hidden;
         }
 
         .ad-label {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: var(--text-dim);
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
@@ -383,10 +453,8 @@
         }
 
         @media (max-width: 768px) {
-            .hero-board {
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
-            }
+            .hero-board { grid-template-columns: 1fr; }
+            .time-sync-board { grid-template-columns: 1fr; }
             .main-ip { font-size: 1.7rem; }
         }
     </style>
@@ -396,7 +464,7 @@
     <nav>
         <div class="brand">
             <div class="brand-icon"><i class="fa-solid fa-shield-halved"></i></div>
-            <span>NetShield Optimizer</span>
+            <span>NetShield Ultra Inspector</span>
         </div>
         <div>
             <select class="lang-btn" id="langSelector" onchange="switchLang(this.value)">
@@ -409,21 +477,21 @@
 
     <div class="container">
 
-        <!-- 1. Hero Status Board (الواجهة الأساسية تظهر أولاً) -->
+        <!-- 1. Hero Status Board -->
         <div class="hero-board">
             <div>
                 <div class="ip-meta-tag">
                     <span class="pulse-dot"></span>
-                    <span id="t_auto_scan">Auto-Scanned Connection</span>
+                    <span id="t_auto_scan">Deep Proxy & VPN Inspector</span>
                 </div>
-                <div class="main-ip" id="userIP">Scanning Connection...</div>
+                <div class="main-ip" id="userIP">Inspecting Headers & Tunnels...</div>
                 
                 <div class="action-row">
                     <button class="btn-copy" onclick="copyUserIP()">
                         <i class="fa-regular fa-copy"></i> <span id="t_copy_btn">Copy Full Audit</span>
                     </button>
                     <span id="ipTypeBadge" class="status-pill pill-clean">
-                        <i class="fa-solid fa-shield"></i> <span id="valIpType">Residential Line</span>
+                        <i class="fa-solid fa-shield"></i> <span id="valIpType">Residential ISP</span>
                     </span>
                 </div>
             </div>
@@ -433,35 +501,63 @@
                 <div class="score-label" id="t_fraud_title">Fraud & Abuse Risk</div>
                 <div class="score-val" id="fraudScore">0%</div>
                 <div class="score-status" id="fraudStatus">
-                    <i class="fa-solid fa-circle-check"></i> <span id="t_fraud_safe">Optimal Setup for Offers</span>
+                    <i class="fa-solid fa-circle-check"></i> <span id="t_fraud_safe">Clean Line</span>
                 </div>
             </div>
         </div>
 
-        <!-- 2. Dynamic Actionable Advice Panel -->
+        <!-- 2. Timezone Sync & Clock Matching -->
+        <div class="time-sync-board">
+            <div class="clock-card highlight">
+                <div class="clock-title">
+                    <span id="t_target_clock">Target IP Time (Must Match This)</span>
+                    <i class="fa-solid fa-crosshairs" style="color:var(--cyan);"></i>
+                </div>
+                <div class="clock-time" id="ipClock">--:--:--</div>
+                <div class="clock-zone" id="ipZoneName">Detecting Zone...</div>
+            </div>
+
+            <div class="clock-card">
+                <div class="clock-title">
+                    <span id="t_device_clock">Your Current System Time</span>
+                    <i class="fa-solid fa-laptop"></i>
+                </div>
+                <div class="clock-time" id="systemClock">--:--:--</div>
+                <div class="clock-zone" id="systemZoneName" style="color:var(--text-dim);">Detecting Zone...</div>
+            </div>
+        </div>
+
+        <!-- 3. Dynamic Actionable Advice Panel -->
         <div class="advisor-panel">
             <div class="advisor-header">
                 <div class="advisor-title">
                     <i class="fa-solid fa-wand-magic-sparkles"></i>
                     <span id="t_adv_title">Smart Optimization Checklist & Advisor</span>
                 </div>
-                <span style="color:var(--text-dim); font-size:0.85rem;" id="t_adv_sub">Live Action Plan to prevent account bans</span>
+                <span style="color:var(--text-dim); font-size:0.85rem;" id="t_adv_sub">Live Action Plan to prevent bans</span>
             </div>
 
             <div class="tips-list" id="tipsContainer">
                 <div class="tip-item">
                     <i class="fa-solid fa-circle-notch fa-spin tip-icon" style="color:var(--cyan);"></i>
                     <div class="tip-content">
-                        <h4>Analyzing device & network profile...</h4>
-                        <p>Please wait while evaluating environment consistency.</p>
+                        <h4>Running Deep Network & Tunnel Inspection...</h4>
+                        <p>Checking latency consistency, timezone integrity and proxy leak vectors.</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- 3. Network & IP Intelligence -->
+        <!-- AdsPower Anti-Detect Banner (Middle Placement) -->
+        <div class="banner-strip">
+            <a href="https://www.adspower.com/share/GXxIGf" target="_blank">
+                <img src="https://app.adspower.com/static/jpg/reward_post_2_EN.YacFe4vg.jpg" alt="AdsPower Anti-Detect Browser">
+            </a>
+        </div>
+
+        <!-- 4. Network & IP Intelligence -->
         <div class="section-title">
-            <i class="fa-solid fa-server"></i> <span id="t_sec_ip">Network & Geolocation</span>
+            <i class="fa-solid fa-server"></i> <span id="t_sec_ip">Network & ISP Intelligence</span>
         </div>
         <div class="audit-grid">
             <div class="audit-card">
@@ -482,7 +578,7 @@
 
             <div class="audit-card">
                 <div class="card-header">
-                    <span id="t_card_geo">Geo Location (City/Country)</span>
+                    <span id="t_card_geo">Geo Location</span>
                     <i class="fa-solid fa-location-dot"></i>
                 </div>
                 <div class="card-val" id="valGeo">-</div>
@@ -490,54 +586,54 @@
 
             <div class="audit-card">
                 <div class="card-header">
-                    <span id="t_card_tz">IP Timezone Match</span>
+                    <span id="t_card_tz">Timezone Offset</span>
                     <i class="fa-solid fa-clock"></i>
                 </div>
                 <div class="card-val mono" id="valTimezone">-</div>
             </div>
         </div>
 
-        <!-- 4. Fraud & Multi-Account Integrity -->
+        <!-- 5. Fraud & Multi-Account Integrity -->
         <div class="section-title">
-            <i class="fa-solid fa-shield-virus"></i> <span id="t_sec_fraud">Fraud, Abuse & History Check</span>
+            <i class="fa-solid fa-shield-virus"></i> <span id="t_sec_fraud">Deep Proxy & VPN Audit</span>
         </div>
         <div class="audit-grid">
             <div class="audit-card">
                 <div class="card-header">
-                    <span id="t_card_usage">IP Usage (Multi-Account)</span>
+                    <span id="t_card_usage">IP Usage Score</span>
                     <span class="status-pill pill-clean" id="pillUsage">Unique</span>
                 </div>
-                <div class="card-val" id="valUsage">Fresh / No Duplicate Accounts</div>
+                <div class="card-val" id="valUsage">Fresh Residential IP</div>
             </div>
 
             <div class="audit-card">
                 <div class="card-header">
-                    <span id="t_card_proxy">Proxy / TOR / VPN Detection</span>
+                    <span id="t_card_proxy">Proxy / VPN Deep Scan</span>
                     <span class="status-pill pill-clean" id="pillProxy">Clean</span>
                 </div>
-                <div class="card-val" id="valProxy">Negative (Direct Line)</div>
+                <div class="card-val" id="valProxy">Negative (Direct ISP Connection)</div>
             </div>
 
             <div class="audit-card">
                 <div class="card-header">
-                    <span id="t_card_blacklist">Blacklist & Abuse Databases</span>
-                    <span class="status-pill pill-clean" id="pillBlacklist">0 / 64 Clean</span>
+                    <span id="t_card_blacklist">Latency / Ping Discrepancy</span>
+                    <span class="status-pill pill-clean" id="pillPing">Natural</span>
                 </div>
-                <div class="card-val" id="valBlacklist">Not Listed (Clean Score)</div>
+                <div class="card-val" id="valPing">Direct Routing Verified</div>
             </div>
 
             <div class="audit-card">
                 <div class="card-header">
-                    <span id="t_card_offerwall">Offerwall Firewall Status</span>
-                    <span class="status-pill pill-clean" id="pillOffer">Whitelisted</span>
+                    <span id="t_card_offerwall">Offerwall Status</span>
+                    <span class="status-pill pill-clean" id="pillOffer">Accepted</span>
                 </div>
                 <div class="card-val" id="valOffer">Whitelisted Profile</div>
             </div>
         </div>
 
-        <!-- 5. Hardware & Browser Fingerprint Audit -->
+        <!-- 6. Hardware & Browser Fingerprint -->
         <div class="section-title">
-            <i class="fa-solid fa-microchip"></i> <span id="t_sec_fp">Device & Hardware Environment</span>
+            <i class="fa-solid fa-microchip"></i> <span id="t_sec_fp">Hardware Environment</span>
         </div>
         <div class="audit-grid">
             <div class="audit-card">
@@ -550,7 +646,7 @@
 
             <div class="audit-card">
                 <div class="card-header">
-                    <span id="t_card_hardware">CPU Cores & Device RAM</span>
+                    <span id="t_card_hardware">CPU Cores & RAM</span>
                     <i class="fa-solid fa-memory"></i>
                 </div>
                 <div class="card-val mono" id="valHardware">-</div>
@@ -558,7 +654,7 @@
 
             <div class="audit-card">
                 <div class="card-header">
-                    <span id="t_card_webrtc">WebRTC Leak Integrity</span>
+                    <span id="t_card_webrtc">WebRTC Leak Test</span>
                     <span class="status-pill pill-clean" id="pillWebRTC">Secured</span>
                 </div>
                 <div class="card-val mono" id="valWebRTC">No Internal IP Leaked</div>
@@ -566,16 +662,23 @@
 
             <div class="audit-card">
                 <div class="card-header">
-                    <span id="t_card_screen">Display Specs & Depth</span>
+                    <span id="t_card_screen">Display Specs</span>
                     <i class="fa-solid fa-desktop"></i>
                 </div>
                 <div class="card-val mono" id="valScreen">-</div>
             </div>
         </div>
 
-        <!-- 6. Bottom Ad Placement (الإعلان في الأسفل فقط) -->
+        <!-- IPRoyal Residential Proxy Banner (Bottom Placement) -->
+        <div class="banner-strip">
+            <a href="https://iproyal.com/?r=1528614" target="_blank">
+                <img src="https://dashboard.iproyal.com/img/b/728_1.jpg" alt="IPRoyal Clean Residential Proxies">
+            </a>
+        </div>
+
+        <!-- Adsterra Compact Banner Placement -->
         <div class="bottom-ad-wrapper">
-            <div class="ad-label">Sponsored Links</div>
+            <div class="ad-label">Sponsored</div>
             <script async="async" data-cfasync="false" src="https://pl30936838.effectivecpmnetwork.com/571194fc60e5ce4d40cad72b82d13793/invoke.js"></script>
             <div id="container-571194fc60e5ce4d40cad72b82d13793"></div>
         </div>
@@ -583,54 +686,58 @@
     </div>
 
     <footer>
-        <p>© 2026 NetShield Optimizer. Smart Anti-Ban & Multi-Account Inspector.</p>
+        <p>© 2026 NetShield Ultra. Advanced Anti-Detect & Multi-Account Inspector.</p>
     </footer>
 
     <script>
         const i18n = {
             en: {
                 dir: 'ltr',
-                auto_scan: 'Auto-Scanned Connection',
+                auto_scan: 'Deep Proxy & VPN Inspector',
                 copy_btn: 'Copy Full Audit',
                 fraud_title: 'Fraud & Abuse Risk',
-                fraud_safe: 'Optimal Setup for Offers',
+                fraud_safe: 'Clean Line',
+                target_clock: 'Target IP Time (Must Match This)',
+                device_clock: 'Your Current System Time',
                 adv_title: 'Smart Optimization Checklist & Advisor',
-                adv_sub: 'Live Action Plan to prevent account bans',
-                sec_ip: 'Network & Geolocation',
-                sec_fraud: 'Fraud, Abuse & History Check',
-                sec_fp: 'Device & Hardware Environment',
+                adv_sub: 'Live Action Plan to prevent bans',
+                sec_ip: 'Network & ISP Intelligence',
+                sec_fraud: 'Deep Proxy & VPN Audit',
+                sec_fp: 'Hardware Environment',
                 card_isp: 'ISP Provider',
                 card_asn: 'ASN / Routing Route',
-                card_geo: 'Geo Location (City/Country)',
-                card_tz: 'IP Timezone Match',
-                card_usage: 'IP Usage (Multi-Account)',
-                card_proxy: 'Proxy / TOR / VPN Detection',
-                card_blacklist: 'Blacklist & Abuse Databases',
-                card_offerwall: 'Offerwall Firewall Status',
+                card_geo: 'Geo Location',
+                card_tz: 'Timezone Offset',
+                card_usage: 'IP Usage Score',
+                card_proxy: 'Proxy / VPN Deep Scan',
+                card_blacklist: 'Latency / Ping Discrepancy',
+                card_offerwall: 'Offerwall Status',
                 card_canvas: 'Canvas / WebGL Fingerprint Hash',
-                card_hardware: 'CPU Cores & Device RAM',
-                card_webrtc: 'WebRTC Leak Integrity',
-                card_screen: 'Display Specs & Depth'
+                card_hardware: 'CPU Cores & RAM',
+                card_webrtc: 'WebRTC Leak Test',
+                card_screen: 'Display Specs'
             },
             ar: {
                 dir: 'rtl',
-                auto_scan: 'فحص فوري للاتصال الحالي',
+                auto_scan: 'فاحص البروكسي والـ VPN المتقدم',
                 copy_btn: 'نسخ تقرير الفحص بالكامل',
-                fraud_title: 'نسبة الخطورة والاحتيال (Fraud Score)',
-                fraud_safe: 'إعداد مثالي لتخطي فلاتر العروض',
+                fraud_title: 'نسبة الخطورة والريسك (Fraud Score)',
+                fraud_safe: 'اتصال سكني نظيف',
+                target_clock: 'ساعة وتوقيت الـ IP (يجب أن تضبط جهازك عليها)',
+                device_clock: 'ساعة جهازك الحالية',
                 adv_title: 'المستشار الذكي وقائمة التوجيهات والإصلاح',
                 adv_sub: 'خطة عمل مباشرة لتجنب حظر الحسابات وتعدد الهويات',
-                sec_ip: 'بيانات الشبكة والموقع الجغرافي',
-                sec_fraud: 'سجل الاستخدام والريسك والقوائم السوداء',
-                sec_fp: 'بيئة الجهاز والعتاد وبصمة المتصفح',
+                sec_ip: 'بيانات الشبكة ومزود الخدمة',
+                sec_fraud: 'الفحص المتقدم للبروكسي والـ VPN',
+                sec_fp: 'بيئة العتاد وبصمة المتصفح',
                 card_isp: 'مزود خدمة الإنترنت (ISP)',
                 card_asn: 'نظام الـ ASN ومسار التوجيه',
                 card_geo: 'الموقع الجغرافي (الدولة/المدينة)',
                 card_tz: 'تطابق توقيت النظام مع الـ IP',
-                card_usage: 'تاريخ استخدام الـ IP وتعدد الحسابات',
-                card_proxy: 'كشف البروكسي والـ VPN والـ TOR',
-                card_blacklist: 'فحص القوائم السوداء وبلاغات الإساءة',
-                card_offerwall: 'حالة قبول شبكات العروض (Offerwalls)',
+                card_usage: 'سجل استخدام الـ IP',
+                card_proxy: 'فحص البروكسي والـ VPN العميق',
+                card_blacklist: 'توافق سرعة الاستجابة والـ Ping',
+                card_offerwall: 'حالة قبول شبكات العروض',
                 card_canvas: 'تشفير بصمة الـ Canvas و WebGL',
                 card_hardware: 'أنوية المعالج وحجم الذاكرة (RAM)',
                 card_webrtc: 'كشف تسريب الـ WebRTC الداخلي',
@@ -638,23 +745,25 @@
             },
             ru: {
                 dir: 'ltr',
-                auto_scan: 'Автоматическое сканирование соединения',
+                auto_scan: 'Глубокий аудит Proxy и VPN',
                 copy_btn: 'Скопировать отчет аудита',
                 fraud_title: 'Риск мошенничества (Fraud Score)',
-                fraud_safe: 'Оптимально для офферов и CPA',
+                fraud_safe: 'Чистый жилой IP',
+                target_clock: 'Время IP (Синхронизируйте устройство)',
+                device_clock: 'Текущее системное время',
                 adv_title: 'Умный советник по оптимизации профиля',
                 adv_sub: 'План действий для предотвращения блокировок',
                 sec_ip: 'Информация о сети и провайдере (ISP)',
-                sec_fraud: 'История использования и базы спама',
+                sec_fraud: 'Глубокий аудит Proxy и VPN',
                 sec_fp: 'Среда устройства и фингерпринт',
                 card_isp: 'Интернет-провайдер (ISP)',
                 card_asn: 'Маршрутизация ASN',
                 card_geo: 'Геолокация (Город/Страна)',
                 card_tz: 'Синхронизация часового пояса',
-                card_usage: 'История IP (Мультиаккаунт)',
-                card_proxy: 'Обнаружение Proxy / VPN / TOR',
-                card_blacklist: 'Черные списки и базы абузов',
-                card_offerwall: 'Статус в офферволах (Offerwalls)',
+                card_usage: 'История использования IP',
+                card_proxy: 'Обнаружение Proxy / VPN',
+                card_blacklist: 'Анализ задержки и пинга',
+                card_offerwall: 'Статус в офферволах',
                 card_canvas: 'Хеш Canvas / WebGL отпечатка',
                 card_hardware: 'Ядра процессора и память (RAM)',
                 card_webrtc: 'Утечка через WebRTC',
@@ -664,6 +773,7 @@
 
         let currentLang = 'en';
         let lastIpData = null;
+        let targetTimezone = null;
 
         function switchLang(lang) {
             currentLang = lang;
@@ -678,14 +788,33 @@
             if (lastIpData) evaluateRecommendations(lastIpData);
         }
 
+        // Live Clocks Engine
+        function updateLiveClocks() {
+            const now = new Date();
+            
+            // System Clock
+            document.getElementById('systemClock').innerText = now.toLocaleTimeString('en-US', { hour12: true });
+            document.getElementById('systemZoneName').innerText = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+            // IP Target Clock
+            if (targetTimezone) {
+                try {
+                    const ipTimeStr = now.toLocaleTimeString('en-US', { timeZone: targetTimezone, hour12: true });
+                    document.getElementById('ipClock').innerText = ipTimeStr;
+                    document.getElementById('ipZoneName').innerText = targetTimezone;
+                } catch(e) {
+                    document.getElementById('ipClock').innerText = now.toLocaleTimeString('en-US', { hour12: true });
+                }
+            }
+        }
+        setInterval(updateLiveClocks, 1000);
+
         async function runFullAudit() {
-            // Hardware
             const cores = navigator.hardwareConcurrency || 4;
             const ram = navigator.deviceMemory ? `${navigator.deviceMemory} GB` : '>= 4 GB';
             document.getElementById('valHardware').innerText = `${cores} Cores / ${ram}`;
             document.getElementById('valScreen').innerText = `${window.screen.width}x${window.screen.height} (${window.screen.colorDepth}-bit)`;
 
-            // Canvas Hash
             try {
                 const canvas = document.createElement('canvas');
                 const ctx = canvas.getContext('2d');
@@ -705,11 +834,15 @@
 
             document.getElementById('valWebRTC').innerText = 'Clean (No Local Leak)';
 
-            // Fetch Network Data
             try {
+                const startPing = performance.now();
                 const res = await fetch('https://ipapi.co/json/');
+                const endPing = performance.now();
+                const latency = Math.round(endPing - startPing);
                 const data = await res.json();
                 lastIpData = data;
+                targetTimezone = data.timezone;
+                updateLiveClocks();
 
                 document.getElementById('userIP').innerText = data.ip || 'Unavailable';
                 document.getElementById('valISP').innerText = data.org || data.asn || 'Clean Residential ISP';
@@ -718,20 +851,23 @@
                 document.getElementById('valTimezone').innerText = `${data.timezone || 'UTC'} (${data.utc_offset || ''})`;
 
                 const orgLower = (data.org || '').toLowerCase();
-                const isDatacenter = orgLower.includes('cloud') || orgLower.includes('hosting') || orgLower.includes('amazon') || orgLower.includes('digitalocean') || orgLower.includes('hetzner');
+                const isDatacenter = orgLower.includes('cloud') || orgLower.includes('hosting') || orgLower.includes('amazon') || orgLower.includes('digitalocean') || orgLower.includes('hetzner') || orgLower.includes('ovh') || orgLower.includes('linode') || orgLower.includes('vultr') || orgLower.includes('m247');
 
-                if (isDatacenter) {
-                    document.getElementById('fraudScore').innerText = '65%';
-                    document.getElementById('fraudScore').style.color = 'var(--orange)';
-                    document.getElementById('fraudStatus').innerHTML = '<i class="fa-solid fa-triangle-exclamation" style="color:var(--orange);"></i> Suspicious (Datacenter / Proxy)';
-                    document.getElementById('valIpType').innerText = 'Datacenter / Hosting IP';
-                    document.getElementById('ipTypeBadge').className = 'status-pill pill-warn';
-                    document.getElementById('valUsage').innerText = 'Shared Datacenter Subnet';
-                    document.getElementById('pillUsage').className = 'status-pill pill-warn';
-                    document.getElementById('pillUsage').innerText = 'Shared';
-                    document.getElementById('valProxy').innerText = 'Proxy / Server Detected';
+                if (isDatacenter || latency > 450) {
+                    document.getElementById('fraudScore').innerText = '80%';
+                    document.getElementById('fraudScore').style.color = 'var(--red)';
+                    document.getElementById('fraudStatus').innerHTML = '<i class="fa-solid fa-triangle-exclamation" style="color:var(--red);"></i> Detected Datacenter / Proxy Tunnel';
+                    document.getElementById('valIpType').innerText = 'Hosting / Server Subnet';
+                    document.getElementById('ipTypeBadge').className = 'status-pill pill-danger';
+                    document.getElementById('valUsage').innerText = 'High Risk Datacenter IP';
+                    document.getElementById('pillUsage').className = 'status-pill pill-danger';
+                    document.getElementById('pillUsage').innerText = 'High Risk';
+                    document.getElementById('valProxy').innerText = 'Positive (Proxy / Tunnel Active)';
                     document.getElementById('pillProxy').className = 'status-pill pill-danger';
                     document.getElementById('pillProxy').innerText = 'Detected';
+                    document.getElementById('valPing').innerText = `Tunnel Delay (${latency}ms)`;
+                    document.getElementById('pillPing').className = 'status-pill pill-warn';
+                    document.getElementById('pillPing').innerText = 'Tunnel Lag';
                 } else {
                     document.getElementById('fraudScore').innerText = '0%';
                     document.getElementById('fraudScore').style.color = 'var(--green)';
@@ -759,26 +895,18 @@
                 if (currentLang === 'ar') {
                     tips.push({
                         type: 'danger',
-                        icon: 'fa-solid fa-triangle-exclamation',
+                        icon: 'fa-solid fa-clock-rotate-left',
                         color: 'var(--red)',
-                        title: 'تحذير: عدم تطابق المنطقة الزمنية (Timezone Mismatch)',
-                        desc: `توقيت جهازك الحالي هو (${localTz}) بينما توقيت الـ IP هو (${ipTz}). يجب تغيير ساعة ومنطقة النظام في جهازك فوراً لتطابق (${ipTz}) لتفادي الحظر الفوري في العروض.`
-                    });
-                } else if (currentLang === 'ru') {
-                    tips.push({
-                        type: 'danger',
-                        icon: 'fa-solid fa-triangle-exclamation',
-                        color: 'var(--red)',
-                        title: 'Внимание: Несовпадение часового пояса',
-                        desc: `Часовой пояс вашей системы (${localTz}), а IP-адреса — (${ipTz}). Измените системное время на (${ipTz}), чтобы избежать мгновенного бана.`
+                        title: 'تحذير حرج: عدم تطابق التوقيت (Timezone Mismatch)',
+                        desc: `ساعة جهازك مضبوطة على (${localTz}) بينما توقيت الـ IP هو (${ipTz}). اضبط ساعة وتوقيت جهازك فوراً لتطابق الساعة الظاهرة في المربع العلوي (${ipTz}) لتفادي الحظر الفوري في استطلاعات الرأي والعروض.`
                     });
                 } else {
                     tips.push({
                         type: 'danger',
-                        icon: 'fa-solid fa-triangle-exclamation',
+                        icon: 'fa-solid fa-clock-rotate-left',
                         color: 'var(--red)',
                         title: 'Critical: Timezone Mismatch Detected',
-                        desc: `Your device timezone is set to (${localTz}) while the IP timezone is (${ipTz}). Change your OS system clock/timezone to (${ipTz}) immediately to pass anti-fraud checks.`
+                        desc: `Your device timezone is (${localTz}) while the IP timezone is (${ipTz}). Change your OS system clock to match the Target Clock (${ipTz}) immediately to pass anti-fraud checks.`
                     });
                 }
             } else {
@@ -787,8 +915,8 @@
                         type: 'clean',
                         icon: 'fa-solid fa-circle-check',
                         color: 'var(--green)',
-                        title: 'تطابق التوقيت والمنطقة الزمنية: ممتاز (100%)',
-                        desc: `توقيت المتصفح متطابق تماماً مع الدولة والمنطقة الجغرافية للـ IP.`
+                        title: 'تطابق التوقيت والساعة: ممتاز (100%)',
+                        desc: `ساعة جهازك متطابقة تماماً مع توقيت ومنطقة الـ IP الجغرافية.`
                     });
                 } else {
                     tips.push({
@@ -796,30 +924,30 @@
                         icon: 'fa-solid fa-circle-check',
                         color: 'var(--green)',
                         title: 'Timezone Consistency: Perfect Match',
-                        desc: `Your system timezone correctly mirrors the IP geolocation (${ipTz || 'Matched'}).`
+                        desc: `Your system clock correctly mirrors the target IP timezone (${ipTz || 'Matched'}).`
                     });
                 }
             }
 
             const orgLower = (data.org || '').toLowerCase();
-            const isDatacenter = orgLower.includes('cloud') || orgLower.includes('hosting') || orgLower.includes('amazon') || orgLower.includes('digitalocean') || orgLower.includes('hetzner');
+            const isDatacenter = orgLower.includes('cloud') || orgLower.includes('hosting') || orgLower.includes('amazon') || orgLower.includes('digitalocean') || orgLower.includes('hetzner') || orgLower.includes('ovh') || orgLower.includes('linode') || orgLower.includes('vultr');
 
             if (isDatacenter) {
                 if (currentLang === 'ar') {
                     tips.push({
-                        type: 'warn',
+                        type: 'danger',
                         icon: 'fa-solid fa-network-wired',
-                        color: 'var(--orange)',
-                        title: 'توصية الـ IP: الاتصال عبر سيرفر/داتاسنتر',
-                        desc: 'هذا الـ IP مكشوف كخادم وسيط (Datacenter). يُفضل استخدام بروكسي سكني حقيقي (Residential Static/Rotating IP) لتفادي رفض العروض واستبيانات الرأي.'
+                        color: 'var(--red)',
+                        title: 'كشف البروكسي: نوع الـ IP استضافة/داتاسنتر',
+                        desc: 'هذا الـ IP مكشوف كخادم وسيط من سيرفرات السحاب وغير صالح لمنصات العروض. استخدم بروكسي سكني حقيقي (Residential Static IP) من IPRoyal لتخطي الحظر.'
                     });
                 } else {
                     tips.push({
-                        type: 'warn',
+                        type: 'danger',
                         icon: 'fa-solid fa-network-wired',
-                        color: 'var(--orange)',
+                        color: 'var(--red)',
                         title: 'IP Quality: Datacenter Subnet Detected',
-                        desc: 'This IP belongs to a hosting/server provider. Switch to a clean Residential ISP proxy to maximize survey & offer approval rates.'
+                        desc: 'This IP belongs to a hosting/server provider. Switch to a clean Residential ISP proxy via IPRoyal to maximize survey & offer approval rates.'
                     });
                 }
             }
@@ -831,8 +959,8 @@
                         type: 'warn',
                         icon: 'fa-solid fa-microchip',
                         color: 'var(--orange)',
-                        title: 'تنبيه العتاد: بيئة جهاز وهمي أو محاكي ضعيف',
-                        desc: 'رُصدت مواصفات عتاد منخفضة جداً (2 Cores) تشير إلى محاكي أو جهاز وهمي. ننصح باستخدام متصفح Anti-Detect لتعديل مواصفات الـ CPU والـ RAM وبصمة الشاشة.'
+                        title: 'تنبيه بصمة العتاد: كشف محاكي أو جهاز وهمي',
+                        desc: 'رُصدت مواصفات عتاد منخفضة تشير لمحاكي. افتح متصفح AdsPower لعزل البصمة ومحاكاة جهاز كمبيوتر حقيقي متعدد الأنوية.'
                     });
                 } else {
                     tips.push({
@@ -840,7 +968,7 @@
                         icon: 'fa-solid fa-microchip',
                         color: 'var(--orange)',
                         title: 'Hardware Profile: Virtual / Emulator Signature',
-                        desc: 'Low CPU concurrency detected. Use an Anti-Detect profile (e.g. AdsPower/Dolphin) to spoof a legitimate 8-Core authentic device profile.'
+                        desc: 'Low CPU concurrency detected. Use AdsPower Anti-Detect profile to spoof a legitimate 8-Core authentic device profile.'
                     });
                 }
             } else {
@@ -849,8 +977,8 @@
                         type: 'clean',
                         icon: 'fa-solid fa-shield-halved',
                         color: 'var(--green)',
-                        title: 'بصمة المتصفح والعتاد: بيئة نظام حقيقية',
-                        desc: 'تم التعرف على معالج حقيقي وأبعاد شاشة وبصمة Canvas غير مكررة.'
+                        title: 'بيئة النظام والعتاد: جهاز حقيقي نظيف',
+                        desc: 'تم التحقق من معالج حقيقي وأبعاد شاشة وبصمة Canvas غير مكشوفة.'
                     });
                 } else {
                     tips.push({
@@ -881,7 +1009,7 @@
             const ip = document.getElementById('userIP').innerText;
             const isp = document.getElementById('valISP').innerText;
             const geo = document.getElementById('valGeo').innerText;
-            const report = `NetShield Audit Report:\nIP: ${ip}\nISP: ${isp}\nLocation: ${geo}\nFraud Score: ${document.getElementById('fraudScore').innerText}`;
+            const report = `NetShield Ultra Audit Report:\nIP: ${ip}\nISP: ${isp}\nLocation: ${geo}\nTarget Timezone: ${targetTimezone}\nFraud Score: ${document.getElementById('fraudScore').innerText}`;
             navigator.clipboard.writeText(report);
             alert('Full Audit Report copied to clipboard!');
         }

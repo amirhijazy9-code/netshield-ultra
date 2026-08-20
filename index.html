@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NetShield Pro | فحص وتحليل الـ IP والشبكة المتقدم</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-color: #0d1117;
+            --card-bg: #161b22;
+            --card-border: #30363d;
+            --accent-cyan: #00f2fe;
+            --accent-blue: #4facfe;
+            --accent-green: #2ea043;
+            --accent-red: #da3633;
+            --accent-orange: #f0883e;
+            --text-main: #f0f6fc;
+            --text-muted: #8b949e;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* Top Navbar */
+        nav {
+            background: rgba(22, 27, 34, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--card-border);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.3rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo i {
+            color: var(--accent-cyan);
+            -webkit-text-fill-color: initial;
+        }
+
+        .live-clock {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--accent-cyan);
+            font-size: 0.9rem;
+            background: #21262d;
+            padding: 6px 14px;
+            border-radius: 20px;
+            border: 1px solid var(--card-border);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+            width: 100%;
+        }
+
+        /* Hero Header */
+        .hero {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .hero h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .hero p {
+            color: var(--text-muted);
+            font-size: 1.05rem;
+        }
+
+        /* Search & Custom Check Bar */
+        .search-box {
+            display: flex;
+            gap: 10px;
+            max-width: 600px;
+            margin: 1.5rem auto;
+        }
+
+        .search-input {
+            flex: 1;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            padding: 12px 16px;
+            color: #fff;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .search-input:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 10px rgba(79, 172, 254, 0.2);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+            border: none;
+            color: #000;
+            font-weight: 700;
+            padding: 0 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        /* Main IP Highlight Card */
+        .ip-hero-card {
+            background: linear-gradient(145deg, #161b22, #1c2128);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ip-hero-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-blue));
+        }
+
+        .ip-label {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .ip-display {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 2.3rem;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: 1px;
+            margin-bottom: 1rem;
+            word-break: break-all;
+        }
+
+        .copy-btn {
+            background: #21262d;
+            border: 1px solid var(--card-border);
+            color: var(--text-main);
+            padding: 6px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: #30363d;
+            color: var(--accent-cyan);
+        }
+
+        /* Risk & Status Badges */
+        .badges-row {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 1.2rem;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .badge-safe {
+            background: rgba(46, 160, 67, 0.15);
+            color: #3fb950;
+            border: 1px solid rgba(46, 160, 67, 0.4);
+        }
+
+        .badge-warning {
+            background: rgba(240, 136, 62, 0.15);
+            color: #f0883e;
+            border: 1px solid rgba(240, 136, 62, 0.4);
+        }
+
+        .badge-danger {
+            background: rgba(218, 54, 51, 0.15);
+            color: #f85149;
+            border: 1px solid rgba(218, 54, 51, 0.4);
+        }
+
+        /* Grid Details */
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.2rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .info-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 1.2rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            transition: 0.2s;
+        }
+
+        .info-card:hover {
+            border-color: #58a6ff;
+            transform: translateY(-2px);
+        }
+
+        .info-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            background: #21262d;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent-cyan);
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .info-content {
+            flex: 1;
+        }
+
+        .info-title {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-bottom: 4px;
+        }
+
+        .info-val {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: #fff;
+            word-break: break-all;
+        }
+
+        .info-val.mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Affiliate / Offer Banner */
+        .affiliate-box {
+            background: linear-gradient(135deg, rgba(79, 172, 254, 0.1), rgba(0, 242, 254, 0.05));
+            border: 1px solid rgba(79, 172, 254, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 2.5rem;
+        }
+
+        .affiliate-box h3 {
+            font-size: 1.1rem;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .affiliate-box p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .affiliate-btn {
+            background: #238636;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.2s;
+        }
+
+        .affiliate-btn:hover {
+            background: #2ea043;
+        }
+
+        /* Extra Tools Section */
+        .extra-tools {
+            margin-top: 1rem;
+        }
+
+        .section-header {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.2rem;
+        }
+
+        .tool-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .tool-card h4 {
+            font-size: 1.1rem;
+            margin-bottom: 0.8rem;
+            color: var(--accent-cyan);
+        }
+
+        .pwd-input {
+            width: 100%;
+            background: #0d1117;
+            border: 1px solid var(--card-border);
+            border-radius: 6px;
+            padding: 10px;
+            color: #fff;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95rem;
+            margin-bottom: 10px;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: auto;
+            border-top: 1px solid var(--card-border);
+            background: var(--card-bg);
+            padding: 1.5rem;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .ip-display {
+                font-size: 1.6rem;
+            }
+            .search-box {
+                flex-direction: column;
+            }
+            .btn {
+                padding: 12px;
+                justify-content: center;
+            }
+            .affiliate-box {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav>
+        <div class="logo">
+            <i class="fa-solid fa-shield-halved"></i> NetShield Pro
+        </div>
+        <div class="live-clock" id="liveClock">--:--:--</div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        
+        <div class="hero">
+            <h1>فحص وتحليل عنوان IP بدقة عالية</h1>
+            <p>كشف الموقع الجغرافي، مزود الخدمة، ونسبة خطورة الاتصال (Proxy / VPN / Hosting)</p>
+            
+            <div class="search-box">
+                <input type="text" id="ipInput" class="search-input" placeholder="أدخل أي IP لفحصه (مثال: 8.8.8.8)...">
+                <button class="btn" onclick="checkCustomIP()">
+                    <i class="fa-solid fa-magnifying-glass"></i> فحص الآن
+                </button>
+            </div>
+        </div>
+
+        <!-- IP Display Card -->
+        <div class="ip-hero-card">
+            <div class="ip-label">عنوان الـ IP الخاص بك (Public IP)</div>
+            <div class="ip-display" id="myIp">جاري الفحص...</div>
+            <button class="copy-btn" onclick="copyIP()">
+                <i class="fa-regular fa-copy"></i> نسخ الـ IP
+            </button>
+
+            <div class="badges-row" id="badgesContainer">
+                <span class="badge badge-safe" id="statusBadge"><i class="fa-solid fa-circle-notch fa-spin"></i> جاري التدقيق</span>
+                <span class="badge" id="riskBadge" style="display:none;"></span>
+            </div>
+        </div>
+
+        <!-- Details Grid -->
+        <div class="details-grid">
+            <div class="info-card">
+                <div class="info-icon"><i class="fa-solid fa-earth-americas"></i></div>
+                <div class="info-content">
+                    <div class="info-title">الدولة والمدينة</div>
+                    <div class="info-val" id="valLocation">-</div>
+                </div>
+            </div>
+
+            <div class="info-card">
+                <div class="info-icon"><i class="fa-solid fa-network-wired"></i></div>
+                <div class="info-content">
+                    <div class="info-title">مزود خدمة الإنترنت (ISP)</div>
+                    <div class="info-val" id="valIsp">-</div>
+                </div>
+            </div>
+
+            <div class="info-card">
+                <div class="info-icon"><i class="fa-solid fa-server"></i></div>
+                <div class="info-content">
+                    <div class="info-title">نظام الـ Autonomous (ASN)</div>
+                    <div class="info-val mono" id="valAsn">-</div>
+                </div>
+            </div>
+
+            <div class="info-card">
+                <div class="info-icon"><i class="fa-solid fa-clock"></i></div>
+                <div class="info-content">
+                    <div class="info-title">المنطقة الزمنية والتوقيت</div>
+                    <div class="info-val mono" id="valTimezone">-</div>
+                </div>
+            </div>
+
+            <div class="info-card">
+                <div class="info-icon"><i class="fa-solid fa-location-dot"></i></div>
+                <div class="info-content">
+                    <div class="info-title">الإحداثيات الجغرافية (Lat/Lon)</div>
+                    <div class="info-val mono" id="valCoords">-</div>
+                </div>
+            </div>
+
+            <div class="info-card">
+                <div class="info-icon"><i class="fa-solid fa-shield-virus"></i></div>
+                <div class="info-content">
+                    <div class="info-title">فحص الـ Proxy / VPN / Hosting</div>
+                    <div class="info-val" id="valProxyType">-</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Affiliate / Offer Banner -->
+        <div class="affiliate-box">
+            <div>
+                <h3><i class="fa-solid fa-lock"></i> هل تريد حماية اتصالك وتغيير الـ IP بالكامل؟</h3>
+                <p>تصفح بحرية وأمان عالي دون تسريب لمعلوماتك الشخصية أو موقعك الحقيقي.</p>
+            </div>
+            <!-- ضع رابط الأفلييت أو صفحة الإحالة الخاصة بك هنا -->
+            <a href="#" class="affiliate-btn" id="affiliateLink" target="_blank">
+                احصل على حماية VPN قوية <i class="fa-solid fa-arrow-left"></i>
+            </a>
+        </div>
+
+        <!-- Extra Tools -->
+        <div class="extra-tools">
+            <div class="section-header">
+                <i class="fa-solid fa-toolbox" style="color: var(--accent-cyan);"></i> أدوات شبكة إضافية مجانية
+            </div>
+
+            <div class="tools-grid">
+                <!-- Wi-Fi Password Generator -->
+                <div class="tool-card">
+                    <h4><i class="fa-solid fa-key"></i> مولد كلمات سر للراوتر والواي فاي</h4>
+                    <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:10px;">توليد باسوورد عشوائي ومعقد ضد هجمات التخمين</p>
+                    <input type="text" id="genPwdOutput" class="pwd-input" readonly placeholder="اضغط توليد...">
+                    <div style="display:flex; gap:8px;">
+                        <button class="btn" style="flex:1; padding:8px;" onclick="generateSecurePassword()">توليد كلمة سر</button>
+                        <button class="copy-btn" onclick="copyPassword()"><i class="fa-regular fa-copy"></i></button>
+                    </div>
+                </div>
+
+                <!-- MAC Address Formatter -->
+                <div class="tool-card">
+                    <h4><i class="fa-solid fa-laptop-code"></i> منسق عنوان الماك (MAC Formatter)</h4>
+                    <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:10px;">تحويل شكل الماك أدرس ليتوافق مع إعدادات الراوتر</p>
+                    <input type="text" id="rawMacInput" class="pwd-input" placeholder="أدخل الماك (مثال: a1b2c3d4e5f6)">
+                    <button class="btn" style="width:100%; padding:8px;" onclick="formatMacAddress()">تنسيق (Colon & Dash)</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2026 NetShield Pro - أداة فحص معلومات الشبكة والـ IP بدقة. جميع الحقوق محفوظة.</p>
+    </footer>
+
+    <!-- Script -->
+    <script>
+        // Live Clock
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('liveClock').innerText = now.toLocaleTimeString('ar-EG', { hour12: false });
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // Main IP Fetch via ipapi.co (Detailed & Fast)
+        async function fetchIPData(ip = '') {
+            const url = ip ? `https://ipapi.co/${ip}/json/` : 'https://ipapi.co/json/';
+            try {
+                const res = await fetch(url);
+                const data = await res.json();
+                
+                if(data.error) {
+                    alert('تعذر جلب معلومات هذا الـ IP، تأكد من صحة العنوان.');
+                    return;
+                }
+
+                document.getElementById('myIp').innerText = data.ip || 'غير معروف';
+                document.getElementById('valLocation').innerText = `${data.country_name || '-'} (${data.city || '-'})`;
+                document.getElementById('valIsp').innerText = data.org || data.asn || '-';
+                document.getElementById('valAsn').innerText = data.asn || '-';
+                document.getElementById('valTimezone').innerText = `${data.timezone || '-'} (${data.utc_offset || ''})`;
+                document.getElementById('valCoords').innerText = `${data.latitude || '-'}, ${data.longitude || '-'}`;
+
+                // Risk & Type Check Simulation
+                const orgLower = (data.org || '').toLowerCase();
+                const isHosting = orgLower.includes('hosting') || orgLower.includes('cloud') || orgLower.includes('datacenter') || orgLower.includes('amazon') || orgLower.includes('digitalocean') || orgLower.includes('hetzner');
+
+                const statusBadge = document.getElementById('statusBadge');
+                const riskBadge = document.getElementById('riskBadge');
+                riskBadge.style.display = 'inline-flex';
+
+                if (isHosting) {
+                    document.getElementById('valProxyType').innerHTML = '<span style="color:#f0883e;">Proxy / Datacenter IP</span>';
+                    statusBadge.className = 'badge badge-warning';
+                    statusBadge.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> اتصال بروكسي / داتاسنتر';
+                    riskBadge.className = 'badge badge-warning';
+                    riskBadge.innerHTML = 'مستوى الريسك: متوسط (Suspicious)';
+                } else {
+                    document.getElementById('valProxyType').innerHTML = '<span style="color:#3fb950;">Residential (اتصال منزلي نظيف)</span>';
+                    statusBadge.className = 'badge badge-safe';
+                    statusBadge.innerHTML = '<i class="fa-solid fa-circle-check"></i> اتصال نظيف ومباشر';
+                    riskBadge.className = 'badge badge-safe';
+                    riskBadge.innerHTML = 'مستوى الريسك: منخفض (Safe 0%)';
+                }
+
+            } catch (err) {
+                console.error(err);
+                document.getElementById('myIp').innerText = 'حدث خطأ في الاتصال';
+            }
+        }
+
+        // On Load
+        window.onload = () => {
+            fetchIPData();
+        };
+
+        // Custom IP Check
+        function checkCustomIP() {
+            const ip = document.getElementById('ipInput').value.trim();
+            if (ip) {
+                document.getElementById('myIp').innerText = 'جاري الفحص...';
+                fetchIPData(ip);
+            }
+        }
+
+        // Copy IP
+        function copyIP() {
+            const ipText = document.getElementById('myIp').innerText;
+            if(ipText && ipText !== 'جاري الفحص...') {
+                navigator.clipboard.writeText(ipText);
+                alert('تم نسخ الـ IP: ' + ipText);
+            }
+        }
+
+        // Wi-Fi Password Generator
+        function generateSecurePassword() {
+            const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+~|}{[]:;?><=";
+            let pwd = "";
+            for (let i = 0; i < 18; i++) {
+                pwd += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            document.getElementById('genPwdOutput').value = pwd;
+        }
+
+        function copyPassword() {
+            const pwd = document.getElementById('genPwdOutput').value;
+            if(pwd) {
+                navigator.clipboard.writeText(pwd);
+                alert('تم نسخ كلمة السر بنجاح!');
+            }
+        }
+
+        // MAC Formatter
+        function formatMacAddress() {
+            let mac = document.getElementById('rawMacInput').value.replace(/[^a-fA-F0-9]/g, '');
+            if(mac.length === 12) {
+                const formatted = mac.match(/.{1,2}/g).join(':').toUpperCase();
+                document.getElementById('rawMacInput').value = formatted;
+                alert('تم تنسيق الماك أدرس: ' + formatted);
+            } else {
+                alert('يرجى كتابة ماك أدرس صالح مكون من 12 خانة سداسية عشرية.');
+            }
+        }
+    </script>
+</body>
+</html>

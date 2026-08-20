@@ -800,7 +800,7 @@
                     <span class="pulse-dot"></span>
                     <span id="t_hero_tag">Master Cyber Diagnostics & Digital Identity Platform</span>
                 </div>
-                <div class="main-ip" id="userIP">Scanning Tunnels & Headers...</div>
+                <div class="main-ip" id="userIP">Analyzing Real-time Connection...</div>
                 
                 <div class="btn-action-group">
                     <button class="btn-scan" onclick="runFullScanEngine()">
@@ -816,8 +816,8 @@
             <div class="score-grid">
                 <div class="score-box">
                     <div style="font-size:0.75rem; color:var(--text-dim); font-weight:800; margin-bottom:4px;" id="t_score_priv">Privacy Score</div>
-                    <div class="score-val" id="privacyScore" style="color:var(--green);">100%</div>
-                    <span class="badge badge-pass" id="badgePriv">OPTIMAL</span>
+                    <div class="score-val" id="privacyScore" style="color:var(--green);">--%</div>
+                    <span class="badge badge-info" id="badgePriv">CALCULATING</span>
                 </div>
                 <div class="score-box">
                     <div style="font-size:0.75rem; color:var(--text-dim); font-weight:800; margin-bottom:4px;" id="t_score_risk">Fraud Risk Score</div>
@@ -826,8 +826,8 @@
                 </div>
                 <div class="score-box">
                     <div style="font-size:0.75rem; color:var(--text-dim); font-weight:800; margin-bottom:4px;" id="t_score_conf">Confidence Level</div>
-                    <div class="score-val" id="confScore" style="color:var(--cyan);">98%</div>
-                    <span class="badge badge-info" id="badgeConf">3 Sources</span>
+                    <div class="score-val" id="confScore" style="color:var(--cyan);">99%</div>
+                    <span class="badge badge-info" id="badgeConf">Direct Consensus</span>
                 </div>
                 <div class="score-box">
                     <div style="font-size:0.75rem; color:var(--text-dim); font-weight:800; margin-bottom:4px;" id="t_score_bot">Automation / Bot</div>
@@ -845,7 +845,7 @@
                     <i class="fa-solid fa-crosshairs" style="color:var(--cyan);"></i>
                 </div>
                 <div class="clock-time" id="ipClock">--:--:--</div>
-                <div style="font-size:0.85rem; color:var(--cyan); font-weight:800;" id="ipZoneName">Detecting Zone...</div>
+                <div style="font-size:0.85rem; color:var(--cyan); font-weight:800;" id="ipZoneName">Synchronizing Zone...</div>
             </div>
 
             <div class="clock-card">
@@ -1113,7 +1113,7 @@
         <p id="t_footer_text">© 2026 NetShield Ultra. All rights reserved | High-Precision Cyber & Privacy Diagnostic Platform.</p>
     </footer>
 
-    <!-- Hardened & Deep Interactive Scripts -->
+    <!-- Hardened & Instant Responsive Diagnostic Scripts -->
     <script>
         if (window.top !== window.self) {
             window.top.location = window.self.location;
@@ -1135,7 +1135,7 @@
             lastAIMsgTime: 0,
             canScan: function() {
                 const now = Date.now();
-                if (now - this.lastScanTime < 3000) return false;
+                if (now - this.lastScanTime < 2000) return false;
                 this.lastScanTime = now;
                 return true;
             },
@@ -1300,8 +1300,8 @@
             setTimeout(() => {
                 let reply = "";
                 const q = query.toLowerCase();
-                const currentIp = lastReportData.ip || '127.0.0.1';
-                const currentTz = targetTimezone || 'UTC';
+                const currentIp = lastReportData.ip || 'Detecting...';
+                const currentTz = targetTimezone || Intl.DateTimeFormat().resolvedOptions().timeZone;
                 const localTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
                 const isTzMismatch = currentTz.toLowerCase() !== localTz.toLowerCase();
                 const org = (lastReportData.org || '').toLowerCase();
@@ -1389,7 +1389,7 @@
         }
         setInterval(updateClocks, 1000);
 
-        async function secureFetch(url, timeoutMs = 4500) {
+        async function secureFetch(url, timeoutMs = 3500) {
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
             try {
@@ -1403,49 +1403,54 @@
         }
 
         async function fetchIntelligence() {
-            const apis = [
-                'https://ipapi.co/json/',
-                'https://ipwhois.app/json/',
-                'https://freeipapi.com/api/json'
+            const endpoints = [
+                { url: 'https://ipwhois.app/json/', map: d => ({ ip: d.ip, org: d.isp || d.org, asn: d.asn, country: d.country, city: d.city, timezone: d.timezone }) },
+                { url: 'https://freeipapi.com/api/json', map: d => ({ ip: d.ipAddress, org: d.asn || 'Consumer Line', asn: d.asn || 'AS-Standard', country: d.countryName, city: d.cityName, timezone: d.timeZones?.[0] || Intl.DateTimeFormat().resolvedOptions().timeZone }) },
+                { url: 'https://ipapi.co/json/', map: d => ({ ip: d.ip, org: d.org, asn: d.asn, country: d.country_name, city: d.city, timezone: d.timezone }) }
             ];
 
-            for (const url of apis) {
+            for (const ep of endpoints) {
                 try {
                     const start = performance.now();
-                    const res = await secureFetch(url);
+                    const res = await secureFetch(ep.url);
                     const latency = Math.round(performance.now() - start);
                     if (res.ok) {
-                        const d = await res.json();
-                        return {
-                            ip: d.ip || d.query || d.ipAddress || '127.0.0.1',
-                            org: d.org || d.asn || d.isp || 'Consumer ISP',
-                            asn: d.asn || 'AS-Standard',
-                            country: d.country_name || d.country || 'Global',
-                            city: d.city || d.cityName || 'Metropolitan',
-                            timezone: d.timezone || d.time_zone || Intl.DateTimeFormat().resolvedOptions().timeZone,
-                            latency: latency
-                        };
+                        const raw = await res.json();
+                        const parsed = ep.map(raw);
+                        if (parsed.ip && !parsed.ip.includes('127.0.0.1')) {
+                            return {
+                                ip: sanitizeText(parsed.ip),
+                                org: sanitizeText(parsed.org || 'Broadband ISP'),
+                                asn: sanitizeText(parsed.asn || 'AS-Standard'),
+                                country: sanitizeText(parsed.country || 'Global'),
+                                city: sanitizeText(parsed.city || 'Metropolitan'),
+                                timezone: sanitizeText(parsed.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone),
+                                latency: latency
+                            };
+                        }
                     }
                 } catch (e) {}
             }
+
+            // Client-safe fallback using local Intl APIs without dummy 127.0.0.1 miscalculation
+            const localTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
             return {
-                ip: '127.0.0.1',
-                org: 'Local Line',
-                asn: 'AS-Local',
+                ip: 'Connecting...',
+                org: 'Direct Gateway Line',
+                asn: 'AS-Standard',
                 country: 'Global',
-                city: 'Local',
-                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                city: 'Local Gateway',
+                timezone: localTz,
                 latency: 35
             };
         }
 
         async function runFullScanEngine() {
             if (!RateLimiter.canScan()) {
-                alert('Scan is in cooldown. Please wait 3 seconds.');
                 return;
             }
 
-            document.getElementById('userIP').textContent = 'Scanning Tunnels & Fingerprints...';
+            document.getElementById('userIP').textContent = 'Analyzing Real-time Connection...';
             
             const cores = navigator.hardwareConcurrency || 4;
             const ram = navigator.deviceMemory ? `${navigator.deviceMemory} GB` : '>= 4 GB';
@@ -1484,10 +1489,10 @@
 
         function renderAdvisorAndScores(data) {
             const orgLower = (data.org || '').toLowerCase();
-            const isDatacenter = orgLower.includes('cloud') || orgLower.includes('hosting') || orgLower.includes('amazon') || orgLower.includes('digitalocean') || orgLower.includes('hetzner') || orgLower.includes('ovh') || orgLower.includes('m247') || data.latency > 450;
+            const isDatacenter = orgLower.includes('cloud') || orgLower.includes('hosting') || orgLower.includes('amazon') || orgLower.includes('digitalocean') || orgLower.includes('hetzner') || orgLower.includes('ovh') || orgLower.includes('m247') || data.latency > 500;
             
             const localTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-            const isTzMismatch = data.timezone && localTz && (data.timezone.toLowerCase() !== localTz.toLowerCase());
+            const isTzMismatch = data.timezone && localTz && (data.timezone.toLowerCase() !== localTz.toLowerCase()) && data.ip !== 'Connecting...';
 
             let risk = 0;
             let privacy = 100;
@@ -1502,6 +1507,8 @@
 
             document.getElementById('privacyScore').textContent = `${privacy}%`;
             document.getElementById('privacyScore').style.color = privacy < 60 ? 'var(--red)' : 'var(--green)';
+            document.getElementById('badgePriv').className = privacy < 60 ? 'badge badge-error' : 'badge badge-pass';
+            document.getElementById('badgePriv').textContent = privacy < 60 ? 'ACTION NEEDED' : 'OPTIMAL';
 
             if (isDatacenter) {
                 document.getElementById('v_iptype').textContent = 'Datacenter / Server IP';
@@ -1548,7 +1555,7 @@
             }
         }
 
-        // Live Real-Time Interactive Tool Execution Engine (Every single tool has its unique live output!)
+        // Live Real-Time Interactive Tool Execution Engine
         function executeInteractiveTool(toolName) {
             const modal = document.getElementById('toolModal');
             const title = document.getElementById('modalToolTitle');
@@ -1786,7 +1793,8 @@
             alert('Full Audit Report copied to clipboard!');
         }
 
-        window.onload = runFullScanEngine;
+        // Automatic instant trigger upon initial page DOM load
+        document.addEventListener('DOMContentLoaded', runFullScanEngine);
     </script>
 </body>
 </html>

@@ -89,22 +89,8 @@
         .container {
             max-width: 1140px;
             margin: 0 auto;
-            padding: 2rem 1.5rem;
+            padding: 1.5rem 1.2rem;
             width: 100%;
-        }
-
-        /* Ad Placement Area */
-        .ad-container-box {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 1rem;
-            margin: 1.5rem 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 90px;
-            overflow: hidden;
         }
 
         /* Hero Board */
@@ -114,12 +100,12 @@
                         var(--surface);
             border: 1px solid var(--border);
             border-radius: 18px;
-            padding: 2.2rem;
-            margin-bottom: 2rem;
+            padding: 2rem;
+            margin-bottom: 1.8rem;
             box-shadow: 0 12px 35px rgba(0,0,0,0.6);
             display: grid;
             grid-template-columns: 1.4fr 1fr;
-            gap: 2rem;
+            gap: 1.8rem;
             align-items: center;
             position: relative;
             overflow: hidden;
@@ -161,7 +147,7 @@
 
         .main-ip {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 2.5rem;
+            font-size: 2.3rem;
             font-weight: 700;
             color: #fff;
             margin-bottom: 0.8rem;
@@ -198,21 +184,21 @@
             background: var(--surface-card);
             border: 1px solid var(--border);
             border-radius: 14px;
-            padding: 1.5rem;
+            padding: 1.3rem;
             text-align: center;
         }
 
         .score-label {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: var(--text-dim);
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
 
         .score-val {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 2.8rem;
+            font-size: 2.6rem;
             font-weight: 800;
             color: var(--green);
             line-height: 1;
@@ -220,7 +206,7 @@
         }
 
         .score-status {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             font-weight: 700;
             color: var(--green);
             display: inline-flex;
@@ -234,7 +220,7 @@
             border: 1px solid var(--border);
             border-radius: 16px;
             padding: 1.5rem;
-            margin-bottom: 2.2rem;
+            margin-bottom: 2rem;
         }
 
         .advisor-header {
@@ -247,7 +233,7 @@
         }
 
         .advisor-title {
-            font-size: 1.2rem;
+            font-size: 1.15rem;
             font-weight: 700;
             color: #fff;
             display: flex;
@@ -279,24 +265,13 @@
             border-right: 4px solid var(--green);
         }
 
-        .tip-item.warn {
-            border-left-color: var(--orange);
-        }
-        [dir="rtl"] .tip-item.warn {
-            border-right-color: var(--orange);
-        }
+        .tip-item.warn { border-left-color: var(--orange); }
+        [dir="rtl"] .tip-item.warn { border-right-color: var(--orange); }
 
-        .tip-item.danger {
-            border-left-color: var(--red);
-        }
-        [dir="rtl"] .tip-item.danger {
-            border-right-color: var(--red);
-        }
+        .tip-item.danger { border-left-color: var(--red); }
+        [dir="rtl"] .tip-item.danger { border-right-color: var(--red); }
 
-        .tip-icon {
-            font-size: 1.2rem;
-            margin-top: 2px;
-        }
+        .tip-icon { font-size: 1.2rem; margin-top: 2px; }
 
         .tip-content h4 {
             font-size: 0.95rem;
@@ -312,7 +287,7 @@
 
         /* Sections Grid */
         .section-title {
-            font-size: 1.25rem;
+            font-size: 1.2rem;
             font-weight: 700;
             margin-bottom: 1.2rem;
             display: flex;
@@ -325,16 +300,16 @@
 
         .audit-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
             gap: 1.2rem;
-            margin-bottom: 2.2rem;
+            margin-bottom: 2rem;
         }
 
         .audit-card {
             background: var(--surface);
             border: 1px solid var(--border);
             border-radius: 12px;
-            padding: 1.3rem;
+            padding: 1.2rem;
             display: flex;
             flex-direction: column;
             gap: 8px;
@@ -354,7 +329,7 @@
         }
 
         .card-val {
-            font-size: 1.15rem;
+            font-size: 1.1rem;
             font-weight: 700;
             color: #fff;
             word-break: break-all;
@@ -362,7 +337,7 @@
 
         .card-val.mono {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 1rem;
+            font-size: 0.95rem;
         }
 
         .status-pill {
@@ -379,6 +354,24 @@
         .pill-warn { background: rgba(255, 171, 0, 0.15); color: var(--orange); }
         .pill-danger { background: rgba(255, 82, 82, 0.15); color: var(--red); }
 
+        /* Ad Placement Area at Bottom */
+        .bottom-ad-wrapper {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 1.2rem;
+            margin: 2rem 0 1rem;
+            text-align: center;
+        }
+
+        .ad-label {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
         footer {
             margin-top: auto;
             border-top: 1px solid var(--border);
@@ -394,7 +387,7 @@
                 grid-template-columns: 1fr;
                 gap: 1.5rem;
             }
-            .main-ip { font-size: 1.8rem; }
+            .main-ip { font-size: 1.7rem; }
         }
     </style>
 </head>
@@ -416,13 +409,7 @@
 
     <div class="container">
 
-        <!-- Top Adsterra Ad Placement -->
-        <div class="ad-container-box">
-            <script async="async" data-cfasync="false" src="https://pl30936838.effectivecpmnetwork.com/571194fc60e5ce4d40cad72b82d13793/invoke.js"></script>
-            <div id="container-571194fc60e5ce4d40cad72b82d13793"></div>
-        </div>
-
-        <!-- Hero Status Board -->
+        <!-- 1. Hero Status Board (الواجهة الأساسية تظهر أولاً) -->
         <div class="hero-board">
             <div>
                 <div class="ip-meta-tag">
@@ -451,7 +438,7 @@
             </div>
         </div>
 
-        <!-- Dynamic Actionable Advice Panel -->
+        <!-- 2. Dynamic Actionable Advice Panel -->
         <div class="advisor-panel">
             <div class="advisor-header">
                 <div class="advisor-title">
@@ -472,7 +459,7 @@
             </div>
         </div>
 
-        <!-- 1. Network & IP Intelligence -->
+        <!-- 3. Network & IP Intelligence -->
         <div class="section-title">
             <i class="fa-solid fa-server"></i> <span id="t_sec_ip">Network & Geolocation</span>
         </div>
@@ -510,7 +497,7 @@
             </div>
         </div>
 
-        <!-- 2. Fraud & Multi-Account Integrity -->
+        <!-- 4. Fraud & Multi-Account Integrity -->
         <div class="section-title">
             <i class="fa-solid fa-shield-virus"></i> <span id="t_sec_fraud">Fraud, Abuse & History Check</span>
         </div>
@@ -548,7 +535,7 @@
             </div>
         </div>
 
-        <!-- 3. Hardware & Browser Fingerprint Audit -->
+        <!-- 5. Hardware & Browser Fingerprint Audit -->
         <div class="section-title">
             <i class="fa-solid fa-microchip"></i> <span id="t_sec_fp">Device & Hardware Environment</span>
         </div>
@@ -586,8 +573,10 @@
             </div>
         </div>
 
-        <!-- Bottom Ad Placement -->
-        <div class="ad-container-box">
+        <!-- 6. Bottom Ad Placement (الإعلان في الأسفل فقط) -->
+        <div class="bottom-ad-wrapper">
+            <div class="ad-label">Sponsored Links</div>
+            <script async="async" data-cfasync="false" src="https://pl30936838.effectivecpmnetwork.com/571194fc60e5ce4d40cad72b82d13793/invoke.js"></script>
             <div id="container-571194fc60e5ce4d40cad72b82d13793"></div>
         </div>
 

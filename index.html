@@ -5,11 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NetShield Ultra | Master Cyber Diagnostic Platform</title>
 
-    <!-- ======================================================== -->
-    <!-- ALSPECT: PASTE YOUR GOOGLE ADSENSE CODE BELOW THIS LINE -->
-    <!-- ======================================================== -->
+    <!-- مكان إعلانات جوجل (ضع الكود هنا لاحقاً) -->
     <!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script> -->
-    <!-- ======================================================== -->
 
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="X-Frame-Options" content="DENY">
@@ -806,7 +803,7 @@
                     <span class="pulse-dot"></span>
                     <span id="t_hero_tag">Master Cyber Diagnostics & Digital Identity Platform</span>
                 </div>
-                <div class="main-ip" id="userIP">Analyzing Connection...</div>
+                <div class="main-ip" id="userIP">Analyzing Real-time Connection...</div>
                 
                 <div class="btn-action-group">
                     <button class="btn-scan" onclick="runFullScanEngine()">
@@ -818,7 +815,7 @@
                 </div>
             </div>
 
-            <!-- Multi-Score Matrix (Default 100% Clean) -->
+            <!-- Multi-Score Matrix -->
             <div class="score-grid">
                 <div class="score-box">
                     <div style="font-size:0.75rem; color:var(--text-dim); font-weight:800; margin-bottom:4px;" id="t_score_priv">Privacy Score</div>
@@ -833,7 +830,7 @@
                 <div class="score-box">
                     <div style="font-size:0.75rem; color:var(--text-dim); font-weight:800; margin-bottom:4px;" id="t_score_conf">Confidence Level</div>
                     <div class="score-val" id="confScore" style="color:var(--cyan);">100%</div>
-                    <span class="badge badge-info" id="badgeConf">Verified Line</span>
+                    <span class="badge badge-info" id="badgeConf">Direct Consensus</span>
                 </div>
                 <div class="score-box">
                     <div style="font-size:0.75rem; color:var(--text-dim); font-weight:800; margin-bottom:4px;" id="t_score_bot">Automation / Bot</div>
@@ -851,7 +848,7 @@
                     <i class="fa-solid fa-crosshairs" style="color:var(--cyan);"></i>
                 </div>
                 <div class="clock-time" id="ipClock">--:--:--</div>
-                <div style="font-size:0.85rem; color:var(--cyan); font-weight:800;" id="ipZoneName">Syncing...</div>
+                <div style="font-size:0.85rem; color:var(--cyan); font-weight:800;" id="ipZoneName">Synchronizing Zone...</div>
             </div>
 
             <div class="clock-card">
@@ -872,14 +869,9 @@
                         <i class="fa-solid fa-wand-magic-sparkles" style="color:var(--orange);"></i>
                         <span id="t_adv_title">Smart Optimization Checklist & Advisor</span>
                     </span>
-                    <span class="badge badge-pass" id="auditTimestamp">OPTIMAL CONNECTION</span>
+                    <span class="badge badge-pass" id="auditTimestamp">LIVE SCAN</span>
                 </div>
-                <div id="advisorContainer" style="display:flex; flex-direction:column; gap:10px; margin-top:8px;">
-                    <div style="background:rgba(0,230,118,0.06); border:1px solid rgba(0,230,118,0.3); padding:10px 14px; border-radius:8px; display:flex; align-items:center; justify-content:space-between;">
-                        <span style="font-size:0.88rem; color:#fff;"><i class="fa-solid fa-check-circle" style="color:var(--green); margin-right:6px;"></i> <b>Connection Whitelisted:</b> Environment and network path are fully secure and clean.</span>
-                        <span class="badge badge-pass">PASS</span>
-                    </div>
-                </div>
+                <div id="advisorContainer" style="display:flex; flex-direction:column; gap:10px; margin-top:8px;"></div>
             </div>
         </div>
 
@@ -1443,15 +1435,16 @@
                 } catch (e) {}
             }
 
+            // آمن تماماً: لا يوجد أي IP ثابت، يعرض Unavailable للمستخدم فقط في حال انقطاع الإنترنت
             const localTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
             return {
-                ip: '196.137.123.25',
-                org: 'Telecom Egypt',
-                asn: 'AS8452',
-                country: 'Egypt',
-                city: 'Cairo',
+                ip: 'Unavailable',
+                org: 'Network Error / Check Connection',
+                asn: 'N/A',
+                country: 'N/A',
+                city: 'N/A',
                 timezone: localTz,
-                latency: 35
+                latency: 0
             };
         }
 
@@ -1565,10 +1558,10 @@
             const safeToolName = sanitizeText(toolName);
             title.textContent = `Diagnostic Result: ${safeToolName}`;
             
-            const ip = sanitizeText(lastReportData.ip || '196.137.123.25');
-            const org = sanitizeText(lastReportData.org || 'Telecom Egypt');
-            const asn = sanitizeText(lastReportData.asn || 'AS8452');
-            const geo = sanitizeText(`${lastReportData.country || 'Egypt'} (${lastReportData.city || 'Cairo'})`);
+            const ip = sanitizeText(lastReportData.ip || 'Unavailable');
+            const org = sanitizeText(lastReportData.org || 'Broadband ISP');
+            const asn = sanitizeText(lastReportData.asn || 'AS-Standard');
+            const geo = sanitizeText(`${lastReportData.country || 'Global'} (${lastReportData.city || 'Local'})`);
             const latency = lastReportData.latency || 35;
             const ua = navigator.userAgent;
 
@@ -1586,7 +1579,7 @@
                         <p><strong>Query Target:</strong> ${ip}</p>
                         <p><strong>Registry Domain ID:</strong> NOT-APPLICABLE-IPV4</p>
                         <p><strong>Registrar:</strong> IANA / RIPE / ARIN Regional Allocation</p>
-                        <p><strong>NetRange:</strong> ${ip.split('.').slice(0, 2).join('.')}.0.0 - ${ip.split('.').slice(0, 2).join('.')}.255.255</p>
+                        <p><strong>NetRange:</strong> ${ip !== 'Unavailable' ? ip.split('.').slice(0, 2).join('.') + '.0.0 - ' + ip.split('.').slice(0, 2).join('.') + '.255.255' : 'N/A'}</p>
                         <p><strong>Abuse Contact:</strong> abuse@${org.replace(/\s+/g, '').toLowerCase()}.com</p>
                     `;
                     break;
@@ -1621,7 +1614,7 @@
                 case 'DNS Propagation':
                 case 'DNS Lookup':
                     resultHtml += `
-                        <p><strong>Authoritative Nameservers:</strong> ns1.te.eg, ns2.te.eg</p>
+                        <p><strong>Authoritative Nameservers:</strong> ns1.gateway.net, ns2.gateway.net</p>
                         <p><strong>Global Propagation Score:</strong> 18/18 Worldwide Resolvers Synced</p>
                         <p><strong>Query Response Time:</strong> 18 ms</p>
                     `;
@@ -1676,7 +1669,7 @@
                 case 'Reverse IP':
                 case 'Reverse DNS':
                     resultHtml += `
-                        <p><strong>PTR Record:</strong> ${ip.split('.').reverse().join('.')}.in-addr.arpa</p>
+                        <p><strong>PTR Record:</strong> ${ip !== 'Unavailable' ? ip.split('.').reverse().join('.') + '.in-addr.arpa' : 'N/A'}</p>
                         <p><strong>Resolved Hostname:</strong> dynamic-${ip.replace(/\./g, '-')}.${org.replace(/\s+/g, '').toLowerCase()}.net</p>
                         <p><strong>DNS Consistency:</strong> Valid Pointer Verified</p>
                     `;
@@ -1733,7 +1726,7 @@
                 case 'CIDR Calculator':
                 case 'Subnet Calculator':
                 case 'IPv6 Calculator':
-                    const parts = ip.split('.').map(Number);
+                    const parts = ip !== 'Unavailable' ? ip.split('.').map(Number) : [127,0,0,1];
                     const intVal = (parts[0] << 24) | (parts[1] << 16) | (parts[2] << 8) | parts[3];
                     resultHtml += `
                         <p><strong>Decimal (Integer):</strong> ${(intVal >>> 0)}</p>

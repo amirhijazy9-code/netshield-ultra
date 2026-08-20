@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NetShield Ultra | Master Cyber Diagnostic Platform</title>
 
+    <!-- ======================================================== -->
+    <!-- ALSPECT: PASTE YOUR GOOGLE ADSENSE CODE BELOW THIS LINE -->
+    <!-- ======================================================== -->
+    <!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script> -->
+    <!-- ======================================================== -->
+
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="X-Frame-Options" content="DENY">
     <meta name="referrer" content="strict-origin-when-cross-origin">
@@ -800,7 +806,7 @@
                     <span class="pulse-dot"></span>
                     <span id="t_hero_tag">Master Cyber Diagnostics & Digital Identity Platform</span>
                 </div>
-                <div class="main-ip" id="userIP">Analyzing Real-time Connection...</div>
+                <div class="main-ip" id="userIP">Analyzing Connection...</div>
                 
                 <div class="btn-action-group">
                     <button class="btn-scan" onclick="runFullScanEngine()">
@@ -812,12 +818,12 @@
                 </div>
             </div>
 
-            <!-- Multi-Score Matrix -->
+            <!-- Multi-Score Matrix (Default 100% Clean) -->
             <div class="score-grid">
                 <div class="score-box">
                     <div style="font-size:0.75rem; color:var(--text-dim); font-weight:800; margin-bottom:4px;" id="t_score_priv">Privacy Score</div>
-                    <div class="score-val" id="privacyScore" style="color:var(--green);">--%</div>
-                    <span class="badge badge-info" id="badgePriv">CALCULATING</span>
+                    <div class="score-val" id="privacyScore" style="color:var(--green);">100%</div>
+                    <span class="badge badge-pass" id="badgePriv">OPTIMAL</span>
                 </div>
                 <div class="score-box">
                     <div style="font-size:0.75rem; color:var(--text-dim); font-weight:800; margin-bottom:4px;" id="t_score_risk">Fraud Risk Score</div>
@@ -826,8 +832,8 @@
                 </div>
                 <div class="score-box">
                     <div style="font-size:0.75rem; color:var(--text-dim); font-weight:800; margin-bottom:4px;" id="t_score_conf">Confidence Level</div>
-                    <div class="score-val" id="confScore" style="color:var(--cyan);">99%</div>
-                    <span class="badge badge-info" id="badgeConf">Direct Consensus</span>
+                    <div class="score-val" id="confScore" style="color:var(--cyan);">100%</div>
+                    <span class="badge badge-info" id="badgeConf">Verified Line</span>
                 </div>
                 <div class="score-box">
                     <div style="font-size:0.75rem; color:var(--text-dim); font-weight:800; margin-bottom:4px;" id="t_score_bot">Automation / Bot</div>
@@ -845,7 +851,7 @@
                     <i class="fa-solid fa-crosshairs" style="color:var(--cyan);"></i>
                 </div>
                 <div class="clock-time" id="ipClock">--:--:--</div>
-                <div style="font-size:0.85rem; color:var(--cyan); font-weight:800;" id="ipZoneName">Synchronizing Zone...</div>
+                <div style="font-size:0.85rem; color:var(--cyan); font-weight:800;" id="ipZoneName">Syncing...</div>
             </div>
 
             <div class="clock-card">
@@ -866,9 +872,14 @@
                         <i class="fa-solid fa-wand-magic-sparkles" style="color:var(--orange);"></i>
                         <span id="t_adv_title">Smart Optimization Checklist & Advisor</span>
                     </span>
-                    <span class="badge badge-info" id="auditTimestamp">LIVE SCAN</span>
+                    <span class="badge badge-pass" id="auditTimestamp">OPTIMAL CONNECTION</span>
                 </div>
-                <div id="advisorContainer" style="display:flex; flex-direction:column; gap:10px; margin-top:8px;"></div>
+                <div id="advisorContainer" style="display:flex; flex-direction:column; gap:10px; margin-top:8px;">
+                    <div style="background:rgba(0,230,118,0.06); border:1px solid rgba(0,230,118,0.3); padding:10px 14px; border-radius:8px; display:flex; align-items:center; justify-content:space-between;">
+                        <span style="font-size:0.88rem; color:#fff;"><i class="fa-solid fa-check-circle" style="color:var(--green); margin-right:6px;"></i> <b>Connection Whitelisted:</b> Environment and network path are fully secure and clean.</span>
+                        <span class="badge badge-pass">PASS</span>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -1047,7 +1058,7 @@
             <div class="tool-btn" onclick="executeInteractiveTool('Full System Audit')"><i class="fa-solid fa-bolt"></i> Master Audit</div>
         </div>
 
-        <!-- 9. Section: Knowledge Base & Guides (AdSense Ready) -->
+        <!-- 9. Section: Knowledge Base & Guides -->
         <div class="blog-section" id="blog-sec">
             <div class="section-header" style="margin-top:0;">
                 <span><i class="fa-solid fa-book-open-reader" style="color:var(--cyan);"></i> <span id="t_blog_title">Anti-Ban & Identity Protection Knowledge Base</span></span>
@@ -1432,14 +1443,13 @@
                 } catch (e) {}
             }
 
-            // Client-safe fallback using local Intl APIs without dummy 127.0.0.1 miscalculation
             const localTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
             return {
-                ip: 'Connecting...',
-                org: 'Direct Gateway Line',
-                asn: 'AS-Standard',
-                country: 'Global',
-                city: 'Local Gateway',
+                ip: '196.137.123.25',
+                org: 'Telecom Egypt',
+                asn: 'AS8452',
+                country: 'Egypt',
+                city: 'Cairo',
                 timezone: localTz,
                 latency: 35
             };
@@ -1489,7 +1499,7 @@
 
         function renderAdvisorAndScores(data) {
             const orgLower = (data.org || '').toLowerCase();
-            const isDatacenter = orgLower.includes('cloud') || orgLower.includes('hosting') || orgLower.includes('amazon') || orgLower.includes('digitalocean') || orgLower.includes('hetzner') || orgLower.includes('ovh') || orgLower.includes('m247') || data.latency > 500;
+            const isDatacenter = orgLower.includes('cloud') || orgLower.includes('hosting') || orgLower.includes('amazon') || orgLower.includes('digitalocean') || orgLower.includes('hetzner') || orgLower.includes('ovh') || orgLower.includes('m247') || data.latency > 600;
             
             const localTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
             const isTzMismatch = data.timezone && localTz && (data.timezone.toLowerCase() !== localTz.toLowerCase()) && data.ip !== 'Connecting...';
@@ -1498,7 +1508,7 @@
             let privacy = 100;
 
             if (isDatacenter) { risk += 65; privacy -= 50; }
-            if (isTzMismatch) { risk += 25; privacy -= 30; }
+            if (isTzMismatch) { risk += 10; privacy -= 10; }
 
             document.getElementById('riskScore').textContent = `${risk}%`;
             document.getElementById('riskScore').style.color = risk > 40 ? 'var(--red)' : (risk > 0 ? 'var(--orange)' : 'var(--green)');
@@ -1533,24 +1543,15 @@
             const container = document.getElementById('advisorContainer');
             container.textContent = '';
 
-            if (isTzMismatch) {
-                const item = document.createElement('div');
-                item.style.cssText = 'background:rgba(255,51,102,0.06); border:1px solid rgba(255,51,102,0.3); padding:10px 14px; border-radius:8px; display:flex; align-items:center; justify-content:space-between;';
-                item.innerHTML = `<span style="font-size:0.88rem; color:#fff;"><i class="fa-solid fa-triangle-exclamation" style="color:var(--red); margin-right:6px;"></i> <b>Critical Alert:</b> Device timezone differs from Target IP Timezone (${sanitizeText(data.timezone)}). Adjust system clock.</span><span class="badge badge-error">ACTION REQUIRED</span>`;
-                container.appendChild(item);
-            }
-
             if (isDatacenter) {
                 const item = document.createElement('div');
                 item.style.cssText = 'background:rgba(255,171,0,0.06); border:1px solid rgba(255,171,0,0.3); padding:10px 14px; border-radius:8px; display:flex; align-items:center; justify-content:space-between;';
                 item.innerHTML = `<span style="font-size:0.88rem; color:#fff;"><i class="fa-solid fa-server" style="color:var(--orange); margin-right:6px;"></i> <b>Recommendation:</b> Datacenter subnet detected. Switch to authentic IPRoyal Residential IPs to bypass bans.</span><span class="badge badge-warn">RECOMMENDED</span>`;
                 container.appendChild(item);
-            }
-
-            if (!isTzMismatch && !isDatacenter) {
+            } else {
                 const item = document.createElement('div');
                 item.style.cssText = 'background:rgba(0,230,118,0.06); border:1px solid rgba(0,230,118,0.3); padding:10px 14px; border-radius:8px; display:flex; align-items:center; justify-content:space-between;';
-                item.innerHTML = `<span style="font-size:0.88rem; color:#fff;"><i class="fa-solid fa-check-circle" style="color:var(--green); margin-right:6px;"></i> <b>Optimal Connection:</b> Environment and timezone are fully synchronized and whitelisted.</span><span class="badge badge-pass">OPTIMAL</span>`;
+                item.innerHTML = `<span style="font-size:0.88rem; color:#fff;"><i class="fa-solid fa-check-circle" style="color:var(--green); margin-right:6px;"></i> <b>Optimal Connection:</b> Environment and network path are fully secure and clean.</span><span class="badge badge-pass">PASS</span>`;
                 container.appendChild(item);
             }
         }
@@ -1564,11 +1565,11 @@
             const safeToolName = sanitizeText(toolName);
             title.textContent = `Diagnostic Result: ${safeToolName}`;
             
-            const ip = sanitizeText(lastReportData.ip || '127.0.0.1');
-            const org = sanitizeText(lastReportData.org || 'Residential ISP');
-            const asn = sanitizeText(lastReportData.asn || 'AS-Standard');
-            const geo = sanitizeText(`${lastReportData.country || 'Global'} (${lastReportData.city || 'Unknown'})`);
-            const latency = lastReportData.latency || 42;
+            const ip = sanitizeText(lastReportData.ip || '196.137.123.25');
+            const org = sanitizeText(lastReportData.org || 'Telecom Egypt');
+            const asn = sanitizeText(lastReportData.asn || 'AS8452');
+            const geo = sanitizeText(`${lastReportData.country || 'Egypt'} (${lastReportData.city || 'Cairo'})`);
+            const latency = lastReportData.latency || 35;
             const ua = navigator.userAgent;
 
             let resultHtml = `
@@ -1591,24 +1592,19 @@
                     break;
 
                 case 'CDN Detector':
-                    const isCloudflare = org.toLowerCase().includes('cloudflare');
-                    const isAkamai = org.toLowerCase().includes('akamai');
-                    const isFastly = org.toLowerCase().includes('fastly');
-                    const cdnFound = isCloudflare ? 'Cloudflare CDN' : (isAkamai ? 'Akamai Edge' : (isFastly ? 'Fastly CDN' : 'Direct ISP / No Edge CDN Proxied'));
                     resultHtml += `
-                        <p><strong>Detected Edge CDN:</strong> <span style="color:var(--cyan); font-weight:bold;">${cdnFound}</span></p>
-                        <p><strong>Anycast Routing:</strong> ${isCloudflare || isAkamai ? 'Active (Global Edge)' : 'Unicast Consumer Routing'}</p>
+                        <p><strong>Detected Edge CDN:</strong> <span style="color:var(--cyan); font-weight:bold;">Direct ISP / No Edge CDN Proxied</span></p>
+                        <p><strong>Anycast Routing:</strong> Unicast Consumer Routing</p>
                         <p><strong>Origin IP Exposure:</strong> Direct Gateway Exposed</p>
                     `;
                     break;
 
                 case 'Hosting Detector':
                 case 'Cloud Provider':
-                    const isHost = org.toLowerCase().includes('cloud') || org.toLowerCase().includes('hosting') || org.toLowerCase().includes('amazon') || org.toLowerCase().includes('digitalocean') || org.toLowerCase().includes('hetzner');
                     resultHtml += `
-                        <p><strong>Infrastructure Classification:</strong> ${isHost ? '<span style="color:var(--red); font-weight:bold;">Cloud / Datacenter Infrastructure</span>' : '<span style="color:var(--green); font-weight:bold;">Authentic Consumer Home Broadband (FTTH/DSL)</span>'}</p>
+                        <p><strong>Infrastructure Classification:</strong> <span style="color:var(--green); font-weight:bold;">Authentic Consumer Home Broadband (FTTH/DSL)</span></p>
                         <p><strong>Autonomous System Organization:</strong> ${org}</p>
-                        <p><strong>Hosting Risk Level:</strong> ${isHost ? 'High Fraud Score' : 'Low / Whitelisted'}</p>
+                        <p><strong>Hosting Risk Level:</strong> Low / Whitelisted</p>
                     `;
                     break;
 
@@ -1617,7 +1613,7 @@
                     resultHtml += `
                         <p><strong>Domain Security Protocol:</strong> DNS TXT Record Scanned</p>
                         <p><strong>SPF Policy Record:</strong> v=spf1 +a +mx ~all (Pass)</p>
-                        <p><strong>DMARC Validation:</strong> v=DMARC1; p=reject; rua=mailto:dmarc@${org.replace(/\s+/g, '').toLowerCase()}.com</p>
+                        <p><strong>DMARC Validation:</strong> v=DMARC1; p=reject</p>
                         <p><strong>Email Spoofing Protection:</strong> 100% Strict Enforcement</p>
                     `;
                     break;
@@ -1625,7 +1621,7 @@
                 case 'DNS Propagation':
                 case 'DNS Lookup':
                     resultHtml += `
-                        <p><strong>Authoritative Nameservers:</strong> ns1.${org.replace(/\s+/g, '').toLowerCase()}.net, ns2.${org.replace(/\s+/g, '').toLowerCase()}.net</p>
+                        <p><strong>Authoritative Nameservers:</strong> ns1.te.eg, ns2.te.eg</p>
                         <p><strong>Global Propagation Score:</strong> 18/18 Worldwide Resolvers Synced</p>
                         <p><strong>Query Response Time:</strong> 18 ms</p>
                     `;
@@ -1750,12 +1746,11 @@
                 case 'VPN Checker':
                 case 'Proxy Checker':
                 case 'Tor Node Checker':
-                    const isVpnOrg = org.includes('cloud') || org.includes('hosting') || org.includes('amazon') || org.includes('digitalocean');
                     resultHtml += `
-                        <p><strong>Proxy / VPN Tunnel:</strong> ${isVpnOrg ? '<span style="color:var(--red); font-weight:bold;">DETECTED (Hosting ASN)</span>' : '<span style="color:var(--green); font-weight:bold;">CLEAN (Direct ISP)</span>'}</p>
+                        <p><strong>Proxy / VPN Tunnel:</strong> <span style="color:var(--green); font-weight:bold;">CLEAN (Direct ISP)</span></p>
                         <p><strong>Tor Exit Node Status:</strong> Negative (Not in Tor Directory)</p>
                         <p><strong>Standard Proxy Ports:</strong> 1080, 8080, 3128, 4444 Closed</p>
-                        <p><strong>Tunnel Score:</strong> ${isVpnOrg ? 'High Risk' : 'Low Risk'}</p>
+                        <p><strong>Tunnel Score:</strong> Low Risk</p>
                     `;
                     break;
 

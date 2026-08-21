@@ -1,1 +1,936 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NetShield Ultra | Cyber Diagnostic Platform</title>
 
+<style>
+:root{
+  --bg:#05070d;
+  --panel:#0b101b;
+  --panel2:#101827;
+  --line:#1b2940;
+  --text:#edf4ff;
+  --muted:#8795aa;
+  --cyan:#00e5ff;
+  --green:#00ff9d;
+  --red:#ff4d6d;
+  --yellow:#ffd166;
+  --purple:#9b6cff;
+}
+
+*{box-sizing:border-box}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+  margin:0;
+  min-height:100vh;
+  background:
+    radial-gradient(circle at 15% 10%,rgba(0,229,255,.08),transparent 30%),
+    radial-gradient(circle at 85% 20%,rgba(155,108,255,.08),transparent 30%),
+    var(--bg);
+  color:var(--text);
+  font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+
+button,input{
+  font:inherit;
+}
+
+button{
+  cursor:pointer;
+}
+
+.header{
+  position:sticky;
+  top:0;
+  z-index:50;
+  backdrop-filter:blur(18px);
+  background:rgba(5,7,13,.78);
+  border-bottom:1px solid var(--line);
+}
+
+.nav{
+  max-width:1250px;
+  margin:auto;
+  padding:16px 20px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:16px;
+}
+
+.logo{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  font-weight:900;
+  letter-spacing:.5px;
+}
+
+.logo-icon{
+  width:42px;
+  height:42px;
+  display:grid;
+  place-items:center;
+  border:1px solid rgba(0,229,255,.4);
+  border-radius:13px;
+  background:rgba(0,229,255,.07);
+  box-shadow:0 0 30px rgba(0,229,255,.12);
+  font-size:21px;
+}
+
+.logo span{
+  color:var(--cyan);
+}
+
+.nav-status{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  color:var(--muted);
+  font-size:13px;
+}
+
+.dot{
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:var(--green);
+  box-shadow:0 0 12px var(--green);
+}
+
+.container{
+  max-width:1250px;
+  margin:auto;
+  padding:50px 20px 80px;
+}
+
+.hero{
+  text-align:center;
+  max-width:900px;
+  margin:0 auto 45px;
+}
+
+.badge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:8px 13px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  background:rgba(255,255,255,.025);
+  color:var(--cyan);
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:1px;
+  text-transform:uppercase;
+}
+
+.hero h1{
+  font-size:clamp(42px,8vw,82px);
+  line-height:.95;
+  margin:20px 0;
+  letter-spacing:-4px;
+}
+
+.gradient{
+  background:linear-gradient(90deg,var(--cyan),#ffffff,var(--purple));
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+}
+
+.hero p{
+  color:var(--muted);
+  font-size:17px;
+  line-height:1.7;
+  margin:auto;
+  max-width:720px;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(12,1fr);
+  gap:18px;
+}
+
+.card{
+  grid-column:span 4;
+  background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.015));
+  border:1px solid var(--line);
+  border-radius:20px;
+  padding:20px;
+  box-shadow:0 15px 50px rgba(0,0,0,.2);
+}
+
+.card.wide{
+  grid-column:span 8;
+}
+
+.card.full{
+  grid-column:1/-1;
+}
+
+.card h2{
+  margin:0 0 7px;
+  font-size:17px;
+}
+
+.card-sub{
+  color:var(--muted);
+  font-size:13px;
+  margin-bottom:18px;
+}
+
+.metric{
+  font-size:29px;
+  font-weight:900;
+  word-break:break-word;
+}
+
+.metric.cyan{color:var(--cyan)}
+.metric.green{color:var(--green)}
+.metric.yellow{color:var(--yellow)}
+.metric.purple{color:var(--purple)}
+
+.actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
+
+.btn{
+  border:1px solid var(--line);
+  background:#0f1725;
+  color:var(--text);
+  padding:12px 16px;
+  border-radius:12px;
+  font-weight:800;
+  transition:.2s;
+}
+
+.btn:hover{
+  transform:translateY(-2px);
+  border-color:#334867;
+}
+
+.btn.primary{
+  background:linear-gradient(135deg,#00bcd4,#0078ff);
+  border:none;
+}
+
+.btn.green{
+  background:rgba(0,255,157,.09);
+  border-color:rgba(0,255,157,.25);
+  color:var(--green);
+}
+
+.btn.red{
+  background:rgba(255,77,109,.08);
+  border-color:rgba(255,77,109,.2);
+  color:#ff8096;
+}
+
+.input-row{
+  display:flex;
+  gap:10px;
+}
+
+.input{
+  width:100%;
+  background:#060b13;
+  color:var(--text);
+  border:1px solid var(--line);
+  outline:none;
+  border-radius:12px;
+  padding:13px 14px;
+}
+
+.input:focus{
+  border-color:var(--cyan);
+  box-shadow:0 0 0 3px rgba(0,229,255,.08);
+}
+
+.result{
+  margin-top:15px;
+  padding:15px;
+  border-radius:14px;
+  background:#060b13;
+  border:1px solid var(--line);
+  min-height:80px;
+  color:#b8c5d8;
+  line-height:1.6;
+  overflow:auto;
+}
+
+.kv{
+  display:grid;
+  grid-template-columns:180px 1fr;
+  gap:10px;
+  font-size:13px;
+}
+
+.kv div{
+  padding:10px 0;
+  border-bottom:1px dashed #1b2638;
+}
+
+.kv div:nth-child(odd){
+  color:var(--muted);
+}
+
+.score{
+  display:flex;
+  align-items:center;
+  gap:18px;
+}
+
+.ring{
+  width:90px;
+  height:90px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:
+    radial-gradient(circle at center,#080d16 55%,transparent 56%),
+    conic-gradient(var(--green) var(--score,80%),#182335 0);
+}
+
+.ring strong{
+  font-size:24px;
+}
+
+.log{
+  max-height:270px;
+  overflow:auto;
+}
+
+.log-item{
+  padding:11px 0;
+  border-bottom:1px solid #162235;
+  display:flex;
+  justify-content:space-between;
+  gap:15px;
+  font-size:13px;
+}
+
+.log-item small{
+  color:var(--muted);
+}
+
+.tag{
+  padding:5px 8px;
+  border-radius:7px;
+  font-size:11px;
+  font-weight:900;
+}
+
+.tag.ok{
+  color:var(--green);
+  background:rgba(0,255,157,.08);
+}
+
+.tag.info{
+  color:var(--cyan);
+  background:rgba(0,229,255,.08);
+}
+
+.tag.warn{
+  color:var(--yellow);
+  background:rgba(255,209,102,.08);
+}
+
+.loader{
+  width:16px;
+  height:16px;
+  border:2px solid #33445e;
+  border-top-color:var(--cyan);
+  border-radius:50%;
+  animation:spin .8s linear infinite;
+  display:inline-block;
+  vertical-align:middle;
+}
+
+.hidden{
+  display:none!important;
+}
+
+.footer{
+  max-width:1250px;
+  margin:auto;
+  padding:0 20px 35px;
+  color:#58667a;
+  text-align:center;
+  font-size:12px;
+}
+
+@keyframes spin{
+  to{transform:rotate(360deg)}
+}
+
+@media(max-width:950px){
+  .card,.card.wide{
+    grid-column:1/-1;
+  }
+}
+
+@media(max-width:600px){
+  .container{
+    padding-top:35px;
+  }
+
+  .nav{
+    padding:12px 15px;
+  }
+
+  .nav-status{
+    display:none;
+  }
+
+  .hero h1{
+    letter-spacing:-2px;
+  }
+
+  .input-row{
+    flex-direction:column;
+  }
+
+  .kv{
+    grid-template-columns:1fr;
+    gap:0;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+  <nav class="nav">
+    <div class="logo">
+      <div class="logo-icon">🛡️</div>
+      <div>NET<span>SHIELD</span> ULTRA</div>
+    </div>
+
+    <div class="nav-status">
+      <span class="dot"></span>
+      SYSTEM ONLINE
+    </div>
+  </nav>
+</header>
+
+<main class="container">
+
+<section class="hero">
+  <div class="badge">⚡ Ultra Cyber Diagnostic Platform</div>
+
+  <h1>
+    <span class="gradient">Know Your Network.</span><br>
+    Protect Your Digital Edge.
+  </h1>
+
+  <p>
+    A futuristic browser-based network intelligence dashboard for IP
+    intelligence, DNS diagnostics, browser security checks and local
+    environment analysis.
+  </p>
+</section>
+
+<section class="grid">
+
+  <!-- PUBLIC IP -->
+  <article class="card wide">
+    <h2>🌐 Public IP Intelligence</h2>
+    <div class="card-sub">Detect your public-facing IP and basic network metadata.</div>
+
+    <div class="metric cyan" id="ip">Detecting...</div>
+
+    <div class="result" id="ipDetails">
+      <span class="loader"></span>
+      Contacting IP intelligence service...
+    </div>
+
+    <div class="actions" style="margin-top:14px">
+      <button class="btn primary" onclick="loadIP(true)">
+        Refresh Intelligence
+      </button>
+
+      <button class="btn" onclick="copyIP()">
+        Copy IP
+      </button>
+    </div>
+  </article>
+
+  <!-- SECURITY SCORE -->
+  <article class="card">
+    <h2>🧠 Security Score</h2>
+    <div class="card-sub">Browser-side diagnostic score.</div>
+
+    <div class="score">
+      <div class="ring" id="scoreRing">
+        <strong id="scoreValue">--</strong>
+      </div>
+
+      <div>
+        <div class="metric green" id="scoreStatus">Scanning</div>
+        <div style="color:var(--muted);font-size:12px;margin-top:5px">
+          Based on local checks
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- DNS -->
+  <article class="card wide">
+    <h2>🔎 DNS Intelligence</h2>
+    <div class="card-sub">
+      Resolve a domain using DNS-over-HTTPS.
+    </div>
+
+    <div class="input-row">
+      <input
+        class="input"
+        id="domainInput"
+        placeholder="example.com"
+        autocomplete="off"
+      >
+
+      <button class="btn primary" onclick="dnsLookup()">
+        Resolve
+      </button>
+    </div>
+
+    <div class="result" id="dnsResult">
+      Enter a domain to begin.
+    </div>
+  </article>
+
+  <!-- URL CHECK -->
+  <article class="card">
+    <h2>🛰️ URL Analyzer</h2>
+    <div class="card-sub">Analyze the structure of a URL locally.</div>
+
+    <input
+      class="input"
+      id="urlInput"
+      placeholder="https://example.com"
+    >
+
+    <button class="btn green" style="margin-top:10px;width:100%"
+      onclick="analyzeURL()">
+      Analyze URL
+    </button>
+
+    <div class="result" id="urlResult">
+      Waiting for input...
+    </div>
+  </article>
+
+  <!-- BROWSER -->
+  <article class="card wide">
+    <h2>💻 Browser Environment</h2>
+    <div class="card-sub">Local browser and device intelligence.</div>
+
+    <div class="kv" id="browserInfo"></div>
+  </article>
+
+  <!-- CONNECTION -->
+  <article class="card">
+    <h2>📡 Connection</h2>
+    <div class="card-sub">Current browser connection information.</div>
+
+    <div class="kv" id="connectionInfo"></div>
+
+    <button class="btn" style="margin-top:14px"
+      onclick="updateConnection()">
+      Refresh
+    </button>
+  </article>
+
+  <!-- SECURITY CHECKS -->
+  <article class="card full">
+    <h2>🛡️ Browser Security Checks</h2>
+    <div class="card-sub">
+      These checks inspect browser-visible security capabilities.
+      They are not a replacement for a professional security audit.
+    </div>
+
+    <div class="actions">
+      <button class="btn primary" onclick="runSecurityScan()">
+        Run Full Scan
+      </button>
+    </div>
+
+    <div class="result" id="securityResult">
+      Ready to scan.
+    </div>
+  </article>
+
+  <!-- DIAGNOSTIC LOG -->
+  <article class="card full">
+    <h2>📋 Diagnostic Activity</h2>
+    <div class="card-sub">Local session activity.</div>
+
+    <div class="log" id="activityLog"></div>
+  </article>
+
+</section>
+
+</main>
+
+<footer class="footer">
+  NetShield Ultra • Browser diagnostic interface • No passwords or private
+  credentials are collected by this page.
+</footer>
+
+<script>
+const state = {
+  ip: "",
+  score: 0
+};
+
+function logActivity(message, type="info"){
+  const container = document.getElementById("activityLog");
+
+  const row = document.createElement("div");
+  row.className = "log-item";
+
+  const time = new Date().toLocaleTimeString();
+
+  row.innerHTML = `
+    <span>${escapeHTML(message)}</span>
+    <small>${time}</small>
+  `;
+
+  container.prepend(row);
+
+  while(container.children.length > 30){
+    container.removeChild(container.lastChild);
+  }
+}
+
+function escapeHTML(value){
+  return String(value)
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+async function loadIP(force=false){
+  const ipElement = document.getElementById("ip");
+  const details = document.getElementById("ipDetails");
+
+  ipElement.textContent = "Detecting...";
+  details.innerHTML = '<span class="loader"></span> Querying IP intelligence...';
+
+  try{
+    const response = await fetch(
+      "https://ipapi.co/json/",
+      {cache: force ? "no-store" : "default"}
+    );
+
+    if(!response.ok){
+      throw new Error("IP service unavailable");
+    }
+
+    const data = await response.json();
+
+    state.ip = data.ip || "";
+
+    ipElement.textContent = state.ip || "Unavailable";
+
+    details.innerHTML = `
+      <div class="kv">
+        <div>Country</div><div>${escapeHTML(data.country_name || "Unknown")}</div>
+        <div>Country Code</div><div>${escapeHTML(data.country_code || "Unknown")}</div>
+        <div>Region</div><div>${escapeHTML(data.region || "Unknown")}</div>
+        <div>City</div><div>${escapeHTML(data.city || "Unknown")}</div>
+        <div>ISP / Org</div><div>${escapeHTML(data.org || "Unknown")}</div>
+        <div>Timezone</div><div>${escapeHTML(data.timezone || "Unknown")}</div>
+      </div>
+    `;
+
+    logActivity("Public IP intelligence updated.");
+  }catch(error){
+    ipElement.textContent = "Unavailable";
+
+    details.innerHTML =
+      "Could not retrieve public IP intelligence. Check your internet connection or try again.";
+
+    logActivity("IP intelligence request failed.");
+  }
+}
+
+function copyIP(){
+  if(!state.ip){
+    logActivity("No IP available to copy.","warn");
+    return;
+  }
+
+  navigator.clipboard.writeText(state.ip)
+    .then(()=>{
+      logActivity("Public IP copied.");
+    })
+    .catch(()=>{
+      logActivity("Clipboard permission denied.");
+    });
+}
+
+async function dnsLookup(){
+  const input = document.getElementById("domainInput");
+  const result = document.getElementById("dnsResult");
+
+  const domain = input.value.trim()
+    .replace(/^https?:\/\//i,"")
+    .split("/")[0];
+
+  if(!domain){
+    result.textContent = "Enter a domain first.";
+    return;
+  }
+
+  result.innerHTML =
+    '<span class="loader"></span> Resolving DNS records...';
+
+  try{
+    const response = await fetch(
+      "https://cloudflare-dns.com/dns-query?name=" +
+      encodeURIComponent(domain) +
+      "&type=A",
+      {
+        headers:{
+          "accept":"application/dns-json"
+        }
+      }
+    );
+
+    if(!response.ok){
+      throw new Error("DNS request failed");
+    }
+
+    const data = await response.json();
+
+    const answers = data.Answer || [];
+
+    if(!answers.length){
+      result.textContent = "No A records were returned.";
+      logActivity("DNS lookup completed with no A records.");
+      return;
+    }
+
+    result.innerHTML = answers.map(record => `
+      <div style="margin-bottom:8px">
+        <strong>${escapeHTML(domain)}</strong>
+        →
+        <span style="color:var(--cyan)">
+          ${escapeHTML(record.data)}
+        </span>
+      </div>
+    `).join("");
+
+    logActivity("DNS lookup completed for " + domain);
+  }catch(error){
+    result.textContent =
+      "DNS lookup failed. The domain may be invalid or the DNS service may be unavailable.";
+
+    logActivity("DNS lookup failed.");
+  }
+}
+
+function analyzeURL(){
+  const input = document.getElementById("urlInput");
+  const result = document.getElementById("urlResult");
+
+  const raw = input.value.trim();
+
+  if(!raw){
+    result.textContent = "Enter a URL first.";
+    return;
+  }
+
+  try{
+    const url = new URL(
+      /^https?:\/\//i.test(raw) ? raw : "https://" + raw
+    );
+
+    const https = url.protocol === "https:";
+
+    result.innerHTML = `
+      <div class="kv">
+        <div>Protocol</div>
+        <div>${escapeHTML(url.protocol)}</div>
+
+        <div>Hostname</div>
+        <div>${escapeHTML(url.hostname)}</div>
+
+        <div>Port</div>
+        <div>${escapeHTML(url.port || "Default")}</div>
+
+        <div>HTTPS</div>
+        <div style="color:${https ? "var(--green)" : "var(--red)"}">
+          ${https ? "Enabled" : "Not enabled"}
+        </div>
+
+        <div>Path</div>
+        <div>${escapeHTML(url.pathname || "/")}</div>
+
+        <div>Query Parameters</div>
+        <div>${url.searchParams.size}</div>
+      </div>
+    `;
+
+    logActivity("URL analyzed: " + url.hostname);
+  }catch(error){
+    result.textContent = "Invalid URL.";
+    logActivity("Invalid URL submitted.");
+  }
+}
+
+function collectBrowserInfo(){
+  const info = document.getElementById("browserInfo");
+
+  const data = [
+    ["User Agent", navigator.userAgent],
+    ["Platform", navigator.platform || "Unknown"],
+    ["Language", navigator.language || "Unknown"],
+    ["Cookies Enabled", navigator.cookieEnabled ? "Yes" : "No"],
+    ["Online", navigator.onLine ? "Yes" : "No"],
+    ["Screen", `${screen.width} × ${screen.height}`],
+    ["Color Depth", `${screen.colorDepth} bit`],
+    ["Timezone", Intl.DateTimeFormat().resolvedOptions().timeZone || "Unknown"],
+    ["CPU Threads", navigator.hardwareConcurrency || "Unknown"],
+    ["Memory", navigator.deviceMemory ? navigator.deviceMemory + " GB" : "Unavailable"]
+  ];
+
+  info.innerHTML = data.map(([key,value]) => `
+    <div>${escapeHTML(key)}</div>
+    <div>${escapeHTML(value)}</div>
+  `).join("");
+}
+
+function updateConnection(){
+  const info = document.getElementById("connectionInfo");
+
+  const connection =
+    navigator.connection ||
+    navigator.mozConnection ||
+    navigator.webkitConnection;
+
+  const data = [
+    ["Online", navigator.onLine ? "Yes" : "No"],
+    ["Type", connection?.effectiveType || "Unavailable"],
+    ["Downlink", connection?.downlink ? connection.downlink + " Mbps" : "Unavailable"],
+    ["RTT", connection?.rtt ? connection.rtt + " ms" : "Unavailable"],
+    ["Save Data", connection?.saveData ? "Enabled" : "Disabled"]
+  ];
+
+  info.innerHTML = data.map(([key,value]) => `
+    <div>${escapeHTML(key)}</div>
+    <div>${escapeHTML(value)}</div>
+  `).join("");
+
+  logActivity("Connection diagnostics refreshed.");
+}
+
+async function runSecurityScan(){
+  const result = document.getElementById("securityResult");
+  const scoreRing = document.getElementById("scoreRing");
+  const scoreValue = document.getElementById("scoreValue");
+  const status = document.getElementById("scoreStatus");
+
+  result.innerHTML =
+    '<span class="loader"></span> Running browser security checks...';
+
+  await new Promise(resolve => setTimeout(resolve,700));
+
+  const checks = [];
+
+  checks.push({
+    name:"HTTPS",
+    ok:location.protocol === "https:"
+  });
+
+  checks.push({
+    name:"Online",
+    ok:navigator.onLine
+  });
+
+  checks.push({
+    name:"Cookies",
+    ok:navigator.cookieEnabled
+  });
+
+  checks.push({
+    name:"Secure Context",
+    ok:window.isSecureContext === true
+  });
+
+  checks.push({
+    name:"Web Crypto",
+    ok:typeof crypto !== "undefined" && !!crypto.subtle
+  });
+
+  const passed = checks.filter(item => item.ok).length;
+  const score = Math.round((passed / checks.length) * 100);
+
+  state.score = score;
+
+  scoreRing.style.setProperty("--score", score + "%");
+  scoreValue.textContent = score;
+
+  if(score >= 80){
+    status.textContent = "GOOD";
+    status.className = "metric green";
+  }else if(score >= 60){
+    status.textContent = "FAIR";
+    status.className = "metric yellow";
+  }else{
+    status.textContent = "LOW";
+    status.className = "metric";
+    status.style.color = "var(--red)";
+  }
+
+  result.innerHTML = checks.map(item => `
+    <div class="log-item">
+      <span>${escapeHTML(item.name)}</span>
+      <span class="tag ${item.ok ? "ok" : "warn"}">
+        ${item.ok ? "PASS" : "CHECK"}
+      </span>
+    </div>
+  `).join("");
+
+  logActivity("Security scan completed: " + score + "/100");
+}
+
+function initialize(){
+  collectBrowserInfo();
+  updateConnection();
+  loadIP();
+  runSecurityScan();
+
+  logActivity("NetShield Ultra initialized.");
+  logActivity("Diagnostic engine online.");
+}
+
+window.addEventListener("online",()=>{
+  updateConnection();
+  logActivity("Network connection restored.");
+});
+
+window.addEventListener("offline",()=>{
+  updateConnection();
+  logActivity("Browser reports offline state.");
+});
+
+initialize();
+</script>
+
+</body>
+</html>

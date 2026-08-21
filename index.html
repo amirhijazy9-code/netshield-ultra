@@ -1,410 +1,1341 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<meta name="theme-color" content="#050812">
-<title>NetShield Ultra — Advanced Privacy Diagnostic</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#050811">
+<title>NetShield Ultra — Final Boss</title>
+<meta name="description" content="Advanced privacy, network, browser and consistency diagnostics.">
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked/15.0.7/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
 
 <style>
 :root{
- --bg:#050812;
- --panel:rgba(13,20,35,.78);
- --panel2:rgba(18,27,47,.88);
- --line:rgba(90,180,255,.16);
- --text:#edf7ff;
- --muted:#8ea4ba;
- --cyan:#00d9ff;
- --blue:#367cff;
- --green:#00e58a;
- --yellow:#ffc857;
- --red:#ff4d6d;
- --purple:#9b6cff;
- --shadow:0 20px 70px rgba(0,0,0,.42);
+  --bg:#03060c;
+  --bg2:#070d17;
+  --panel:#0a1220;
+  --panel2:#0d1727;
+  --line:#1b2c46;
+  --text:#eef7ff;
+  --muted:#8ca2ba;
+
+  --cyan:#00e5ff;
+  --blue:#4777ff;
+  --green:#00efa0;
+  --yellow:#ffd166;
+  --orange:#ff9c46;
+  --red:#ff4f70;
+  --purple:#a879ff;
+
+  --shadow:0 22px 70px rgba(0,0,0,.42);
 }
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
+
+*{
+  box-sizing:border-box;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
 body{
- margin:0;
- background:
- radial-gradient(circle at 10% 0%,rgba(0,217,255,.12),transparent 28%),
- radial-gradient(circle at 90% 10%,rgba(85,65,255,.13),transparent 30%),
- var(--bg);
- color:var(--text);
- font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  margin:0;
+  min-height:100vh;
+  color:var(--text);
+  font-family:
+    Inter,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
+  background:
+    radial-gradient(
+      circle at 10% 0%,
+      rgba(0,229,255,.12),
+      transparent 28%
+    ),
+    radial-gradient(
+      circle at 90% 5%,
+      rgba(168,121,255,.11),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 50% 100%,
+      rgba(71,119,255,.07),
+      transparent 35%
+    ),
+    var(--bg);
 }
-button,input,textarea{font:inherit}
-a{color:inherit;text-decoration:none}
+
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:-1;
+  pointer-events:none;
+
+  background-image:
+    linear-gradient(
+      rgba(255,255,255,.018) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(255,255,255,.018) 1px,
+      transparent 1px
+    );
+
+  background-size:34px 34px;
+
+  mask-image:
+    linear-gradient(
+      to bottom,
+      black,
+      transparent 90%
+    );
+}
+
+button,
+input,
+textarea,
+select{
+  font:inherit;
+}
+
+button{
+  cursor:pointer;
+}
+
+a{
+  color:inherit;
+  text-decoration:none;
+}
 
 .topbar{
- position:sticky;
- top:0;
- z-index:100;
- backdrop-filter:blur(18px);
- background:rgba(5,8,18,.78);
- border-bottom:1px solid var(--line);
+  position:sticky;
+  top:0;
+  z-index:100;
+
+  border-bottom:1px solid var(--line);
+
+  background:
+    rgba(3,6,12,.82);
+
+  backdrop-filter:
+    blur(20px)
+    saturate(140%);
 }
+
 .nav{
- max-width:1250px;
- margin:auto;
- padding:13px 18px;
- display:flex;
- align-items:center;
- justify-content:space-between;
- gap:15px;
+  width:min(1450px,calc(100% - 24px));
+  min-height:70px;
+  margin:auto;
+
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
 }
+
 .brand{
- display:flex;
- align-items:center;
- gap:10px;
- font-weight:900;
- letter-spacing:.4px;
+  display:flex;
+  align-items:center;
+  gap:11px;
+
+  font-weight:900;
+  letter-spacing:.5px;
 }
+
 .logo{
- width:39px;height:39px;
- display:grid;place-items:center;
- border-radius:12px;
- background:linear-gradient(135deg,var(--cyan),var(--purple));
- box-shadow:0 0 28px rgba(0,217,255,.25);
+  width:43px;
+  height:43px;
+
+  display:grid;
+  place-items:center;
+
+  border-radius:13px;
+
+  border:1px solid
+    rgba(0,229,255,.35);
+
+  background:
+    rgba(0,229,255,.07);
+
+  box-shadow:
+    0 0 30px
+    rgba(0,229,255,.14);
 }
-.brand small{display:block;color:var(--muted);font-weight:600}
-.navlinks{display:flex;gap:8px;align-items:center}
-.navlinks button,.menuBtn{
- background:transparent;
- border:1px solid transparent;
- color:var(--muted);
- padding:9px 11px;
- border-radius:10px;
- cursor:pointer;
+
+.brand b{
+  color:var(--cyan);
 }
-.navlinks button:hover,.menuBtn:hover{
- color:white;
- background:rgba(255,255,255,.05);
+
+.nav-right{
+  display:flex;
+  align-items:center;
+  gap:10px;
 }
-.menuBtn{
- font-size:22px;
- border-color:var(--line);
+
+.system-status{
+  display:flex;
+  align-items:center;
+  gap:8px;
+
+  color:var(--muted);
+
+  font-size:11px;
+  font-weight:800;
+}
+
+.lamp{
+  width:8px;
+  height:8px;
+
+  border-radius:50%;
+
+  background:var(--green);
+
+  box-shadow:
+    0 0 14px
+    var(--green);
+}
+
+.menu-btn{
+  width:42px;
+  height:42px;
+
+  border-radius:12px;
+
+  border:1px solid var(--line);
+
+  background:#0b1422;
+
+  color:white;
+
+  font-size:21px;
+}
+
+.menu{
+  position:absolute;
+
+  right:12px;
+  top:63px;
+
+  width:250px;
+
+  padding:8px;
+
+  border-radius:16px;
+
+  border:1px solid var(--line);
+
+  background:
+    rgba(7,13,24,.97);
+
+  box-shadow:
+    0 25px 80px
+    rgba(0,0,0,.55);
+
+  display:none;
+}
+
+.menu.open{
+  display:block;
+}
+
+.menu button{
+  display:block;
+
+  width:100%;
+
+  padding:11px 12px;
+
+  border:0;
+
+  border-radius:10px;
+
+  background:transparent;
+
+  color:white;
+
+  text-align:left;
+
+  font-size:12px;
+  font-weight:800;
+}
+
+.menu button:hover{
+  background:
+    rgba(255,255,255,.06);
 }
 
 .container{
- max-width:1250px;
- margin:auto;
- padding:25px 18px 70px;
+  width:min(1450px,calc(100% - 24px));
+  margin:auto;
+
+  padding:
+    32px
+    0
+    70px;
 }
 
 .hero{
- text-align:center;
- padding:45px 10px 25px;
+  max-width:1050px;
+
+  margin:
+    0 auto
+    28px;
+
+  text-align:center;
 }
+
 .badge{
- display:inline-flex;
- gap:8px;
- align-items:center;
- border:1px solid rgba(0,217,255,.25);
- background:rgba(0,217,255,.06);
- color:#8eefff;
- padding:7px 12px;
- border-radius:999px;
- font-size:13px;
- font-weight:800;
+  display:inline-flex;
+
+  align-items:center;
+  gap:8px;
+
+  padding:
+    8px
+    12px;
+
+  border-radius:999px;
+
+  border:1px solid var(--line);
+
+  color:var(--cyan);
+
+  background:
+    rgba(0,229,255,.05);
+
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:1px;
 }
+
 .hero h1{
- font-size:clamp(38px,7vw,72px);
- line-height:.98;
- margin:18px 0 15px;
- letter-spacing:-2.5px;
+  margin:
+    18px
+    0
+    15px;
+
+  font-size:
+    clamp(44px,7vw,92px);
+
+  line-height:.94;
+
+  letter-spacing:-4px;
+
+  background:
+    linear-gradient(
+      90deg,
+      var(--cyan),
+      #fff,
+      var(--purple)
+    );
+
+  -webkit-background-clip:text;
+  background-clip:text;
+
+  color:transparent;
 }
-.gradient{
- background:linear-gradient(90deg,#fff,var(--cyan),#a88cff);
- -webkit-background-clip:text;
- color:transparent;
-}
+
 .hero p{
- max-width:760px;
- margin:auto;
- color:var(--muted);
- font-size:17px;
- line-height:1.7;
+  max-width:850px;
+  margin:auto;
+
+  color:var(--muted);
+
+  font-size:15px;
+  line-height:1.75;
 }
 
 .actions{
- display:flex;
- justify-content:center;
- flex-wrap:wrap;
- gap:10px;
- margin:25px 0;
+  display:flex;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:9px;
+
+  margin-top:20px;
 }
+
 .btn{
- border:0;
- border-radius:12px;
- padding:12px 17px;
- cursor:pointer;
- font-weight:850;
- color:white;
- background:linear-gradient(135deg,var(--blue),var(--cyan));
- box-shadow:0 10px 30px rgba(0,150,255,.16);
+  padding:
+    11px
+    15px;
+
+  border-radius:11px;
+
+  border:1px solid var(--line);
+
+  background:#0f1a2b;
+
+  color:white;
+
+  font-weight:850;
+
+  transition:.18s ease;
 }
-.btn.secondary{
- background:rgba(255,255,255,.05);
- border:1px solid var(--line);
- box-shadow:none;
+
+.btn:hover{
+  transform:translateY(-1px);
+  border-color:#3b587c;
 }
-.btn.danger{
- background:linear-gradient(135deg,#a62245,var(--red));
+
+.btn.primary{
+  border:0;
+
+  background:
+    linear-gradient(
+      135deg,
+      #00b9d4,
+      #416eff
+    );
 }
-.btn:hover{transform:translateY(-1px)}
+
+.btn.green{
+  color:var(--green);
+
+  border-color:
+    rgba(0,239,160,.25);
+
+  background:
+    rgba(0,239,160,.06);
+}
+
+.btn.purple{
+  color:var(--purple);
+
+  border-color:
+    rgba(168,121,255,.25);
+
+  background:
+    rgba(168,121,255,.06);
+}
+
+.btn.red{
+  color:#ff91a4;
+
+  border-color:
+    rgba(255,79,112,.25);
+
+  background:
+    rgba(255,79,112,.05);
+}
+
+.status-banner{
+  display:flex;
+  align-items:center;
+  gap:12px;
+
+  margin-bottom:15px;
+
+  padding:
+    15px
+    17px;
+
+  border-radius:17px;
+
+  border:1px solid var(--line);
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(255,255,255,.03),
+      rgba(0,229,255,.025)
+    );
+}
+
+.big-lamp{
+  width:14px;
+  height:14px;
+
+  flex:none;
+
+  border-radius:50%;
+
+  background:var(--green);
+
+  box-shadow:
+    0 0 23px
+    var(--green);
+}
+
+.status-banner.warn .big-lamp{
+  background:var(--yellow);
+
+  box-shadow:
+    0 0 23px
+    var(--yellow);
+}
+
+.status-banner.bad .big-lamp{
+  background:var(--red);
+
+  box-shadow:
+    0 0 23px
+    var(--red);
+}
+
+.status-title{
+  font-weight:900;
+  font-size:14px;
+}
+
+.status-detail{
+  color:var(--muted);
+  font-size:12px;
+  margin-top:2px;
+}
+
+.tabs{
+  display:flex;
+
+  gap:7px;
+
+  overflow-x:auto;
+
+  margin-bottom:15px;
+
+  padding-bottom:4px;
+}
+
+.tab{
+  padding:
+    10px
+    14px;
+
+  border-radius:11px;
+
+  border:1px solid var(--line);
+
+  background:#091220;
+
+  color:var(--muted);
+
+  white-space:nowrap;
+
+  font-weight:800;
+}
+
+.tab.active,
+.tab:hover{
+  color:white;
+
+  border-color:
+    rgba(0,229,255,.35);
+
+  background:
+    rgba(0,229,255,.06);
+}
+
+.page{
+  display:none;
+}
+
+.page.active{
+  display:block;
+}
 
 .grid{
- display:grid;
- grid-template-columns:repeat(12,1fr);
- gap:14px;
+  display:grid;
+
+  grid-template-columns:
+    repeat(12,1fr);
+
+  gap:15px;
 }
+
 .card{
- grid-column:span 4;
- background:linear-gradient(145deg,var(--panel),rgba(8,14,27,.8));
- border:1px solid var(--line);
- border-radius:18px;
- padding:18px;
- box-shadow:var(--shadow);
- overflow:hidden;
+  grid-column:
+    span 4;
+
+  padding:20px;
+
+  border-radius:20px;
+
+  border:1px solid var(--line);
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,.035),
+      rgba(255,255,255,.012)
+    );
+
+  box-shadow:
+    var(--shadow);
+
+  overflow:hidden;
 }
-.card.wide{grid-column:span 8}
-.card.full{grid-column:1/-1}
-.card h2,.card h3{
- margin:0 0 12px;
+
+.card.wide{
+  grid-column:
+    span 8;
 }
-.sub{color:var(--muted);font-size:13px;line-height:1.6}
+
+.card.full{
+  grid-column:
+    1/-1;
+}
+
+.card h2{
+  margin:
+    0
+    0
+    5px;
+
+  font-size:17px;
+}
+
+.card h3{
+  margin:
+    0
+    0
+    7px;
+}
+
+.sub{
+  color:var(--muted);
+
+  font-size:12px;
+
+  line-height:1.65;
+
+  margin-bottom:14px;
+}
+
 .value{
- font-size:25px;
- font-weight:900;
- margin:9px 0;
- word-break:break-word;
+  font-size:30px;
+  font-weight:900;
+
+  word-break:break-word;
 }
+
+.cyan{
+  color:var(--cyan);
+}
+
+.green{
+  color:var(--green);
+}
+
+.yellow{
+  color:var(--yellow);
+}
+
+.orange{
+  color:var(--orange);
+}
+
+.red{
+  color:var(--red);
+}
+
+.purple{
+  color:var(--purple);
+}
+
+.kv{
+  display:grid;
+
+  grid-template-columns:
+    190px
+    1fr;
+
+  font-size:12px;
+}
+
+.kv > div{
+  padding:
+    8px
+    0;
+
+  border-bottom:
+    1px dashed
+    #18263c;
+}
+
+.kv > div:nth-child(odd){
+  color:var(--muted);
+}
+
 .row{
- display:flex;
- justify-content:space-between;
- gap:15px;
- padding:10px 0;
- border-bottom:1px solid rgba(255,255,255,.055);
-}
-.row:last-child{border-bottom:0}
-.label{color:var(--muted)}
-.status{
- display:inline-flex;
- align-items:center;
- gap:7px;
- padding:6px 10px;
- border-radius:999px;
- font-size:12px;
- font-weight:900;
-}
-.ok{background:rgba(0,229,138,.1);color:var(--green)}
-.warn{background:rgba(255,200,87,.1);color:var(--yellow)}
-.bad{background:rgba(255,77,109,.1);color:var(--red)}
-.neutral{background:rgba(255,255,255,.07);color:#c8d5e2}
+  display:flex;
 
-.riskWrap{
- display:flex;
- align-items:center;
- gap:25px;
- flex-wrap:wrap;
-}
-.riskCircle{
- width:155px;height:155px;
- border-radius:50%;
- display:grid;
- place-items:center;
- background:
- conic-gradient(var(--cyan) 0deg,#16304a 0deg);
- position:relative;
-}
-.riskCircle:after{
- content:"";
- position:absolute;
- width:120px;height:120px;
- border-radius:50%;
- background:#09101d;
-}
-.riskNum{
- position:relative;
- z-index:2;
- text-align:center;
-}
-.riskNum strong{font-size:42px;display:block}
-.riskNum span{font-size:11px;color:var(--muted)}
+  gap:9px;
 
-.toolGrid{
- display:grid;
- grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
- gap:11px;
-}
-.tool{
- padding:15px;
- border-radius:14px;
- border:1px solid var(--line);
- background:rgba(255,255,255,.025);
- cursor:pointer;
- transition:.2s;
-}
-.tool:hover{
- transform:translateY(-3px);
- border-color:rgba(0,217,255,.4);
- background:rgba(0,217,255,.05);
-}
-.tool b{display:block;margin-bottom:6px}
-.tool span{font-size:12px;color:var(--muted)}
+  align-items:center;
 
-.results{
- margin-top:14px;
- display:grid;
- gap:8px;
+  flex-wrap:wrap;
 }
+
+.grow{
+  flex:
+    1
+    1
+    200px;
+}
+
+.input,
+.textarea,
+.select{
+  width:100%;
+
+  padding:
+    12px
+    13px;
+
+  color:white;
+
+  background:
+    #050a13;
+
+  border:
+    1px solid
+    var(--line);
+
+  outline:none;
+
+  border-radius:11px;
+}
+
+.textarea{
+  min-height:
+    105px;
+
+  resize:
+    vertical;
+}
+
+.input:focus,
+.textarea:focus,
+.select:focus{
+  border-color:
+    rgba(0,229,255,.5);
+
+  box-shadow:
+    0 0 0 3px
+    rgba(0,229,255,.06);
+}
+
 .result{
- padding:12px 14px;
- border-radius:12px;
- border:1px solid rgba(255,255,255,.06);
- background:rgba(255,255,255,.025);
-}
-.result b{display:block;margin-bottom:4px}
+  padding:
+    13px;
 
-.tips{
- display:grid;
- grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
- gap:10px;
-}
-.tip{
- border-left:3px solid var(--cyan);
- background:rgba(0,217,255,.045);
- padding:14px;
- border-radius:10px;
-}
-.tip b{display:block;margin-bottom:5px}
+  margin-top:
+    11px;
 
-.adbox{
- display:flex;
- align-items:center;
- justify-content:center;
- min-height:125px;
- background:rgba(255,255,255,.025);
- border:1px dashed rgba(255,255,255,.13);
- border-radius:14px;
- overflow:hidden;
-}
-.adbox img{
- max-width:100%;
- height:auto;
- display:block;
-}
-.adText{
- text-align:center;
- padding:20px;
-}
-.adText b{font-size:18px}
-.adText p{color:var(--muted);font-size:13px}
+  border-radius:
+    13px;
 
-.ai{
- display:grid;
- grid-template-columns:1fr auto;
- gap:10px;
+  border:
+    1px solid
+    var(--line);
+
+  background:
+    #050a13;
+
+  line-height:
+    1.65;
+
+  overflow:
+    auto;
 }
-.ai input{
- width:100%;
- padding:13px 14px;
- border-radius:12px;
- color:white;
- background:#07101d;
- border:1px solid var(--line);
- outline:none;
+
+.result-title{
+  font-weight:
+    900;
+
+  margin-bottom:
+    4px;
 }
-.chat{
- min-height:130px;
- max-height:300px;
- overflow:auto;
- margin-bottom:12px;
- display:grid;
- gap:8px;
+
+.badge-state{
+  display:inline-flex;
+
+  padding:
+    5px
+    8px;
+
+  border-radius:
+    8px;
+
+  font-size:
+    10px;
+
+  font-weight:
+    900;
 }
-.msg{
- padding:11px 13px;
- border-radius:12px;
- background:rgba(255,255,255,.045);
- border:1px solid rgba(255,255,255,.06);
- line-height:1.55;
+
+.state-ok{
+  color:var(--green);
+
+  background:
+    rgba(0,239,160,.08);
 }
-.msg.user{border-right:3px solid var(--cyan)}
-.msg.bot{border-left:3px solid var(--purple)}
+
+.state-warn{
+  color:var(--yellow);
+
+  background:
+    rgba(255,209,102,.08);
+}
+
+.state-bad{
+  color:var(--red);
+
+  background:
+    rgba(255,79,112,.08);
+}
+
+.state-info{
+  color:var(--cyan);
+
+  background:
+    rgba(0,229,255,.08);
+}
+
+.score-wrap{
+  display:flex;
+
+  align-items:center;
+
+  gap:18px;
+}
+
+.ring{
+  width:105px;
+  height:105px;
+
+  border-radius:50%;
+
+  display:grid;
+  place-items:center;
+
+  background:
+    radial-gradient(
+      circle,
+      #07101b 56%,
+      transparent 57%
+    ),
+    conic-gradient(
+      var(--green)
+      var(--score,0%),
+      #17243b
+      0
+    );
+}
+
+.ring strong{
+  font-size:25px;
+}
+
+.risk-label{
+  font-size:27px;
+  font-weight:950;
+}
+
+.risk-bar{
+  height:8px;
+
+  margin-top:
+    12px;
+
+  overflow:hidden;
+
+  border-radius:999px;
+
+  background:
+    #17253a;
+}
+
+.risk-bar span{
+  display:block;
+
+  height:100%;
+
+  width:0;
+
+  background:
+    linear-gradient(
+      90deg,
+      var(--green),
+      var(--yellow),
+      var(--red)
+    );
+
+  transition:
+    .45s;
+}
+
+.finding{
+  display:grid;
+
+  grid-template-columns:
+    auto
+    1fr;
+
+  gap:9px;
+
+  padding:
+    10px
+    0;
+
+  border-bottom:
+    1px solid
+    #17243a;
+
+  font-size:12px;
+}
+
+.finding b{
+  display:block;
+
+  margin-bottom:
+    3px;
+}
+
+.finding small{
+  color:var(--muted);
+
+  line-height:
+    1.5;
+}
 
 .table{
- width:100%;
- border-collapse:collapse;
-}
-.table td,.table th{
- text-align:left;
- padding:10px;
- border-bottom:1px solid rgba(255,255,255,.06);
-}
-.table th{color:var(--muted);font-size:12px}
+  width:100%;
 
-.footer{
- margin-top:35px;
- padding:25px 0 5px;
- border-top:1px solid var(--line);
- color:var(--muted);
- text-align:center;
- line-height:1.7;
+  border-collapse:
+    collapse;
+
+  font-size:
+    12px;
 }
+
+.table th,
+.table td{
+  padding:
+    9px;
+
+  text-align:left;
+
+  border-bottom:
+    1px solid
+    #19263d;
+}
+
+.table th{
+  color:
+    var(--muted);
+}
+
+.tool-grid{
+  display:grid;
+
+  grid-template-columns:
+    repeat(
+      auto-fit,
+      minmax(190px,1fr)
+    );
+
+  gap:10px;
+}
+
+.tool{
+  padding:
+    15px;
+
+  border-radius:
+    14px;
+
+  border:
+    1px solid
+    var(--line);
+
+  background:
+    rgba(255,255,255,.025);
+
+  transition:
+    .18s;
+
+  cursor:pointer;
+}
+
+.tool:hover{
+  transform:
+    translateY(-2px);
+
+  border-color:
+    rgba(0,229,255,.4);
+
+  background:
+    rgba(0,229,255,.05);
+}
+
+.tool b{
+  display:block;
+
+  margin-bottom:
+    5px;
+}
+
+.tool span{
+  font-size:
+    11px;
+
+  color:
+    var(--muted);
+}
+
+.chat{
+  height:
+    370px;
+
+  overflow:
+    auto;
+
+  display:
+    flex;
+
+  flex-direction:
+    column;
+
+  gap:
+    8px;
+}
+
+.message{
+  max-width:
+    90%;
+
+  padding:
+    11px
+    13px;
+
+  border-radius:
+    13px;
+
+  border:
+    1px solid
+    var(--line);
+
+  font-size:
+    13px;
+
+  line-height:
+    1.65;
+}
+
+.message.user{
+  align-self:
+    flex-end;
+
+  background:
+    rgba(0,229,255,.07);
+
+  border-color:
+    rgba(0,229,255,.22);
+}
+
+.message.ai{
+  align-self:
+    flex-start;
+
+  background:
+    rgba(255,255,255,.03);
+}
+
+.ad{
+  padding:
+    14px;
+
+  border-radius:
+    16px;
+
+  border:
+    1px solid
+    #294361;
+
+  background:
+    linear-gradient(
+      135deg,
+      #071221,
+      #0d192a
+    );
+}
+
+.ad-row{
+  display:flex;
+
+  align-items:center;
+
+  justify-content:
+    space-between;
+
+  gap:12px;
+}
+
+.ad-tag{
+  color:
+    var(--yellow);
+
+  font-size:
+    9px;
+
+  font-weight:
+    900;
+
+  letter-spacing:
+    1px;
+}
+
+.ad h3{
+  margin:
+    5px
+    0;
+
+  font-size:
+    15px;
+}
+
+.ad p{
+  margin:
+    0;
+
+  color:
+    var(--muted);
+
+  font-size:
+    11px;
+
+  line-height:
+    1.5;
+}
+
+.tip-grid{
+  display:grid;
+
+  grid-template-columns:
+    repeat(
+      3,
+      1fr
+    );
+
+  gap:10px;
+}
+
+.tip{
+  padding:
+    13px;
+
+  border-radius:
+    13px;
+
+  border:
+    1px solid
+    var(--line);
+
+  background:
+    rgba(255,255,255,.025);
+}
+
+.tip h3{
+  margin:
+    0
+    0
+    5px;
+
+  font-size:
+    13px;
+}
+
+.tip p{
+  margin:
+    0;
+
+  color:
+    var(--muted);
+
+  font-size:
+    11px;
+
+  line-height:
+    1.55;
+}
+
 .support{
- display:flex;
- justify-content:center;
- flex-wrap:wrap;
- gap:10px;
- margin-top:12px;
+  display:flex;
+
+  gap:9px;
+
+  flex-wrap:
+    wrap;
 }
+
 .support a{
- padding:9px 13px;
- border:1px solid var(--line);
- border-radius:10px;
- background:rgba(255,255,255,.035);
+  padding:
+    10px
+    13px;
+
+  border-radius:
+    11px;
+
+  border:
+    1px solid
+    var(--line);
+
+  background:
+    rgba(255,255,255,.03);
+
+  font-size:
+    12px;
+
+  font-weight:
+    800;
 }
 
-.drawer{
- position:fixed;
- inset:0;
- z-index:200;
- pointer-events:none;
-}
-.drawerPanel{
- position:absolute;
- right:0;
- top:0;
- width:min(340px,88vw);
- height:100%;
- background:#080e1b;
- border-left:1px solid var(--line);
- padding:22px;
- transform:translateX(105%);
- transition:.25s;
- box-shadow:-20px 0 70px rgba(0,0,0,.5);
-}
-.drawer.open{pointer-events:auto}
-.drawer.open .drawerPanel{transform:translateX(0)}
-.drawer button{
- width:100%;
- text-align:left;
- margin:5px 0;
- padding:12px;
- color:white;
- background:rgba(255,255,255,.04);
- border:1px solid var(--line);
- border-radius:10px;
- cursor:pointer;
-}
-.close{text-align:right!important;background:transparent!important;border:0!important}
+.activity-item{
+  display:flex;
 
-@media(max-width:850px){
- .card,.card.wide{grid-column:1/-1}
- .navlinks{display:none}
- .hero{padding-top:28px}
+  gap:9px;
+
+  align-items:center;
+
+  padding:
+    9px
+    0;
+
+  border-bottom:
+    1px solid
+    #17243a;
+
+  font-size:
+    12px;
+}
+
+.activity-item small{
+  margin-left:
+    auto;
+
+  color:
+    var(--muted);
+}
+
+.spinner{
+  display:inline-block;
+
+  width:16px;
+  height:16px;
+
+  border:
+    2px solid
+    #34506d;
+
+  border-top-color:
+    var(--cyan);
+
+  border-radius:
+    50%;
+
+  animation:
+    spin
+    .8s
+    linear
+    infinite;
+
+  vertical-align:
+    -3px;
+}
+
+footer{
+  padding:
+    30px
+    10px
+    10px;
+
+  text-align:
+    center;
+
+  color:
+    #566b84;
+
+  font-size:
+    11px;
+
+  line-height:
+    1.7;
+}
+
+@keyframes spin{
+  to{
+    transform:
+      rotate(360deg);
+  }
+}
+
+@media(max-width:1000px){
+
+  .card,
+  .card.wide{
+    grid-column:
+      1/-1;
+  }
+
+  .tip-grid{
+    grid-template-columns:
+      1fr 1fr;
+  }
+
+}
+
+@media(max-width:620px){
+
+  .container,
+  .nav{
+    width:
+      calc(
+        100% - 18px
+      );
+  }
+
+  .hero h1{
+    letter-spacing:
+      -2px;
+  }
+
+  .system-status{
+    display:
+      none;
+  }
+
+  .kv{
+    grid-template-columns:
+      1fr;
+  }
+
+  .tip-grid{
+    grid-template-columns:
+      1fr;
+  }
+
+  .ad-row{
+    align-items:
+      flex-start;
+
+    flex-direction:
+      column;
+  }
+
+  .message{
+    max-width:
+      95%;
+  }
+
 }
 </style>
 </head>
@@ -412,949 +1343,4401 @@ a{color:inherit;text-decoration:none}
 <body>
 
 <header class="topbar">
+
 <nav class="nav">
- <div class="brand">
-  <div class="logo">🛡️</div>
-  <div>
-   NetShield Ultra
-   <small>Privacy Diagnostic Platform</small>
+
+  <div class="brand">
+
+    <div class="logo">
+      🛡️
+    </div>
+
+    <div>
+      NET<b>SHIELD</b> ULTRA
+    </div>
+
   </div>
- </div>
 
- <div class="navlinks">
-  <button onclick="scrollToId('dashboard')">Dashboard</button>
-  <button onclick="scrollToId('tools')">Tools</button>
-  <button onclick="scrollToId('ai')">AI</button>
- </div>
+  <div class="nav-right">
 
- <button class="menuBtn" onclick="toggleMenu()">⋮</button>
+    <div class="system-status">
+      <span class="lamp"></span>
+      SYSTEM ONLINE
+    </div>
+
+    <button
+      class="menu-btn"
+      id="menuBtn">
+      ⋮
+    </button>
+
+  </div>
+
+  <div
+    class="menu"
+    id="menu">
+
+    <button data-jump="dashboard">
+      🏠 Dashboard
+    </button>
+
+    <button data-jump="scanner">
+      ⚡ Full Ultra Scan
+    </button>
+
+    <button data-jump="network">
+      🌐 Network Lab
+    </button>
+
+    <button data-jump="privacy">
+      🧬 Privacy & Fingerprint
+    </button>
+
+    <button data-jump="offers">
+      🎯 Offer Diagnostics
+    </button>
+
+    <button data-jump="ai">
+      🤖 AI Copilot
+    </button>
+
+    <button data-jump="support">
+      💬 Support
+    </button>
+
+  </div>
+
 </nav>
+
 </header>
 
-<div class="drawer" id="drawer" onclick="closeOutside(event)">
- <div class="drawerPanel">
-  <button class="close" onclick="toggleMenu()">✕</button>
-  <h2>NetShield Menu</h2>
-  <button onclick="scrollToId('dashboard');toggleMenu()">🛡️ Dashboard</button>
-  <button onclick="scrollToId('tools');toggleMenu()">🔧 Security Tools</button>
-  <button onclick="scrollToId('fingerprint');toggleMenu()">🕵️ Fingerprint</button>
-  <button onclick="scrollToId('risk');toggleMenu()">🚨 Risk Engine</button>
-  <button onclick="scrollToId('tips');toggleMenu()">💡 Security Tips</button>
-  <button onclick="scrollToId('ai');toggleMenu()">🤖 AI Assistant</button>
-  <button onclick="setLang('en');toggleMenu()">🇬🇧 English</button>
-  <button onclick="setLang('ar');toggleMenu()">🇪🇬 العربية</button>
-  <button onclick="setLang('ru');toggleMenu()">🇷🇺 Русский</button>
- </div>
-</div>
 
 <main class="container">
 
 <section class="hero">
- <span class="badge">● LIVE CLIENT-SIDE DIAGNOSTICS</span>
- <h1><span class="gradient">NETSHIELD ULTRA</span></h1>
- <p id="heroText">
-  Advanced browser, privacy, network and fingerprint diagnostics in one interface.
- </p>
- <div class="actions">
-  <button class="btn" onclick="runAll()">⚡ Run Full Diagnostic</button>
-  <button class="btn secondary" onclick="scrollToId('tools')">Explore Tools</button>
- </div>
-</section>
 
-<section id="dashboard" class="grid">
-
- <div class="card">
-  <h3>🌐 Public IP</h3>
-  <div class="value" id="ip">Detecting...</div>
-  <div class="sub">External IP returned by the selected public endpoint.</div>
- </div>
-
- <div class="card">
-  <h3>🧭 Browser</h3>
-  <div class="value" id="browser">Detecting...</div>
-  <div class="sub" id="browserSub">Client information</div>
- </div>
-
- <div class="card">
-  <h3>🕐 Local Time</h3>
-  <div class="value" id="clock">--:--:--</div>
-  <div class="sub" id="date">Loading date...</div>
- </div>
-
- <div class="card wide" id="risk">
-  <h2>🚨 Privacy Risk Engine</h2>
-  <div class="riskWrap">
-   <div class="riskCircle" id="riskCircle">
-    <div class="riskNum">
-     <strong id="riskScore">0</strong>
-     <span>/ 100</span>
-    </div>
-   </div>
-   <div>
-    <h3 id="riskLevel">Analyzing...</h3>
-    <p class="sub" id="riskText">
-     Run the diagnostic to calculate a local privacy-risk estimate.
-    </p>
-   </div>
-  </div>
- </div>
-
- <div class="card">
-  <h2>🕐 Timezone</h2>
-  <div class="row"><span class="label">Zone</span><b id="tz">—</b></div>
-  <div class="row"><span class="label">Offset</span><b id="offset">—</b></div>
-  <div class="row"><span class="label">Locale</span><b id="locale">—</b></div>
-  <div class="row"><span class="label">Languages</span><b id="langs">—</b></div>
- </div>
-
- <div class="card">
-  <h2>💻 Environment</h2>
-  <div class="row"><span class="label">Platform</span><b id="platform">—</b></div>
-  <div class="row"><span class="label">Screen</span><b id="screen">—</b></div>
-  <div class="row"><span class="label">Color depth</span><b id="color">—</b></div>
-  <div class="row"><span class="label">Touch</span><b id="touch">—</b></div>
- </div>
-
- <div class="card">
-  <h2>🔒 Connection</h2>
-  <div class="row"><span class="label">Online</span><span id="online" class="status neutral">Checking</span></div>
-  <div class="row"><span class="label">HTTPS</span><span id="https" class="status neutral">Checking</span></div>
-  <div class="row"><span class="label">Cookies</span><span id="cookies" class="status neutral">Checking</span></div>
-  <div class="row"><span class="label">Do Not Track</span><span id="dnt" class="status neutral">—</span></div>
- </div>
-
-</section>
-
-<br>
-
-<section class="card full" id="tools">
- <h2>🔧 Security & Privacy Toolkit</h2>
- <p class="sub">
-  Each tool performs a browser-side diagnostic. Results are informational and do not replace server-side security testing.
- </p>
-
- <div class="toolGrid">
-  <div class="tool" onclick="checkWebRTC()">
-   <b>🧪 WebRTC Check</b>
-   <span>Inspect browser WebRTC availability.</span>
+  <div class="badge">
+    ⚡ FINAL BOSS · ONE PAGE
   </div>
 
-  <div class="tool" onclick="checkStorage()">
-   <b>💾 Storage Check</b>
-   <span>Test local/session storage availability.</span>
-  </div>
+  <h1>
+    Know Your Network.<br>
+    Understand Your Risk.
+  </h1>
 
-  <div class="tool" onclick="checkFingerprint()">
-   <b>🕵️ Fingerprint</b>
-   <span>Generate a non-secret browser fingerprint summary.</span>
-  </div>
-
-  <div class="tool" onclick="checkTimezone()">
-   <b>🕐 Timezone Consistency</b>
-   <span>Compare timezone-related browser signals.</span>
-  </div>
-
-  <div class="tool" onclick="checkHeaders()">
-   <b>📡 Client Signals</b>
-   <span>Review browser-provided request information.</span>
-  </div>
-
-  <div class="tool" onclick="checkPermissions()">
-   <b>🔐 Permissions</b>
-   <span>Review selected browser permission states.</span>
-  </div>
-
-  <div class="tool" onclick="checkFeatures()">
-   <b>⚙️ Browser Features</b>
-   <span>Inspect important privacy-related capabilities.</span>
-  </div>
-
-  <div class="tool" onclick="runAll()">
-   <b>⚡ Full Scan</b>
-   <span>Run the complete local diagnostic.</span>
-  </div>
- </div>
-
- <div class="results" id="results">
-  <div class="result">
-   <b>Ready</b>
-   <span class="sub">Choose a diagnostic above.</span>
-  </div>
- </div>
-</section>
-
-<br>
-
-<section class="card full" id="fingerprint">
- <h2>🕵️ Browser Fingerprint Profile</h2>
- <p class="sub">This is a local profile of browser signals. It is not a guaranteed unique identifier.</p>
-
- <table class="table">
-  <tbody id="fingerprintTable"></tbody>
- </table>
-</section>
-
-<br>
-
-<section class="grid">
-
- <div class="card wide">
-  <h2>🌍 IP / Proxy Intelligence</h2>
-  <p class="sub">
-   The browser cannot reliably determine whether an IP belongs to a commercial VPN,
-   residential proxy, datacenter proxy or Tor exit node without a trusted IP-intelligence service.
+  <p>
+    NetShield Ultra correlates browser-visible signals,
+    network information, timezone, locale and privacy signals
+    into one defensive diagnostic dashboard.
   </p>
 
-  <div class="row">
-   <span class="label">Public IP</span>
-   <b id="ip2">—</b>
-  </div>
+  <div class="actions">
 
-  <div class="row">
-   <span class="label">IP intelligence</span>
-   <span class="status neutral">API required</span>
-  </div>
+    <button
+      class="btn primary"
+      id="heroScan">
+      ⚡ RUN FULL ULTRA SCAN
+    </button>
 
-  <div class="row">
-   <span class="label">VPN detection</span>
-   <span class="status neutral">Not guaranteed client-side</span>
-  </div>
+    <button
+      class="btn"
+      data-jump="network">
+      OPEN TOOLKIT
+    </button>
 
-  <div class="row">
-   <span class="label">Proxy reputation</span>
-   <span class="status neutral">Requires IP database</span>
   </div>
-
-  <div class="row">
-   <span class="label">ASN / ISP</span>
-   <span class="status neutral">Requires IP database</span>
-  </div>
- </div>
-
- <div class="card">
-  <h2>⚠️ Risk Factors</h2>
-  <div id="riskFactors" class="results"></div>
- </div>
 
 </section>
 
-<br>
 
-<section class="card full" id="tips">
- <h2>💡 Privacy & Offer-Platform Tips</h2>
+<section
+  class="status-banner"
+  id="statusBanner">
 
- <div class="tips">
-  <div class="tip">
-   <b>Consistent timezone</b>
-   VPN/proxy users can encounter mismatches when the browser timezone does not correspond to the apparent network region.
+  <span
+    class="big-lamp"
+    id="bigLamp">
+  </span>
+
+  <div>
+
+    <div
+      class="status-title"
+      id="statusTitle">
+      SYSTEM READY
+    </div>
+
+    <div
+      class="status-detail"
+      id="statusDetail">
+      Run the Ultra Scan to calculate the current diagnostic state.
+    </div>
+
   </div>
 
-  <div class="tip">
-   <b>Browser consistency</b>
-   Unusual combinations of browser, OS, language, screen and platform signals may increase automated risk scoring.
-  </div>
-
-  <div class="tip">
-   <b>IP reputation</b>
-   Shared or previously abused IP addresses can have poor reputation. This is something an IP-intelligence database can evaluate.
-  </div>
-
-  <div class="tip">
-   <b>Privacy tools</b>
-   Privacy extensions can change browser behavior. More privacy does not automatically mean every website will accept the resulting fingerprint.
-  </div>
-
-  <div class="tip">
-   <b>Why an offer may not count</b>
-   Tracking systems can fail because of blocked cookies, network errors, attribution windows, duplicate conversions, invalid traffic rules or advertiser-side rejection.
-  </div>
-
-  <div class="tip">
-   <b>Don't bypass platform rules</b>
-   If a service rejects traffic, investigate the legitimate reason instead of attempting to evade its fraud or abuse controls.
-  </div>
-
-  <div class="tip">
-   <b>Secure connection</b>
-   HTTPS protects traffic in transit, but it does not hide your IP from the websites you visit.
-  </div>
-
-  <div class="tip">
-   <b>Fingerprinting</b>
-   A browser fingerprint is composed from multiple signals. No single signal proves that a user is fraudulent.
-  </div>
- </div>
 </section>
 
-<br>
 
-<section class="card full" id="ai">
- <h2>🤖 NetShield AI Assistant</h2>
- <p class="sub">
-  Interactive local assistant. It can explain scan results and common privacy/network concepts.
- </p>
+<div class="tabs">
 
- <div class="chat" id="chat">
-  <div class="msg bot">
-   <b>NetShield AI:</b><br>
-   Hello! Run a diagnostic and ask me about the results.
+  <button
+    class="tab active"
+    data-page="dashboard">
+    Dashboard
+  </button>
+
+  <button
+    class="tab"
+    data-page="scanner">
+    Full Scan
+  </button>
+
+  <button
+    class="tab"
+    data-page="network">
+    Network
+  </button>
+
+  <button
+    class="tab"
+    data-page="privacy">
+    Privacy
+  </button>
+
+  <button
+    class="tab"
+    data-page="offers">
+    Offers
+  </button>
+
+  <button
+    class="tab"
+    data-page="ai">
+    AI
+  </button>
+
+  <button
+    class="tab"
+    data-page="support">
+    Support
+  </button>
+
+</div>
+
+
+<!-- =====================================================
+     DASHBOARD
+     ===================================================== -->
+
+<section
+  class="page active"
+  id="dashboard">
+
+<div class="grid">
+
+
+<article class="card wide">
+
+  <h2>🌐 Public IP Intelligence</h2>
+
+  <div class="sub">
+    Public network metadata returned by the IP intelligence endpoint.
   </div>
- </div>
 
- <div class="ai">
-  <input id="aiInput" placeholder="Ask about your scan, VPN, proxy, timezone, fingerprint...">
-  <button class="btn" onclick="askAI()">Send</button>
- </div>
+  <div
+    class="value cyan"
+    id="ip">
+    Detecting…
+  </div>
+
+  <div
+    class="result"
+    id="ipInfo">
+
+    <span class="spinner"></span>
+    Loading IP intelligence…
+
+  </div>
+
+  <div
+    class="row"
+    style="margin-top:10px">
+
+    <button
+      class="btn primary"
+      id="refreshIP">
+      Refresh
+    </button>
+
+    <button
+      class="btn"
+      id="copyIP">
+      Copy IP
+    </button>
+
+  </div>
+
+</article>
+
+
+<article class="card">
+
+  <h2>🚨 Risk Engine</h2>
+
+  <div class="sub">
+    Correlation estimate. This is not a third-party fraud score.
+  </div>
+
+  <div class="score-wrap">
+
+    <div
+      class="ring"
+      id="riskRing">
+
+      <strong
+        id="riskNumber">
+        --
+      </strong>
+
+    </div>
+
+    <div>
+
+      <div
+        class="risk-label"
+        id="riskLabel">
+        READY
+      </div>
+
+      <div
+        class="sub"
+        id="confidence">
+        Confidence: --
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="risk-bar">
+
+    <span
+      id="riskBar">
+    </span>
+
+  </div>
+
+</article>
+
+
+<article class="card">
+
+  <h2>🕐 Time & Locale</h2>
+
+  <div class="kv">
+
+    <div>Timezone</div>
+    <div id="timezone">
+      —
+    </div>
+
+    <div>UTC</div>
+    <div id="utc">
+      —
+    </div>
+
+    <div>Locale</div>
+    <div id="locale">
+      —
+    </div>
+
+    <div>Languages</div>
+    <div id="languages">
+      —
+    </div>
+
+    <div>Local Time</div>
+    <div id="clock">
+      —
+    </div>
+
+    <div>Date</div>
+    <div id="date">
+      —
+    </div>
+
+  </div>
+
+</article>
+
+
+<article class="card">
+
+  <h2>💻 Browser Profile</h2>
+
+  <div class="kv">
+
+    <div>Browser</div>
+    <div id="browser">
+      —
+    </div>
+
+    <div>Platform</div>
+    <div id="platform">
+      —
+    </div>
+
+    <div>Screen</div>
+    <div id="screen">
+      —
+    </div>
+
+    <div>Pixel Ratio</div>
+    <div id="pixelRatio">
+      —
+    </div>
+
+    <div>CPU Threads</div>
+    <div id="cpu">
+      —
+    </div>
+
+    <div>Touch</div>
+    <div id="touch">
+      —
+    </div>
+
+  </div>
+
+</article>
+
+
+<article class="card">
+
+  <h2>📡 Connection</h2>
+
+  <div
+    class="kv"
+    id="connection">
+  </div>
+
+</article>
+
+
+<article class="card wide">
+
+  <h2>🔎 Top Findings</h2>
+
+  <div class="sub">
+    The findings currently affecting the diagnostic score.
+  </div>
+
+  <div
+    id="findings">
+  </div>
+
+</article>
+
+
+<article class="card full">
+
+  <h2>⚡ Quick Diagnostics</h2>
+
+  <div class="tool-grid">
+
+    <div
+      class="tool"
+      data-tool="fingerprint">
+
+      <b>🧬 Fingerprint Audit</b>
+
+      <span>
+        Review browser-visible fingerprint signals.
+      </span>
+
+    </div>
+
+    <div
+      class="tool"
+      data-tool="webrtc">
+
+      <b>🧪 WebRTC Check</b>
+
+      <span>
+        Inspect WebRTC capability and privacy behavior.
+      </span>
+
+    </div>
+
+    <div
+      class="tool"
+      data-tool="storage">
+
+      <b>💾 Storage Check</b>
+
+      <span>
+        Review cookies and browser storage.
+      </span>
+
+    </div>
+
+    <div
+      class="tool"
+      data-tool="timezone">
+
+      <b>🕐 Consistency Check</b>
+
+      <span>
+        Review timezone and locale signals.
+      </span>
+
+    </div>
+
+  </div>
+
+</article>
+
+
+<article class="card full">
+
+  <h2>📋 Activity</h2>
+
+  <div
+    id="activity">
+  </div>
+
+</article>
+
+
+</div>
+
 </section>
 
-<br>
 
-<section class="card full">
- <h2>📢 Recommended Tools</h2>
+<!-- =====================================================
+     SCANNER
+     ===================================================== -->
 
- <div class="adbox">
-  <a href="https://iproyal.com/?r=1528614" target="_blank" rel="noopener noreferrer">
-   <img
-    src="https://dashboard.iproyal.com/img/b/728_1.jpg"
-    alt="IPRoyal">
-  </a>
- </div>
+<section
+  class="page"
+  id="scanner">
 
- <br>
+<div class="grid">
 
- <div class="adbox">
-  <div class="adText">
-   <b>🛡️ AdsPower</b>
-   <p>Browser-profile management platform.</p>
-   <a
+
+<article class="card full">
+
+  <h2>⚡ Full Ultra Scan</h2>
+
+  <div class="sub">
+    Runs the supported browser-side diagnostics and recalculates the risk engine.
+  </div>
+
+  <div class="row">
+
+    <button
+      class="btn primary"
+      id="fullScan">
+      RUN ULTRA SCAN
+    </button>
+
+    <button
+      class="btn"
+      id="recalculate">
+      RECALCULATE RISK
+    </button>
+
+  </div>
+
+  <div
+    class="result"
+    id="scanStatus">
+    Ready.
+  </div>
+
+</article>
+
+
+<article class="card wide">
+
+  <h2>🧩 Consistency Matrix</h2>
+
+  <div
+    id="matrix">
+  </div>
+
+</article>
+
+
+<article class="card">
+
+  <h2>📊 Risk Breakdown</h2>
+
+  <div
+    id="breakdown">
+  </div>
+
+</article>
+
+
+<article class="card full">
+
+  <h2>🔬 Diagnostic Detail</h2>
+
+  <div
+    id="detail">
+  </div>
+
+</article>
+
+
+</div>
+
+</section>
+
+
+<!-- =====================================================
+     NETWORK
+     ===================================================== -->
+
+<section
+  class="page"
+  id="network">
+
+<div class="grid">
+
+
+<article class="card wide">
+
+  <h2>🔎 DNS Intelligence</h2>
+
+  <div class="sub">
+    Resolve common DNS record types through DNS-over-HTTPS.
+  </div>
+
+  <div class="row">
+
+    <input
+      class="input grow"
+      id="dnsDomain"
+      placeholder="example.com">
+
+    <select
+      class="select"
+      id="dnsType"
+      style="max-width:130px">
+
+      <option>A</option>
+      <option>AAAA</option>
+      <option>MX</option>
+      <option>NS</option>
+      <option>TXT</option>
+
+    </select>
+
+    <button
+      class="btn primary"
+      id="dnsButton">
+      Resolve
+    </button>
+
+  </div>
+
+  <div
+    class="result"
+    id="dnsResult">
+    Ready.
+  </div>
+
+</article>
+
+
+<article class="card">
+
+  <h2>🔗 URL Analyzer</h2>
+
+  <div class="sub">
+    Inspect URL structure locally.
+  </div>
+
+  <input
+    class="input"
+    id="urlInput"
+    placeholder="https://example.com/path?x=1">
+
+  <button
+    class="btn green"
+    id="urlButton"
+    style="width:100%;margin-top:9px">
+    Analyze
+  </button>
+
+  <div
+    class="result"
+    id="urlResult">
+    Ready.
+  </div>
+
+</article>
+
+
+<article class="card wide">
+
+  <h2>🧱 Security Headers</h2>
+
+  <div class="sub">
+    Browser CORS may restrict third-party targets.
+  </div>
+
+  <div class="row">
+
+    <input
+      class="input grow"
+      id="headersURL"
+      placeholder="https://example.com">
+
+    <button
+      class="btn primary"
+      id="headersButton">
+      Inspect
+    </button>
+
+  </div>
+
+  <div
+    class="result"
+    id="headersResult">
+    Ready.
+  </div>
+
+</article>
+
+
+<article class="card">
+
+  <h2>⚡ Latency Test</h2>
+
+  <div class="sub">
+    Measures a browser request round-trip.
+  </div>
+
+  <button
+    class="btn primary"
+    id="latencyButton">
+    Run
+  </button>
+
+  <div
+    class="result"
+    id="latencyResult">
+    Ready.
+  </div>
+
+</article>
+
+
+<article class="card">
+
+  <h2>🔌 Port Reference</h2>
+
+  <input
+    class="input"
+    id="portInput"
+    type="number"
+    min="1"
+    max="65535"
+    placeholder="443">
+
+  <button
     class="btn"
-    href="https://www.adspower.com/share/GXxIGf"
-    target="_blank"
-    rel="noopener noreferrer">
-    Learn More
-   </a>
+    id="portButton"
+    style="width:100%;margin-top:9px">
+    Explain
+  </button>
+
+  <div
+    class="result"
+    id="portResult">
+    Ready.
   </div>
- </div>
+
+</article>
+
+
+</div>
+
 </section>
 
-<footer class="footer">
- <b>NetShield Ultra</b><br>
- Advanced privacy diagnostics and browser intelligence.
 
- <div class="support">
-  <a href="https://t.me/NetShieldSupport" target="_blank" rel="noopener noreferrer">
-   Telegram: @NetShieldSupport
-  </a>
+<!-- =====================================================
+     PRIVACY
+     ===================================================== -->
 
-  <a href="mailto:netshieldprosupport@gmail.com">
-   Email Support
-  </a>
- </div>
+<section
+  class="page"
+  id="privacy">
 
- <p>© 2026 NetShield Ultra. Diagnostic information is provided for educational and defensive purposes.</p>
+<div class="grid">
+
+
+<article class="card wide">
+
+  <h2>🧬 Browser Fingerprint Audit</h2>
+
+  <div class="sub">
+    Shows browser-visible signals that can contribute to fingerprinting.
+  </div>
+
+  <button
+    class="btn primary"
+    id="fingerprintButton">
+    RUN AUDIT
+  </button>
+
+  <div
+    class="result"
+    id="fingerprintResult">
+    Ready.
+  </div>
+
+</article>
+
+
+<article class="card">
+
+  <h2>🕵️ Privacy Exposure</h2>
+
+  <div
+    class="value purple"
+    id="privacyScore">
+    --
+  </div>
+
+  <div
+    class="result"
+    id="privacyText">
+    Run the audit.
+  </div>
+
+</article>
+
+
+<article class="card">
+
+  <h2>🧪 WebRTC</h2>
+
+  <button
+    class="btn"
+    id="webrtcButton">
+    CHECK
+  </button>
+
+  <div
+    class="result"
+    id="webrtcResult">
+    Ready.
+  </div>
+
+</article>
+
+
+<article class="card">
+
+  <h2>💾 Storage</h2>
+
+  <button
+    class="btn"
+    id="storageButton">
+    CHECK
+  </button>
+
+  <div
+    class="result"
+    id="storageResult">
+    Ready.
+  </div>
+
+</article>
+
+
+<article class="card full">
+
+  <h2>📋 Browser Signal Matrix</h2>
+
+  <div
+    id="privacyTable">
+  </div>
+
+</article>
+
+
+<!-- AdsPower appears next to browser/fingerprint functionality -->
+
+<article class="card full">
+
+  <h2>🕵️ Browser Profile Partner</h2>
+
+  <div class="ad">
+
+    <div class="ad-row">
+
+      <div>
+
+        <div class="ad-tag">
+          PARTNER OFFER
+        </div>
+
+        <h3>
+          AdsPower
+        </h3>
+
+        <p>
+          Explore the official AdsPower browser-profile platform.
+        </p>
+
+      </div>
+
+      <a
+        class="btn purple"
+        href="https://www.adspower.com/share/GXxIGf"
+        target="_blank"
+        rel="noopener noreferrer sponsored">
+
+        Explore AdsPower
+
+      </a>
+
+    </div>
+
+  </div>
+
+</article>
+
+
+</div>
+
+</section>
+
+
+<!-- =====================================================
+     OFFERS
+     ===================================================== -->
+
+<section
+  class="page"
+  id="offers">
+
+<div class="grid">
+
+
+<article class="card wide">
+
+  <h2>🎯 Offer Health Diagnostics</h2>
+
+  <div class="sub">
+    Helps explain legitimate tracking and attribution problems.
+    It does not attempt to bypass eligibility or fraud controls.
+  </div>
+
+  <div
+    id="offerFindings">
+  </div>
+
+</article>
+
+
+<article class="card">
+
+  <h2>📈 Offer Health</h2>
+
+  <div
+    class="value"
+    id="offerScore">
+    --
+  </div>
+
+  <div
+    class="result"
+    id="offerText">
+  </div>
+
+</article>
+
+
+<article class="card full">
+
+  <h2>💡 Why a legitimate offer may not count</h2>
+
+  <div class="tip-grid">
+
+    <div class="tip">
+      <h3>Tracking</h3>
+      <p>
+        Cookies, storage restrictions,
+        blocked redirects or connection errors
+        can interrupt attribution.
+      </p>
+    </div>
+
+    <div class="tip">
+      <h3>Campaign rules</h3>
+      <p>
+        Country, device, eligibility and
+        attribution windows differ by campaign.
+      </p>
+    </div>
+
+    <div class="tip">
+      <h3>Duplicate activity</h3>
+      <p>
+        Some programs reject repeated or
+        previously attributed conversions.
+      </p>
+    </div>
+
+    <div class="tip">
+      <h3>Network reputation</h3>
+      <p>
+        Some platforms consider IP/ASN and
+        network reputation as one signal.
+      </p>
+    </div>
+
+    <div class="tip">
+      <h3>Browser privacy</h3>
+      <p>
+        Privacy settings can change tracking
+        behavior and browser capabilities.
+      </p>
+    </div>
+
+    <div class="tip">
+      <h3>Best practice</h3>
+      <p>
+        Follow the campaign terms and contact
+        the vendor if a valid conversion is missing.
+      </p>
+    </div>
+
+  </div>
+
+</article>
+
+
+<!-- IPRoyal integrated with proxy section -->
+
+<article class="card">
+
+  <h2>🌐 Proxy / IP Partner</h2>
+
+  <div class="ad">
+
+    <div class="ad-tag">
+      PARTNER OFFER
+    </div>
+
+    <h3>
+      IPRoyal
+    </h3>
+
+    <p>
+      Explore the official IPRoyal service and referral offer.
+    </p>
+
+    <a
+      class="btn primary"
+      style="display:inline-block;margin-top:9px"
+      href="https://iproyal.com/?r=1528614"
+      target="_blank"
+      rel="noopener noreferrer sponsored">
+
+      Explore IPRoyal
+
+    </a>
+
+  </div>
+
+</article>
+
+
+</div>
+
+</section>
+
+
+<!-- =====================================================
+     AI
+     ===================================================== -->
+
+<section
+  class="page"
+  id="ai">
+
+<div class="grid">
+
+
+<article class="card wide">
+
+  <h2>🤖 NetShield AI Copilot</h2>
+
+  <div class="sub">
+    No language selector. Ask in Arabic, English, Russian or another language.
+    The local engine recognizes Arabic and Russian and uses the current scan.
+  </div>
+
+  <div
+    class="chat"
+    id="chat">
+
+    <div
+      class="message ai">
+
+      <b>NetShield AI:</b>
+
+      <br>
+
+      Hello! Run a scan and ask me about your
+      IP, risk, timezone, fingerprint or network.
+
+    </div>
+
+  </div>
+
+  <div class="row">
+
+    <textarea
+      class="textarea grow"
+      id="aiInput"
+      placeholder="Why is my risk high? / اشرحلي الريسك / Почему риск высокий؟"></textarea>
+
+    <button
+      class="btn primary"
+      id="aiButton">
+      Ask AI
+    </button>
+
+  </div>
+
+</article>
+
+
+<article class="card">
+
+  <h2>🧠 AI Context</h2>
+
+  <div
+    class="result"
+    id="aiContext">
+  </div>
+
+</article>
+
+
+</div>
+
+</section>
+
+
+<!-- =====================================================
+     SUPPORT
+     ===================================================== -->
+
+<section
+  class="page"
+  id="support">
+
+<div class="grid">
+
+
+<article class="card wide">
+
+  <h2>💬 NetShield Support</h2>
+
+  <div class="sub">
+    Direct project support channels.
+  </div>
+
+  <div class="support">
+
+    <a
+      href="https://t.me/NetShieldSupport"
+      target="_blank"
+      rel="noopener noreferrer">
+
+      Telegram · @NetShieldSupport
+
+    </a>
+
+    <a
+      href="mailto:netshieldprosupport@gmail.com">
+
+      Email · netshieldprosupport@gmail.com
+
+    </a>
+
+  </div>
+
+</article>
+
+
+<article class="card">
+
+  <h2>📢 Partner Links</h2>
+
+  <div class="support">
+
+    <a
+      href="https://iproyal.com/?r=1528614"
+      target="_blank"
+      rel="noopener noreferrer sponsored">
+
+      IPRoyal
+
+    </a>
+
+    <a
+      href="https://www.adspower.com/share/GXxIGf"
+      target="_blank"
+      rel="noopener noreferrer sponsored">
+
+      AdsPower
+
+    </a>
+
+  </div>
+
+</article>
+
+
+<article class="card full">
+
+  <h2>🛠️ Diagnostic Limitations</h2>
+
+  <div class="sub">
+
+    Browser-only diagnostics cannot reliably prove that any IP belongs
+    to a VPN, premium proxy, Tor exit, residential network or a specific
+    person. Reliable IP classification requires a trusted server-side
+    intelligence provider.
+
+  </div>
+
+</article>
+
+
+</div>
+
+</section>
+
+
+<footer>
+
+  <b>NetShield Ultra</b>
+
+  <br>
+
+  Advanced privacy, network and consistency diagnostics.
+
+  <br>
+
+  Use diagnostics only for systems, networks and accounts
+  you own or are authorized to assess.
+
 </footer>
 
 </main>
 
+
 <script>
-/* =========================================================
-   NETSHIELD ULTRA ENGINE
-   ========================================================= */
 
-const $ = id => document.getElementById(id);
-let risk = 0;
-let findings = [];
+/* ============================================================
+   STATE
+   ============================================================ */
 
-function scrollToId(id){
- const el=$(id);
- if(el) el.scrollIntoView({behavior:"smooth",block:"start"});
-}
+const state = {
 
-function toggleMenu(){
- $("drawer").classList.toggle("open");
-}
+  ip:null,
 
-function closeOutside(e){
- if(e.target.id==="drawer") toggleMenu();
-}
+  ipData:null,
 
-/* ---------------- CLOCK / DATE ---------------- */
+  risk:0,
 
-function updateClock(){
- const now=new Date();
+  confidence:0,
 
- $("clock").textContent=now.toLocaleTimeString();
- $("date").textContent=now.toLocaleDateString(undefined,{
-  weekday:"long",
-  year:"numeric",
-  month:"long",
-  day:"numeric"
- });
+  findings:[],
 
- $("tz").textContent=
-  Intl.DateTimeFormat().resolvedOptions().timeZone || "Unknown";
+  activity:[],
 
- const mins=-now.getTimezoneOffset();
- const sign=mins>=0?"+":"-";
- const abs=Math.abs(mins);
- $("offset").textContent=
-  "UTC"+sign+
-  String(Math.floor(abs/60)).padStart(2,"0")+":"+
-  String(abs%60).padStart(2,"0");
+  privacyScore:null,
 
- $("locale").textContent=navigator.language||"Unknown";
- $("langs").textContent=(navigator.languages||[navigator.language]).join(", ");
-}
+  privacy:null
 
-setInterval(updateClock,1000);
-updateClock();
-
-/* ---------------- BROWSER ---------------- */
-
-function detectBrowser(){
- const ua=navigator.userAgent;
- let name="Unknown Browser";
-
- if(/Edg\//.test(ua)) name="Microsoft Edge";
- else if(/OPR\//.test(ua)) name="Opera";
- else if(/Firefox\//.test(ua)) name="Firefox";
- else if(/Chrome\//.test(ua)) name="Chrome";
- else if(/Safari\//.test(ua)) name="Safari";
-
- $("browser").textContent=name;
- $("browserSub").textContent=ua.substring(0,100);
-}
-
-detectBrowser();
-
-/* ---------------- ENVIRONMENT ---------------- */
-
-$("platform").textContent=navigator.platform||"Unknown";
-
-$("screen").textContent=
- `${screen.width} × ${screen.height} @ ${window.devicePixelRatio||1}x`;
-
-$("color").textContent=
- `${screen.colorDepth || "?"} bit`;
-
-$("touch").textContent=
- ("ontouchstart" in window || navigator.maxTouchPoints>0)
- ? "Available"
- : "Not detected";
-
-/* ---------------- CONNECTION ---------------- */
-
-function status(id,text,type){
- const el=$(id);
- el.textContent=text;
- el.className="status "+type;
-}
-
-function checkConnection(){
- status(
-  "online",
-  navigator.onLine ? "Online":"Offline",
-  navigator.onLine ? "ok":"bad"
- );
-
- status(
-  "https",
-  location.protocol==="https:" ? "Secure":"Not HTTPS",
-  location.protocol==="https:" ? "ok":"warn"
- );
-
- status(
-  "cookies",
-  navigator.cookieEnabled ? "Enabled":"Disabled",
-  navigator.cookieEnabled ? "warn":"ok"
- );
-
- const dnt=navigator.doNotTrack;
- $("dnt").textContent=dnt==="1"?"Enabled":dnt==="0"?"Disabled":"Not specified";
- $("dnt").className="status neutral";
-}
-
-checkConnection();
-
-/* ---------------- IP ---------------- */
-
-async function getIP(){
- try{
-  const r=await fetch("https://api.ipify.org?format=json",{cache:"no-store"});
-  if(!r.ok) throw new Error();
-  const data=await r.json();
-
-  $("ip").textContent=data.ip||"Unavailable";
-  $("ip2").textContent=data.ip||"Unavailable";
-
-  return data.ip;
- }catch(e){
-  $("ip").textContent="Unavailable";
-  $("ip2").textContent="Unavailable";
-  return null;
- }
-}
-
-/* ---------------- RESULTS ---------------- */
-
-function addResult(title,text,type="neutral"){
- const div=document.createElement("div");
- div.className="result";
- div.innerHTML=
-  `<b>${escapeHTML(title)}
-   <span class="status ${type}" style="float:right">${type.toUpperCase()}</span>
-  </b>
-  <span class="sub">${escapeHTML(text)}</span>`;
- $("results").prepend(div);
-}
-
-function escapeHTML(str){
- return String(str)
- .replaceAll("&","&amp;")
- .replaceAll("<","&lt;")
- .replaceAll(">","&gt;")
- .replaceAll('"',"&quot;")
- .replaceAll("'","&#039;");
-}
-
-/* ---------------- WEBRTC ---------------- */
-
-function checkWebRTC(){
- const supported=
-  !!window.RTCPeerConnection ||
-  !!window.webkitRTCPeerConnection;
-
- if(supported){
-  addResult(
-   "WebRTC",
-   "WebRTC APIs are available in this browser. Availability alone does not prove an IP leak.",
-   "warn"
-  );
- }else{
-  addResult(
-   "WebRTC",
-   "WebRTC API was not detected.",
-   "ok"
-  );
- }
-}
-
-/* ---------------- STORAGE ---------------- */
-
-function checkStorage(){
- let local=false,session=false;
-
- try{
-  localStorage.setItem("__ns_test","1");
-  localStorage.removeItem("__ns_test");
-  local=true;
- }catch(e){}
-
- try{
-  sessionStorage.setItem("__ns_test","1");
-  sessionStorage.removeItem("__ns_test");
-  session=true;
- }catch(e){}
-
- addResult(
-  "Storage",
-  `localStorage: ${local?"available":"blocked"} | sessionStorage: ${session?"available":"blocked"}`,
-  local&&session?"warn":"ok"
- );
-}
-
-/* ---------------- TIMEZONE ---------------- */
-
-function checkTimezone(){
- const zone=Intl.DateTimeFormat().resolvedOptions().timeZone;
- const offset=new Date().getTimezoneOffset();
-
- const suspicious=!zone || typeof offset!=="number";
-
- addResult(
-  "Timezone consistency",
-  suspicious
-   ?"Some timezone information could not be determined."
-   :`Browser timezone: ${zone}; UTC offset: ${offset} minutes.`,
-  suspicious?"warn":"ok"
- );
-}
-
-/* ---------------- CLIENT SIGNALS ---------------- */
-
-function checkHeaders(){
- const info=[
-  `Language: ${navigator.language||"unknown"}`,
-  `Languages: ${(navigator.languages||[]).join(", ")||"unknown"}`,
-  `Platform: ${navigator.platform||"unknown"}`,
-  `User-Agent length: ${navigator.userAgent.length}`,
-  `Online: ${navigator.onLine}`,
-  `Cookies: ${navigator.cookieEnabled}`
- ].join(" | ");
-
- addResult(
-  "Client signals",
-  info,
-  "neutral"
- );
-}
-
-/* ---------------- PERMISSIONS ---------------- */
-
-async function checkPermissions(){
- if(!navigator.permissions){
-  addResult(
-   "Permissions",
-   "Permissions API is not available.",
-   "neutral"
-  );
-  return;
- }
-
- const names=["geolocation","notifications"];
-
- for(const name of names){
-  try{
-   const p=await navigator.permissions.query({name});
-   addResult(
-    `Permission: ${name}`,
-    `State: ${p.state}`,
-    p.state==="denied"?"ok":"warn"
-   );
-  }catch(e){
-   addResult(
-    `Permission: ${name}`,
-    "Browser does not expose this permission state.",
-    "neutral"
-   );
-  }
- }
-}
-
-/* ---------------- FEATURES ---------------- */
-
-function checkFeatures(){
- const features={
-  "WebRTC":!!window.RTCPeerConnection,
-  "WebGL":!!document.createElement("canvas").getContext("webgl"),
-  "Web Workers":!!window.Worker,
-  "Service Workers":"serviceWorker" in navigator,
-  "WebSocket":"WebSocket" in window,
-  "Notifications":"Notification" in window,
-  "Geolocation":"geolocation" in navigator,
-  "Storage":"localStorage" in window
- };
-
- Object.entries(features).forEach(([k,v])=>{
-  addResult(
-   k,
-   v?"Supported":"Not detected",
-   v?"neutral":"warn"
-  );
- });
-}
-
-/* ---------------- FINGERPRINT ---------------- */
-
-async function simpleFingerprint(){
- const canvas=document.createElement("canvas");
- canvas.width=300;
- canvas.height=80;
-
- const ctx=canvas.getContext("2d");
-
- let canvasData="";
- if(ctx){
-  ctx.textBaseline="top";
-  ctx.font="16px Arial";
-  ctx.fillText("NetShield Ultra",10,10);
-  ctx.fillStyle="#00d9ff";
-  ctx.fillRect(10,35,100,20);
-  canvasData=canvas.toDataURL();
- }
-
- const raw=[
-  navigator.userAgent,
-  navigator.language,
-  navigator.platform,
-  screen.width,
-  screen.height,
-  screen.colorDepth,
-  window.devicePixelRatio,
-  Intl.DateTimeFormat().resolvedOptions().timeZone,
-  navigator.hardwareConcurrency||"",
-  navigator.deviceMemory||"",
-  canvasData
- ].join("|");
-
- let hash=0;
- for(let i=0;i<raw.length;i++){
-  hash=((hash<<5)-hash)+raw.charCodeAt(i);
-  hash|=0;
- }
-
- return Math.abs(hash).toString(16).toUpperCase();
-}
-
-async function checkFingerprint(){
- const fp=await simpleFingerprint();
-
- const rows=[
-  ["Fingerprint ID",fp],
-  ["User Agent",navigator.userAgent],
-  ["Platform",navigator.platform],
-  ["Language",navigator.language],
-  ["Languages",(navigator.languages||[]).join(", ")],
-  ["Timezone",Intl.DateTimeFormat().resolvedOptions().timeZone],
-  ["Screen",`${screen.width}×${screen.height}`],
-  ["Pixel Ratio",window.devicePixelRatio],
-  ["Color Depth",screen.colorDepth],
-  ["CPU Threads",navigator.hardwareConcurrency||"Not exposed"],
-  ["Memory",navigator.deviceMemory?navigator.deviceMemory+" GB":"Not exposed"],
-  ["Touch Points",navigator.maxTouchPoints||0],
-  ["Cookies",navigator.cookieEnabled?"Enabled":"Disabled"]
- ];
-
- $("fingerprintTable").innerHTML=rows.map(r=>
-  `<tr><th>${escapeHTML(r[0])}</th><td>${escapeHTML(r[1])}</td></tr>`
- ).join("");
-
- addResult(
-  "Fingerprint",
-  `Local browser profile generated: ${fp}`,
-  "neutral"
- );
-}
-
-/* ---------------- RISK ENGINE ---------------- */
-
-function calculateRisk(){
- risk=0;
- findings=[];
-
- if(!navigator.cookieEnabled){
-  risk+=10;
-  findings.push(["Cookies disabled","warn"]);
- }
-
- if(location.protocol!=="https:"){
-  risk+=15;
-  findings.push(["Connection is not HTTPS","bad"]);
- }
-
- if(!navigator.onLine){
-  risk+=5;
-  findings.push(["Browser reports offline","warn"]);
- }
-
- if(!navigator.languages || navigator.languages.length===0){
-  risk+=5;
-  findings.push(["Language information unavailable","warn"]);
- }
-
- if(!Intl.DateTimeFormat().resolvedOptions().timeZone){
-  risk+=8;
-  findings.push(["Timezone unavailable","warn"]);
- }
-
- if(window.RTCPeerConnection){
-  risk+=3;
-  findings.push(["WebRTC is available","neutral"]);
- }
-
- /* Important:
-    These are diagnostic heuristics, NOT fraud detection. */
-
- risk=Math.min(100,risk);
-
- $("riskScore").textContent=risk;
-
- const degrees=risk*3.6;
- $("riskCircle").style.background=
-  `conic-gradient(var(--cyan) ${degrees}deg,#16304a ${degrees}deg)`;
-
- let level="Low";
- let text="No major local privacy warning was detected.";
-
- if(risk>=60){
-  level="High";
-  text="Several local privacy/security signals require attention.";
- }else if(risk>=30){
-  level="Moderate";
-  text="Some browser configuration signals deserve review.";
- }
-
- $("riskLevel").textContent=level+" Risk";
- $("riskText").textContent=text;
-
- $("riskFactors").innerHTML=
-  findings.length
-  ? findings.map(f=>
-    `<div class="result">
-      <b>${escapeHTML(f[0])}</b>
-      <span class="status ${f[1]}">${f[1].toUpperCase()}</span>
-     </div>`
-   ).join("")
-  : `<div class="result">
-      <b>Clean</b>
-      <span class="sub">No notable local factors detected.</span>
-     </div>`;
-}
-
-/* ---------------- FULL SCAN ---------------- */
-
-async function runAll(){
- $("results").innerHTML="";
- addResult("Diagnostic","Starting full local scan...","neutral");
-
- await getIP();
- checkConnection();
- checkTimezone();
- checkWebRTC();
- checkStorage();
- checkHeaders();
- checkFeatures();
- await checkFingerprint();
- await checkPermissions();
- calculateRisk();
-
- addResult(
-  "Scan complete",
-  "Local diagnostic finished. For real VPN/proxy/ASN reputation intelligence, connect a trusted server-side IP intelligence API.",
-  "ok"
- );
-}
-
-/* ---------------- LOCAL AI ---------------- */
-
-function askAI(){
- const input=$("aiInput");
- const q=input.value.trim();
-
- if(!q)return;
-
- const chat=$("chat");
-
- const user=document.createElement("div");
- user.className="msg user";
- user.innerHTML="<b>You:</b><br>"+escapeHTML(q);
- chat.appendChild(user);
-
- const answer=getAIAnswer(q.toLowerCase());
-
- const bot=document.createElement("div");
- bot.className="msg bot";
- bot.innerHTML="<b>NetShield AI:</b><br>"+answer;
- chat.appendChild(bot);
-
- input.value="";
- chat.scrollTop=chat.scrollHeight;
-}
-
-function getAIAnswer(q){
-
- if(
-  q.includes("vpn") ||
-  q.includes("proxy") ||
-  q.includes("بروكسي") ||
-  q.includes("في بي ان")
- ){
-  return "A browser alone cannot reliably prove that an IP is a VPN or proxy. Reliable classification normally requires server-side IP intelligence such as ASN, hosting, reputation and proxy/Tor databases.";
- }
-
- if(
-  q.includes("timezone") ||
-  q.includes("time zone") ||
-  q.includes("توقيت")
- ){
-  return `Your browser timezone is <b>${escapeHTML(Intl.DateTimeFormat().resolvedOptions().timeZone||"unknown")}</b>. A timezone mismatch can be a signal worth investigating, but it is not proof of fraud or VPN usage.`;
- }
-
- if(
-  q.includes("fingerprint") ||
-  q.includes("بصمة")
- ){
-  return "A browser fingerprint is a combination of browser and device signals. A fingerprint can be used for consistency and privacy analysis, but it should not be treated as proof that someone is malicious.";
- }
-
- if(
-  q.includes("risk") ||
-  q.includes("ريسک") ||
-  q.includes("مخاطر")
- ){
-  return `The current local risk estimate is <b>${risk}/100</b>. This score is only a diagnostic heuristic; it is not an official fraud score.`;
- }
-
- if(
-  q.includes("offer") ||
-  q.includes("عرض") ||
-  q.includes("conversion")
- ){
-  return "Offer attribution can fail for many legitimate reasons: blocked cookies, attribution-window issues, network failures, duplicate conversion rules, advertiser-side rejection or invalid-traffic controls. Check the platform's official rules and logs rather than trying to bypass them.";
- }
-
- if(
-  q.includes("ip") ||
-  q.includes("اي بي")
- ){
-  return `The public IP detected by this browser is <b>${escapeHTML($("ip").textContent)}</b>. To classify its ISP, ASN, VPN/proxy status or reputation, NetShield needs a trusted IP-intelligence API.`;
- }
-
- if(
-  q.includes("hello") ||
-  q.includes("hi") ||
-  q.includes("مرحبا") ||
-  q.includes("اهلا")
- ){
-  return "Hello! 👋 I'm ready. Ask me about your IP, timezone, browser fingerprint, VPN/proxy detection, privacy or risk results.";
- }
-
- return "I can explain your NetShield scan, IP checks, timezone, browser fingerprint, WebRTC, privacy signals and risk factors. Try asking: <b>Why is my risk high?</b> or <b>Is my timezone consistent?</b>";
-}
-
-/* ---------------- LANGUAGE ---------------- */
-
-const translations={
- en:{
-  hero:"Advanced browser, privacy, network and fingerprint diagnostics in one interface."
- },
- ar:{
-  hero:"منصة متقدمة لفحص المتصفح والخصوصية والشبكة والبصمة الرقمية في واجهة واحدة."
- },
- ru:{
-  hero:"Расширенная диагностика браузера, конфиденциальности, сети и цифрового отпечатка."
- }
 };
 
-function setLang(lang){
- const t=translations[lang]||translations.en;
- $("heroText").textContent=t.hero;
 
- document.documentElement.lang=lang;
+/* ============================================================
+   HELPERS
+   ============================================================ */
 
- if(lang==="ar"){
-  document.documentElement.dir="rtl";
- }else{
-  document.documentElement.dir="ltr";
- }
+const $ = id =>
+  document.getElementById(id);
+
+
+function escapeHTML(value){
+
+  return String(value ?? "")
+
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+
 }
 
-/* Default language = English */
-setLang("en");
 
-/* Initial information */
-getIP();
-calculateRisk();
-checkFingerprint();
+function log(message){
 
-/* Recalculate online state */
-window.addEventListener("online",checkConnection);
-window.addEventListener("offline",checkConnection);
+  state.activity.unshift({
 
-/* Enter to send AI */
-$("aiInput").addEventListener("keydown",e=>{
- if(e.key==="Enter") askAI();
-});
+    message,
+
+    time:Date.now()
+
+  });
+
+  state.activity =
+    state.activity.slice(0,40);
+
+  localStorage.setItem(
+
+    "netshield_activity",
+
+    JSON.stringify(
+      state.activity
+    )
+
+  );
+
+  renderActivity();
+
+}
+
+
+function renderActivity(){
+
+  const box =
+    $("activity");
+
+  if(!state.activity.length){
+
+    box.innerHTML =
+      "<div class='sub'>No activity yet.</div>";
+
+    return;
+
+  }
+
+  box.innerHTML =
+    state.activity
+
+      .slice(0,12)
+
+      .map(item => `
+
+        <div class="activity-item">
+
+          <span class="lamp"></span>
+
+          <span>
+            ${escapeHTML(
+              item.message
+            )}
+          </span>
+
+          <small>
+            ${new Date(
+              item.time
+            ).toLocaleTimeString()}
+          </small>
+
+        </div>
+
+      `)
+
+      .join("");
+
+}
+
+
+/* ============================================================
+   NAVIGATION
+   ============================================================ */
+
+function showPage(id){
+
+  document
+    .querySelectorAll(".page")
+    .forEach(page => {
+
+      page.classList.toggle(
+        "active",
+        page.id === id
+      );
+
+    });
+
+  document
+    .querySelectorAll(".tab")
+    .forEach(tab => {
+
+      tab.classList.toggle(
+        "active",
+        tab.dataset.page === id
+      );
+
+    });
+
+  $("menu")
+    .classList
+    .remove("open");
+
+  window.scrollTo({
+
+    top:0,
+
+    behavior:"smooth"
+
+  });
+
+}
+
+
+document
+  .querySelectorAll(".tab")
+  .forEach(tab => {
+
+    tab.addEventListener(
+      "click",
+      () =>
+        showPage(
+          tab.dataset.page
+        )
+    );
+
+  });
+
+
+document
+  .querySelectorAll("[data-jump]")
+  .forEach(button => {
+
+    button.addEventListener(
+      "click",
+      () =>
+        showPage(
+          button.dataset.jump
+        )
+    );
+
+  });
+
+
+$("menuBtn")
+  .addEventListener(
+    "click",
+    event => {
+
+      event.stopPropagation();
+
+      $("menu")
+        .classList
+        .toggle("open");
+
+    }
+  );
+
+
+document.addEventListener(
+  "click",
+  event => {
+
+    if(
+
+      !$("menu")
+        .contains(event.target)
+
+      &&
+
+      event.target !==
+        $("menuBtn")
+
+    ){
+
+      $("menu")
+        .classList
+        .remove("open");
+
+    }
+
+  }
+);
+
+
+/* ============================================================
+   CLOCK / DATE / TIMEZONE
+   ============================================================ */
+
+function updateTime(){
+
+  const now =
+    new Date();
+
+  $("clock").textContent =
+    now.toLocaleTimeString();
+
+  $("date").textContent =
+    now.toLocaleDateString(
+      undefined,
+      {
+        weekday:"long",
+        year:"numeric",
+        month:"long",
+        day:"numeric"
+      }
+    );
+
+  $("timezone").textContent =
+    Intl
+      .DateTimeFormat()
+      .resolvedOptions()
+      .timeZone ||
+    "Unknown";
+
+  const minutes =
+    -now.getTimezoneOffset();
+
+  const sign =
+    minutes >= 0
+      ? "+"
+      : "-";
+
+  const absolute =
+    Math.abs(minutes);
+
+  $("utc").textContent =
+    "UTC" +
+    sign +
+    String(
+      Math.floor(
+        absolute / 60
+      )
+    ).padStart(2,"0") +
+    ":" +
+    String(
+      absolute % 60
+    ).padStart(2,"0");
+
+  $("locale").textContent =
+    navigator.language ||
+    "Unknown";
+
+  $("languages").textContent =
+    (
+      navigator.languages ||
+      []
+    ).join(", ") ||
+    navigator.language ||
+    "Unknown";
+
+}
+
+
+setInterval(
+  updateTime,
+  1000
+);
+
+updateTime();
+
+
+/* ============================================================
+   BROWSER
+   ============================================================ */
+
+function getBrowser(){
+
+  const ua =
+    navigator.userAgent;
+
+  if(/Edg\//.test(ua))
+    return "Microsoft Edge";
+
+  if(/OPR\//.test(ua))
+    return "Opera";
+
+  if(/Firefox\//.test(ua))
+    return "Firefox";
+
+  if(/Chrome\//.test(ua))
+    return "Chrome";
+
+  if(/Safari\//.test(ua))
+    return "Safari";
+
+  return "Unknown";
+
+}
+
+
+$("browser").textContent =
+  getBrowser();
+
+$("platform").textContent =
+  navigator.platform ||
+  "Unknown";
+
+$("screen").textContent =
+  `${screen.width} × ${screen.height}`;
+
+$("pixelRatio").textContent =
+  window.devicePixelRatio ||
+  1;
+
+$("cpu").textContent =
+  navigator.hardwareConcurrency ||
+  "Not exposed";
+
+$("touch").textContent =
+  (
+    "ontouchstart" in window ||
+    navigator.maxTouchPoints > 0
+  )
+    ? "Available"
+    : "Not detected";
+
+
+/* ============================================================
+   CONNECTION
+   ============================================================ */
+
+function renderConnection(){
+
+  const c =
+    navigator.connection ||
+    navigator.mozConnection ||
+    navigator.webkitConnection;
+
+  const data = {
+
+    Online:
+      navigator.onLine
+        ? "Yes"
+        : "No",
+
+    Type:
+      c?.effectiveType ||
+      "Unavailable",
+
+    Downlink:
+      c?.downlink
+        ? c.downlink + " Mbps"
+        : "Unavailable",
+
+    RTT:
+      c?.rtt
+        ? c.rtt + " ms"
+        : "Unavailable",
+
+    SaveData:
+      c?.saveData
+        ? "Enabled"
+        : "Disabled",
+
+    HTTPS:
+      location.protocol ===
+      "https:"
+        ? "Yes"
+        : "No",
+
+    Cookies:
+      navigator.cookieEnabled
+        ? "Enabled"
+        : "Disabled",
+
+    DoNotTrack:
+      navigator.doNotTrack ||
+      "Unset"
+
+  };
+
+  $("connection").innerHTML =
+    Object
+      .entries(data)
+      .map(
+        ([key,value]) => `
+
+          <div>
+            ${escapeHTML(key)}
+          </div>
+
+          <div>
+            ${escapeHTML(value)}
+          </div>
+
+        `
+      )
+      .join("");
+
+}
+
+
+renderConnection();
+
+
+/* ============================================================
+   IP INTELLIGENCE
+   ============================================================ */
+
+async function loadIP(){
+
+  $("ip").textContent =
+    "Detecting…";
+
+  $("ipInfo").innerHTML =
+    `
+      <span class="spinner"></span>
+      Loading IP intelligence...
+    `;
+
+  try{
+
+    const response =
+      await fetch(
+        "https://ipapi.co/json/?v=" +
+        Date.now(),
+        {
+          cache:"no-store"
+        }
+      );
+
+    if(!response.ok)
+      throw new Error();
+
+    const data =
+      await response.json();
+
+    state.ip =
+      data.ip ||
+      null;
+
+    state.ipData =
+      data;
+
+    $("ip").textContent =
+      data.ip ||
+      "Unavailable";
+
+    $("ipInfo").innerHTML = `
+
+      <div class="kv">
+
+        <div>
+          Country
+        </div>
+
+        <div>
+          ${escapeHTML(
+            data.country_name ||
+            "Unknown"
+          )}
+          (${escapeHTML(
+            data.country_code ||
+            "?"
+          )})
+        </div>
+
+        <div>
+          Region
+        </div>
+
+        <div>
+          ${escapeHTML(
+            data.region ||
+            "Unknown"
+          )}
+        </div>
+
+        <div>
+          City
+        </div>
+
+        <div>
+          ${escapeHTML(
+            data.city ||
+            "Unknown"
+          )}
+        </div>
+
+        <div>
+          Organization
+        </div>
+
+        <div>
+          ${escapeHTML(
+            data.org ||
+            "Unknown"
+          )}
+        </div>
+
+        <div>
+          ASN
+        </div>
+
+        <div>
+          ${escapeHTML(
+            data.asn ||
+            "Unavailable"
+          )}
+        </div>
+
+        <div>
+          Timezone
+        </div>
+
+        <div>
+          ${escapeHTML(
+            data.timezone ||
+            "Unknown"
+          )}
+        </div>
+
+      </div>
+
+    `;
+
+    log(
+      "Public IP intelligence updated."
+    );
+
+    runRisk();
+
+  }
+
+  catch{
+
+    $("ip").textContent =
+      "Unavailable";
+
+    $("ipInfo").textContent =
+      "IP intelligence service unavailable.";
+
+    log(
+      "IP lookup failed."
+    );
+
+    runRisk();
+
+  }
+
+}
+
+
+$("refreshIP")
+  .addEventListener(
+    "click",
+    loadIP
+  );
+
+
+$("copyIP")
+  .addEventListener(
+    "click",
+    async () => {
+
+      if(!state.ip)
+        return;
+
+      try{
+
+        await navigator
+          .clipboard
+          .writeText(
+            state.ip
+          );
+
+        log(
+          "Public IP copied."
+        );
+
+      }
+
+      catch{
+
+        log(
+          "Clipboard permission denied."
+        );
+
+      }
+
+    }
+  );
+
+
+/* ============================================================
+   RISK ENGINE
+   ============================================================ */
+
+function addFinding(
+  level,
+  title,
+  detail,
+  weight
+){
+
+  state.findings.push({
+
+    level,
+
+    title,
+
+    detail,
+
+    weight
+
+  });
+
+  state.risk +=
+    weight;
+
+}
+
+
+function knownTimezoneCountry(zone){
+
+  const map = {
+
+    "Africa/Cairo":
+      "EG",
+
+    "Europe/London":
+      "GB",
+
+    "Europe/Berlin":
+      "DE",
+
+    "Europe/Moscow":
+      "RU",
+
+    "Asia/Riyadh":
+      "SA",
+
+    "America/New_York":
+      "US",
+
+    "America/Los_Angeles":
+      "US",
+
+    "Asia/Tokyo":
+      "JP",
+
+    "Asia/Shanghai":
+      "CN"
+
+  };
+
+  return map[zone] || null;
+
+}
+
+
+function localeCountry(locale){
+
+  const map = {
+
+    "ar-eg":
+      "EG",
+
+    "ar-sa":
+      "SA",
+
+    "en-us":
+      "US",
+
+    "en-gb":
+      "GB",
+
+    "de-de":
+      "DE",
+
+    "ru-ru":
+      "RU",
+
+    "fr-fr":
+      "FR",
+
+    "es-es":
+      "ES",
+
+    "tr-tr":
+      "TR",
+
+    "it-it":
+      "IT"
+
+  };
+
+  return map[
+    String(locale)
+      .toLowerCase()
+  ] || null;
+
+}
+
+
+function runRisk(){
+
+  state.risk = 0;
+
+  state.findings = [];
+
+  const country =
+    String(
+      state.ipData?.country_code ||
+      ""
+    ).toUpperCase();
+
+  const zone =
+    Intl
+      .DateTimeFormat()
+      .resolvedOptions()
+      .timeZone ||
+    "";
+
+  const locale =
+    String(
+      navigator.language ||
+      ""
+    ).toLowerCase();
+
+
+  /* HTTPS */
+
+  if(
+    location.protocol !==
+    "https:"
+  ){
+
+    addFinding(
+      "bad",
+      "HTTPS not detected",
+      "The current page is not operating over HTTPS.",
+      20
+    );
+
+  }
+
+
+  /* Secure context */
+
+  if(
+    !window.isSecureContext
+  ){
+
+    addFinding(
+      "warn",
+      "Secure context unavailable",
+      "The browser does not report a secure execution context.",
+      10
+    );
+
+  }
+
+
+  /* Cookies */
+
+  if(
+    !navigator.cookieEnabled
+  ){
+
+    addFinding(
+      "warn",
+      "Cookies disabled",
+      "Some legitimate tracking and session systems depend on browser storage.",
+      7
+    );
+
+  }
+
+
+  /* WebDriver */
+
+  if(
+    navigator.webdriver
+  ){
+
+    addFinding(
+      "bad",
+      "Automation signal",
+      "navigator.webdriver is exposed as true.",
+      20
+    );
+
+  }
+
+
+  /* Timezone mismatch */
+
+  const expectedCountry =
+    knownTimezoneCountry(zone);
+
+  if(
+    country &&
+    expectedCountry &&
+    country !== expectedCountry
+  ){
+
+    addFinding(
+      "warn",
+      "Timezone mismatch",
+      `The IP country is ${country}, while the browser timezone maps to ${expectedCountry}. This is an inconsistency, not proof of VPN/proxy use.`,
+      12
+    );
+
+  }
+
+
+  /* Locale mismatch */
+
+  const localeCountry =
+    localeCountry(
+      locale
+    );
+
+  if(
+    country &&
+    localeCountry &&
+    country !== localeCountry
+  ){
+
+    addFinding(
+      "warn",
+      "Locale mismatch",
+      `Browser locale ${locale} does not match the detected IP country ${country}.`,
+      6
+    );
+
+  }
+
+
+  /* Hosting heuristic */
+
+  const org =
+    String(
+      state.ipData?.org ||
+      ""
+    ).toLowerCase();
+
+  const infraTerms = [
+
+    "hosting",
+    "datacenter",
+    "data center",
+    "cloud",
+    "vps",
+    "server"
+
+  ];
+
+  if(
+    org &&
+    infraTerms
+      .some(
+        term =>
+          org.includes(term)
+      )
+  ){
+
+    addFinding(
+      "warn",
+      "Infrastructure indicator",
+      `The organization name contains infrastructure terms: ${state.ipData.org}. This is only a heuristic.`,
+      12
+    );
+
+  }
+
+
+  /* Connection */
+
+  if(
+    !navigator.onLine
+  ){
+
+    addFinding(
+      "warn",
+      "Offline state",
+      "The browser currently reports no network connection.",
+      5
+    );
+
+  }
+
+
+  /* WebRTC */
+
+  if(
+    window.RTCPeerConnection
+  ){
+
+    addFinding(
+      "info",
+      "WebRTC available",
+      "WebRTC is available. Run the dedicated check for more detail.",
+      0
+    );
+
+  }
+
+
+  state.risk =
+    Math.min(
+      100,
+      Math.round(
+        state.risk
+      )
+    );
+
+
+  const meaningful =
+    state.findings.filter(
+      finding =>
+        finding.weight >= 6
+    ).length;
+
+  state.confidence =
+    Math.min(
+      96,
+      Math.max(
+        40,
+        90 - meaningful * 8
+      )
+    );
+
+
+  renderRisk();
+
+  renderFindings();
+
+  renderMatrix();
+
+  renderBreakdown();
+
+  renderDetail();
+
+  renderOfferHealth();
+
+  updateAIContext();
+
+}
+
+
+function renderRisk(){
+
+  const score =
+    state.risk;
+
+  $("riskNumber")
+    .textContent =
+    score;
+
+  $("riskRing")
+    .style
+    .setProperty(
+      "--score",
+      score + "%"
+    );
+
+  $("riskBar")
+    .style
+    .width =
+    score + "%";
+
+  let label =
+    "LOW RISK";
+
+  let color =
+    "green";
+
+  if(
+    score >= 70
+  ){
+
+    label =
+      "HIGH RISK";
+
+    color =
+      "red";
+
+  }
+
+  else if(
+    score >= 35
+  ){
+
+    label =
+      "MODERATE RISK";
+
+    color =
+      "yellow";
+
+  }
+
+  $("riskLabel")
+    .textContent =
+    label;
+
+  $("riskLabel")
+    .className =
+    "risk-label " +
+    color;
+
+  $("confidence")
+    .textContent =
+    `Confidence: ${state.confidence}%`;
+
+  updateGlobalStatus();
+
+}
+
+
+function updateGlobalStatus(){
+
+  const banner =
+    $("statusBanner");
+
+  let title =
+    "ALL SYSTEMS HEALTHY";
+
+  let detail =
+    "No major locally measurable issue is currently scored.";
+
+  banner.className =
+    "status-banner";
+
+  if(
+    state.risk >= 70
+  ){
+
+    banner.classList.add(
+      "bad"
+    );
+
+    title =
+      "HIGH RISK DETECTED";
+
+    detail =
+      "Several diagnostic signals require attention.";
+
+  }
+
+  else if(
+    state.risk >= 35
+  ){
+
+    banner.classList.add(
+      "warn"
+    );
+
+    title =
+      "ATTENTION REQUIRED";
+
+    detail =
+      "Some browser or network consistency signals deserve review.";
+
+  }
+
+  $("statusTitle")
+    .textContent =
+    title;
+
+  $("statusDetail")
+    .textContent =
+    detail;
+
+}
+
+
+function renderFindings(){
+
+  const major =
+    state.findings
+      .filter(
+        item =>
+          item.level !==
+          "info"
+      );
+
+  $("findings")
+    .innerHTML =
+    major.length
+
+      ?
+
+      major
+        .slice(0,8)
+        .map(
+          item => `
+
+            <div class="finding">
+
+              <span
+                class="badge-state ${
+                  item.level === "bad"
+                    ? "state-bad"
+                    : "state-warn"
+                }">
+
+                ${item.level.toUpperCase()}
+
+              </span>
+
+              <div>
+
+                <b>
+                  ${escapeHTML(
+                    item.title
+                  )}
+                </b>
+
+                <small>
+                  ${escapeHTML(
+                    item.detail
+                  )}
+                </small>
+
+              </div>
+
+            </div>
+
+          `
+        )
+        .join("")
+
+      :
+
+      `
+
+        <div class="result">
+
+          <b>
+            No major findings.
+          </b>
+
+          <div class="sub">
+            Run server-side IP intelligence for
+            VPN/proxy/ASN/reputation classification.
+          </div>
+
+        </div>
+
+      `;
+
+}
+
+
+function renderMatrix(){
+
+  const country =
+    String(
+      state.ipData?.country_code ||
+      ""
+    ).toUpperCase();
+
+  const zone =
+    Intl
+      .DateTimeFormat()
+      .resolvedOptions()
+      .timeZone ||
+    "Unknown";
+
+  const expected =
+    knownTimezoneCountry(
+      zone
+    );
+
+  const timeMatch =
+    country &&
+    expected
+      ? country === expected
+      : null;
+
+  const locale =
+    navigator.language ||
+    "Unknown";
+
+  const localeExpected =
+    localeCountry(
+      locale
+    );
+
+  const localeMatch =
+    country &&
+    localeExpected
+      ? country ===
+        localeExpected
+      : null;
+
+  $("matrix").innerHTML = `
+
+    <table class="table">
+
+      <tr>
+        <th>
+          Signal
+        </th>
+
+        <th>
+          Observed
+        </th>
+
+        <th>
+          Status
+        </th>
+
+      </tr>
+
+      <tr>
+
+        <td>
+          IP country
+        </td>
+
+        <td>
+          ${escapeHTML(
+            country ||
+            "Unknown"
+          )}
+        </td>
+
+        <td>
+          <span
+            class="badge-state state-info">
+            OBSERVED
+          </span>
+        </td>
+
+      </tr>
+
+      <tr>
+
+        <td>
+          Timezone
+        </td>
+
+        <td>
+          ${escapeHTML(zone)}
+        </td>
+
+        <td>
+
+          <span
+            class="badge-state ${
+              timeMatch === false
+                ? "state-warn"
+                : "state-ok"
+            }">
+
+            ${
+              timeMatch === false
+                ? "MISMATCH"
+                : "CHECKED"
+            }
+
+          </span>
+
+        </td>
+
+      </tr>
+
+      <tr>
+
+        <td>
+          Locale
+        </td>
+
+        <td>
+          ${escapeHTML(locale)}
+        </td>
+
+        <td>
+
+          <span
+            class="badge-state ${
+              localeMatch === false
+                ? "state-warn"
+                : "state-info"
+            }">
+
+            ${
+              localeMatch === false
+                ? "CHECK"
+                : "OBSERVED"
+            }
+
+          </span>
+
+        </td>
+
+      </tr>
+
+      <tr>
+
+        <td>
+          WebDriver
+        </td>
+
+        <td>
+          ${
+            navigator.webdriver
+              ? "true"
+              : "false"
+          }
+        </td>
+
+        <td>
+
+          <span
+            class="badge-state ${
+              navigator.webdriver
+                ? "state-bad"
+                : "state-ok"
+            }">
+
+            ${
+              navigator.webdriver
+                ? "CHECK"
+                : "NORMAL"
+            }
+
+          </span>
+
+        </td>
+
+      </tr>
+
+    </table>
+
+  `;
+
+}
+
+
+function renderBreakdown(){
+
+  $("breakdown")
+    .innerHTML =
+    state.findings.length
+
+      ?
+
+      state.findings
+        .map(
+          item => `
+
+            <div class="finding">
+
+              <span
+                class="badge-state ${
+                  item.level === "bad"
+                    ? "state-bad"
+                    : item.level === "warn"
+                      ? "state-warn"
+                      : "state-info"
+                }">
+
+                ${
+                  item.weight
+                    ? "+" + item.weight
+                    : "INFO"
+                }
+
+              </span>
+
+              <div>
+
+                <b>
+                  ${escapeHTML(
+                    item.title
+                  )}
+                </b>
+
+                <small>
+                  ${escapeHTML(
+                    item.detail
+                  )}
+                </small>
+
+              </div>
+
+            </div>
+
+          `
+        )
+        .join("")
+
+      :
+
+      "<div class='sub'>No findings yet.</div>";
+
+}
+
+
+function renderDetail(){
+
+  $("detail")
+    .innerHTML = `
+
+      <div class="kv">
+
+        <div>
+          Risk score
+        </div>
+
+        <div>
+          ${state.risk}/100
+        </div>
+
+        <div>
+          Confidence
+        </div>
+
+        <div>
+          ${state.confidence}%
+        </div>
+
+        <div>
+          Public IP
+        </div>
+
+        <div>
+          ${escapeHTML(
+            state.ip ||
+            "Unavailable"
+          )}
+        </div>
+
+        <div>
+          Organization
+        </div>
+
+        <div>
+          ${escapeHTML(
+            state.ipData?.org ||
+            "Unavailable"
+          )}
+        </div>
+
+        <div>
+          Timezone
+        </div>
+
+        <div>
+          ${escapeHTML(
+            Intl
+              .DateTimeFormat()
+              .resolvedOptions()
+              .timeZone ||
+            "Unavailable"
+          )}
+        </div>
+
+        <div>
+          Locale
+        </div>
+
+        <div>
+          ${escapeHTML(
+            navigator.language ||
+            "Unavailable"
+          )}
+        </div>
+
+      </div>
+
+    `;
+
+}
+
+
+/* ============================================================
+   FULL SCAN
+   ============================================================ */
+
+async function fullScan(){
+
+  showPage(
+    "scanner"
+  );
+
+  $("scanStatus")
+    .innerHTML = `
+
+      <span class="spinner"></span>
+
+      Running Ultra Scan...
+
+    `;
+
+  await loadIP();
+
+  renderConnection();
+
+  fingerprintAudit();
+
+  storageCheck();
+
+  webrtcCheck();
+
+  runRisk();
+
+  await new Promise(
+    resolve =>
+      setTimeout(
+        resolve,
+        250
+      )
+  );
+
+  $("scanStatus")
+    .innerHTML = `
+
+      <span class="green">
+        FULL ULTRA SCAN COMPLETE
+      </span>
+
+      <br>
+
+      ${state.findings.length}
+      findings generated.
+
+    `;
+
+  log(
+    "Full Ultra Scan completed."
+  );
+
+}
+
+
+$("heroScan")
+  .addEventListener(
+    "click",
+    fullScan
+  );
+
+
+$("fullScan")
+  .addEventListener(
+    "click",
+    fullScan
+  );
+
+
+$("recalculate")
+  .addEventListener(
+    "click",
+    () => {
+
+      runRisk();
+
+      log(
+        "Risk engine recalculated."
+      );
+
+    }
+  );
+
+
+/* ============================================================
+   DNS
+   ============================================================ */
+
+async function dnsLookup(){
+
+  const domain =
+    $("dnsDomain")
+      .value
+      .trim()
+      .replace(
+        /^https?:\/\//i,
+        ""
+      )
+      .split("/")[0];
+
+  const type =
+    $("dnsType")
+      .value;
+
+  if(!domain){
+
+    $("dnsResult")
+      .textContent =
+      "Enter a domain.";
+
+    return;
+
+  }
+
+  $("dnsResult")
+    .innerHTML = `
+
+      <span class="spinner"></span>
+
+      Resolving...
+
+    `;
+
+  try{
+
+    const response =
+      await fetch(
+
+        `https://cloudflare-dns.com/dns-query?name=${encodeURIComponent(domain)}&type=${type}`,
+
+        {
+          headers:{
+            "accept":
+              "application/dns-json"
+          }
+        }
+
+      );
+
+    if(!response.ok)
+      throw new Error();
+
+    const data =
+      await response.json();
+
+    const answers =
+      data.Answer ||
+      [];
+
+    $("dnsResult")
+      .innerHTML =
+
+      answers.length
+
+        ?
+
+        answers
+          .map(
+            record => `
+
+              <div>
+
+                <b>
+                  ${escapeHTML(
+                    record.name
+                  )}
+                </b>
+
+                →
+
+                <span class="cyan">
+
+                  ${escapeHTML(
+                    record.data
+                  )}
+
+                </span>
+
+              </div>
+
+            `
+          )
+          .join("")
+
+        :
+
+        "No records returned.";
+
+    log(
+      `DNS ${type} lookup completed for ${domain}.`
+    );
+
+  }
+
+  catch{
+
+    $("dnsResult")
+      .textContent =
+      "DNS lookup failed.";
+
+  }
+
+}
+
+
+$("dnsButton")
+  .addEventListener(
+    "click",
+    dnsLookup
+  );
+
+
+/* ============================================================
+   URL ANALYZER
+   ============================================================ */
+
+$("urlButton")
+  .addEventListener(
+    "click",
+    () => {
+
+      const raw =
+        $("urlInput")
+          .value
+          .trim();
+
+      if(!raw){
+
+        $("urlResult")
+          .textContent =
+          "Enter a URL.";
+
+        return;
+
+      }
+
+      try{
+
+        const url =
+          new URL(
+
+            /^https?:\/\//i.test(
+              raw
+            )
+
+              ? raw
+
+              : "https://" +
+                raw
+
+          );
+
+        $("urlResult")
+          .innerHTML = `
+
+            <div class="kv">
+
+              <div>
+                Protocol
+              </div>
+
+              <div>
+                ${escapeHTML(
+                  url.protocol
+                )}
+              </div>
+
+              <div>
+                Host
+              </div>
+
+              <div>
+                ${escapeHTML(
+                  url.hostname
+                )}
+              </div>
+
+              <div>
+                Port
+              </div>
+
+              <div>
+                ${escapeHTML(
+                  url.port ||
+                  "Default"
+                )}
+              </div>
+
+              <div>
+                HTTPS
+              </div>
+
+              <div>
+                ${
+                  url.protocol ===
+                  "https:"
+                    ? "✅ Enabled"
+                    : "⚠️ Not enabled"
+                }
+              </div>
+
+              <div>
+                Path
+              </div>
+
+              <div>
+                ${escapeHTML(
+                  url.pathname
+                )}
+              </div>
+
+              <div>
+                Query parameters
+              </div>
+
+              <div>
+                ${url.searchParams.size}
+              </div>
+
+            </div>
+
+          `;
+
+      }
+
+      catch{
+
+        $("urlResult")
+          .textContent =
+          "Invalid URL.";
+
+      }
+
+    }
+  );
+
+
+/* ============================================================
+   SECURITY HEADERS
+   ============================================================ */
+
+$("headersButton")
+  .addEventListener(
+    "click",
+    async () => {
+
+      let target =
+        $("headersURL")
+          .value
+          .trim();
+
+      if(!target){
+
+        $("headersResult")
+          .textContent =
+          "Enter a URL.";
+
+        return;
+
+      }
+
+      if(
+        !/^https?:\/\//i.test(
+          target
+        )
+      ){
+
+        target =
+          "https://" +
+          target;
+
+      }
+
+      $("headersResult")
+        .innerHTML = `
+
+          <span class="spinner"></span>
+
+          Inspecting...
+
+        `;
+
+      try{
+
+        const response =
+          await fetch(
+            target,
+            {
+              mode:"cors"
+            }
+          );
+
+        const headers = [
+
+          "content-security-policy",
+          "strict-transport-security",
+          "x-content-type-options",
+          "x-frame-options",
+          "referrer-policy",
+          "permissions-policy"
+
+        ];
+
+        $("headersResult")
+          .innerHTML = `
+
+            <table class="table">
+
+              <tr>
+
+                <th>
+                  Header
+                </th>
+
+                <th>
+                  Value
+                </th>
+
+              </tr>
+
+              ${
+
+                headers
+                  .map(
+                    header => `
+
+                      <tr>
+
+                        <td>
+                          ${header}
+                        </td>
+
+                        <td>
+                          ${escapeHTML(
+                            response
+                              .headers
+                              .get(
+                                header
+                              ) ||
+                            "Not exposed"
+                          )}
+                        </td>
+
+                      </tr>
+
+                    `
+                  )
+                  .join("")
+
+              }
+
+            </table>
+
+          `;
+
+      }
+
+      catch{
+
+        $("headersResult")
+          .textContent =
+
+          "Browser CORS blocked the target. A Cloudflare Worker endpoint is needed for complete cross-origin inspection.";
+
+      }
+
+    }
+  );
+
+
+/* ============================================================
+   LATENCY
+   ============================================================ */
+
+$("latencyButton")
+  .addEventListener(
+    "click",
+    async () => {
+
+      const start =
+        performance.now();
+
+      $("latencyResult")
+        .innerHTML = `
+
+          <span class="spinner"></span>
+
+          Testing...
+
+        `;
+
+      try{
+
+        await fetch(
+          location.href,
+          {
+            cache:
+              "no-store"
+          }
+        );
+
+        const ms =
+          Math.round(
+            performance.now() -
+            start
+          );
+
+        $("latencyResult")
+          .innerHTML = `
+
+            <span class="green">
+              ${ms} ms
+            </span>
+
+          `;
+
+        log(
+          `Latency test: ${ms} ms.`
+        );
+
+      }
+
+      catch{
+
+        $("latencyResult")
+          .textContent =
+          "Latency test failed.";
+
+      }
+
+    }
+  );
+
+
+/* ============================================================
+   PORT REFERENCE
+   ============================================================ */
+
+const ports = {
+
+  21:"FTP",
+  22:"SSH",
+  23:"Telnet",
+  25:"SMTP",
+  53:"DNS",
+  80:"HTTP",
+  110:"POP3",
+  143:"IMAP",
+  443:"HTTPS",
+  465:"SMTPS",
+  587:"SMTP submission",
+  993:"IMAPS",
+  995:"POP3S",
+  3306:"MySQL",
+  5432:"PostgreSQL",
+  6379:"Redis",
+  8080:"Alternate HTTP"
+
+};
+
+
+$("portButton")
+  .addEventListener(
+    "click",
+    () => {
+
+      const port =
+        Number(
+          $("portInput")
+            .value
+        );
+
+      if(
+        !Number.isInteger(
+          port
+        ) ||
+        port < 1 ||
+        port > 65535
+      ){
+
+        $("portResult")
+          .textContent =
+          "Enter a valid port from 1 to 65535.";
+
+        return;
+
+      }
+
+      $("portResult")
+        .innerHTML = `
+
+          <b>
+            Port ${port}
+          </b>
+
+          <div class="sub">
+
+            ${
+              escapeHTML(
+                ports[port] ||
+                "No common mapping in the built-in reference."
+              )
+            }
+
+          </div>
+
+        `;
+
+    }
+  );
+
+
+/* ============================================================
+   FINGERPRINT
+   ============================================================ */
+
+function fingerprintAudit(){
+
+  const data = {
+
+    "User Agent":
+      navigator.userAgent,
+
+    "Platform":
+      navigator.platform,
+
+    "Language":
+      navigator.language,
+
+    "Languages":
+      (
+        navigator.languages ||
+        []
+      ).join(", "),
+
+    "Timezone":
+      Intl
+        .DateTimeFormat()
+        .resolvedOptions()
+        .timeZone,
+
+    "Screen":
+      `${screen.width} × ${screen.height}`,
+
+    "Color Depth":
+      `${screen.colorDepth} bit`,
+
+    "Pixel Ratio":
+      window.devicePixelRatio,
+
+    "CPU Threads":
+      navigator.hardwareConcurrency ||
+      "Not exposed",
+
+    "Device Memory":
+      navigator.deviceMemory
+        ? navigator.deviceMemory + " GB"
+        : "Not exposed",
+
+    "Touch Points":
+      navigator.maxTouchPoints ||
+      0,
+
+    "Cookies":
+      navigator.cookieEnabled
+        ? "Enabled"
+        : "Disabled",
+
+    "WebDriver":
+      navigator.webdriver
+        ? "Detected"
+        : "Not detected",
+
+    "Secure Context":
+      window.isSecureContext
+        ? "Yes"
+        : "No"
+
+  };
+
+  state.privacy =
+    data;
+
+  const count =
+    Object.keys(
+      data
+    ).length;
+
+  const score =
+    Math.max(
+      0,
+      100 -
+      (
+        count *
+        4
+      )
+    );
+
+  state.privacyScore =
+    score;
+
+  $("privacyScore")
+    .textContent =
+    score + "/100";
+
+  $("privacyText")
+    .innerHTML =
+
+    score >= 65
+
+      ?
+
+      `
+        <span class="green">
+          Lower visible surface.
+        </span>
+        <br>
+        <span class="small">
+          Awareness score only.
+        </span>
+      `
+
+      :
+
+      score >= 40
+
+        ?
+
+        `
+          <span class="yellow">
+            Moderate visible surface.
+          </span>
+        `
+
+        :
+
+        `
+          <span class="red">
+            Higher visible surface.
+          </span>
+        `;
+
+  $("privacyTable")
+    .innerHTML = `
+
+      <table class="table">
+
+        <tr>
+
+          <th>
+            Signal
+          </th>
+
+          <th>
+            Value
+          </th>
+
+        </tr>
+
+        ${
+
+          Object.entries(
+            data
+          )
+          .map(
+            ([key,value]) => `
+
+              <tr>
+
+                <td>
+                  ${escapeHTML(key)}
+                </td>
+
+                <td>
+                  ${escapeHTML(value)}
+                </td>
+
+              </tr>
+
+            `
+          )
+          .join("")
+
+        }
+
+      </table>
+
+    `;
+
+  $("fingerprintResult")
+    .innerHTML = `
+
+      <b>
+        Audit complete.
+      </b>
+
+      <div class="sub">
+
+        Reviewed
+        ${count}
+        browser-visible signal categories.
+
+      </div>
+
+    `;
+
+  renderAIContext();
+
+  log(
+    "Fingerprint privacy audit completed."
+  );
+
+  runRisk();
+
+}
+
+
+$("fingerprintButton")
+  .addEventListener(
+    "click",
+    fingerprintAudit
+  );
+
+
+/* ============================================================
+   WEBRTC
+   ============================================================ */
+
+function webrtcCheck(){
+
+  if(
+    !window.RTCPeerConnection
+  ){
+
+    $("webrtcResult")
+      .innerHTML = `
+
+        <span class="green">
+          WebRTC API unavailable.
+        </span>
+
+      `;
+
+    return;
+
+  }
+
+  $("webrtcResult")
+    .innerHTML = `
+
+      <span class="yellow">
+        WebRTC is available.
+      </span>
+
+      <br>
+
+      <span class="small">
+
+        Availability alone does not prove
+        an IP leak. Browser privacy behavior
+        varies by configuration.
+
+      </span>
+
+    `;
+
+  log(
+    "WebRTC capability check completed."
+  );
+
+}
+
+
+$("webrtcButton")
+  .addEventListener(
+    "click",
+    webrtcCheck
+  );
+
+
+/* ============================================================
+   STORAGE
+   ============================================================ */
+
+function storageCheck(){
+
+  let local =
+    false;
+
+  let session =
+    false;
+
+  try{
+
+    localStorage
+      .setItem(
+        "__netshield",
+        "1"
+      );
+
+    localStorage
+      .removeItem(
+        "__netshield"
+      );
+
+    local =
+      true;
+
+  }
+
+  catch{}
+
+
+  try{
+
+    sessionStorage
+      .setItem(
+        "__netshield",
+        "1"
+      );
+
+    sessionStorage
+      .removeItem(
+        "__netshield"
+      );
+
+    session =
+      true;
+
+  }
+
+  catch{}
+
+
+  $("storageResult")
+    .innerHTML = `
+
+      localStorage:
+      ${
+        local
+          ? "✅ Available"
+          : "⚠️ Blocked"
+      }
+
+      <br>
+
+      sessionStorage:
+      ${
+        session
+          ? "✅ Available"
+          : "⚠️ Blocked"
+      }
+
+      <br>
+
+      Cookies:
+      ${
+        navigator.cookieEnabled
+          ? "✅ Enabled"
+          : "⚠️ Disabled"
+      }
+
+    `;
+
+  log(
+    "Storage diagnostic completed."
+  );
+
+}
+
+
+$("storageButton")
+  .addEventListener(
+    "click",
+    storageCheck
+  );
+
+
+/* ============================================================
+   OFFER HEALTH
+   ============================================================ */
+
+function renderOfferHealth(){
+
+  let score =
+    100;
+
+  const notes = [];
+
+  if(
+    !navigator.cookieEnabled
+  ){
+
+    score -=
+      20;
+
+    notes.push(
+      "Cookies are disabled; some legitimate attribution systems may be affected."
+    );
+
+  }
+
+  if(
+    !window.isSecureContext
+  ){
+
+    score -=
+      20;
+
+    notes.push(
+      "The browser is not reporting a secure context."
+    );
+
+  }
+
+  if(
+    state.risk >= 60
+  ){
+
+    score -=
+      15;
+
+    notes.push(
+      "Current diagnostic risk is elevated; review the underlying findings."
+    );
+
+  }
+
+  if(
+    !state.ipData
+  ){
+
+    score -=
+      10;
+
+    notes.push(
+      "IP intelligence has not loaded yet."
+    );
+
+  }
+
+  score =
+    Math.max(
+      0,
+      score
+    );
+
+  $("offerScore")
+    .textContent =
+    score + "/100";
+
+  $("offerScore")
+    .className =
+    "value " +
+    (
+      score >= 80
+        ? "green"
+        : score >= 60
+          ? "yellow"
+          : "red"
+    );
+
+  $("offerText")
+    .innerHTML =
+
+    notes.length
+
+      ?
+
+      notes
+        .map(
+          note => `
+
+            <div class="finding">
+
+              <span
+                class="badge-state state-warn">
+                CHECK
+              </span>
+
+              <div>
+                ${escapeHTML(note)}
+              </div>
+
+            </div>
+
+          `
+        )
+        .join("")
+
+      :
+
+      `
+        <span class="green">
+          No major local attribution warning is scored.
+        </span>
+      `;
+
+  $("offerFindings")
+    .innerHTML = `
+
+      <div class="finding">
+
+        <span
+          class="badge-state state-info">
+          INFO
+        </span>
+
+        <div>
+
+          <b>
+            What NetShield checks
+          </b>
+
+          <small>
+
+            Browser storage, secure context,
+            network metadata, timezone,
+            locale and selected browser signals.
+
+          </small>
+
+        </div>
+
+      </div>
+
+
+      <div class="finding">
+
+        <span
+          class="badge-state state-warn">
+          IMPORTANT
+        </span>
+
+        <div>
+
+          <b>
+            What it cannot prove
+          </b>
+
+          <small>
+
+            Browser-only code cannot guarantee
+            whether an IP is a VPN, proxy,
+            residential IP or Tor exit.
+
+          </small>
+
+        </div>
+
+      </div>
+
+
+      <div class="finding">
+
+        <span
+          class="badge-state state-ok">
+          SAFE
+        </span>
+
+        <div>
+
+          <b>
+            Best practice
+          </b>
+
+          <small>
+
+            Follow campaign rules and contact
+            the vendor when a legitimate
+            conversion is missing.
+
+          </small>
+
+        </div>
+
+      </div>
+
+    `;
+
+}
+
+
+/* ============================================================
+   AI
+   ============================================================ */
+
+function detectLanguage(text){
+
+  if(
+    /[\u0600-\u06FF]/.test(
+      text
+    )
+  ){
+
+    return "ar";
+
+  }
+
+  if(
+    /[А-Яа-яЁё]/.test(
+      text
+    )
+  ){
+
+    return "ru";
+
+  }
+
+  return "en";
+
+}
+
+
+function localAI(question){
+
+  const language =
+    detectLanguage(
+      question
+    );
+
+  const findings =
+    state.findings
+      .slice(0,5)
+      .map(
+        item =>
+          `<li>${escapeHTML(item.title)}</li>`
+      )
+      .join("");
+
+  if(
+    language ===
+    "ar"
+  ){
+
+    return `
+
+      <b>تحليل NetShield المحلي</b>
+
+      <br><br>
+
+      درجة الـRisk الحالية:
+      <b>${state.risk}/100</b>
+
+      <br>
+
+      Confidence:
+      <b>${state.confidence}%</b>
+
+      <br><br>
+
+      أهم الملاحظات:
+
+      <ul>
+        ${findings || "<li>لا توجد ملاحظات كبيرة.</li>"}
+      </ul>
+
+      <span class="small">
+
+        الوضع الحالي Local AI.
+        للحصول على نموذج AI حقيقي،
+        اربط endpoint آمن على Cloudflare Worker
+        ولا تضع أي API key داخل index.html.
+
+      </span>
+
+    `;
+
+  }
+
+
+  if(
+    language ===
+    "ru"
+  ){
+
+    return `
+
+      <b>Локальный анализ NetShield</b>
+
+      <br><br>
+
+      Текущий риск:
+      <b>${state.risk}/100</b>
+
+      <br>
+
+      Уверенность:
+      <b>${state.confidence}%</b>
+
+      <br><br>
+
+      Основные результаты:
+
+      <ul>
+        ${
+          findings ||
+          "<li>Существенных локальных проблем не обнаружено.</li>"
+        }
+      </ul>
+
+      <span class="small">
+
+        Это локальный режим.
+        Для настоящей модели подключите
+        защищённый Cloudflare Worker endpoint.
+
+      </span>
+
+    `;
+
+  }
+
+
+  return `
+
+    <b>NetShield Local Analysis</b>
+
+    <br><br>
+
+    Current risk:
+    <b>${state.risk}/100</b>
+
+    <br>
+
+    Confidence:
+    <b>${state.confidence}%</b>
+
+    <br><br>
+
+    Main findings:
+
+    <ul>
+      ${
+        findings ||
+        "<li>No major local findings.</li>"
+      }
+    </ul>
+
+    <span class="small">
+
+      Local fallback mode is active.
+      Connect a secure Cloudflare Worker
+      endpoint for real model responses.
+
+    </span>
+
+  `;
+
+}
+
+
+function renderAIContext(){
+
+  $("aiContext")
+    .innerHTML = `
+
+      <div class="kv">
+
+        <div>
+          Risk
+        </div>
+
+        <div>
+          ${state.risk}/100
+        </div>
+
+        <div>
+          Confidence
+        </div>
+
+        <div>
+          ${state.confidence}%
+        </div>
+
+        <div>
+          Public IP
+        </div>
+
+        <div>
+          ${escapeHTML(
+            state.ip ||
+            "Unavailable"
+          )}
+        </div>
+
+        <div>
+          Privacy
+        </div>
+
+        <div>
+          ${
+            state.privacyScore ??
+            "--"
+          }/100
+        </div>
+
+        <div>
+          Findings
+        </div>
+
+        <div>
+          ${state.findings.length}
+        </div>
+
+      </div>
+
+    `;
+
+}
+
+
+$("aiButton")
+  .addEventListener(
+    "click",
+    () => {
+
+      const question =
+        $("aiInput")
+          .value
+          .trim();
+
+      if(!question)
+        return;
+
+      const user =
+        document.createElement(
+          "div"
+        );
+
+      user.className =
+        "message user";
+
+      user.innerHTML = `
+
+        <b>
+          You:
+        </b>
+
+        <br>
+
+        ${escapeHTML(
+          question
+        )}
+
+      `;
+
+      $("chat")
+        .appendChild(
+          user
+        );
+
+
+      const answer =
+        document.createElement(
+          "div"
+        );
+
+      answer.className =
+        "message ai";
+
+      answer.innerHTML = `
+
+        <b>
+          NetShield AI:
+        </b>
+
+        <br>
+
+        ${localAI(
+          question
+        )}
+
+      `;
+
+      $("chat")
+        .appendChild(
+          answer
+        );
+
+
+      $("aiInput")
+        .value =
+        "";
+
+      $("chat")
+        .scrollTop =
+        $("chat")
+          .scrollHeight;
+
+    }
+  );
+
+
+$("aiInput")
+  .addEventListener(
+    "keydown",
+    event => {
+
+      if(
+        event.key ===
+        "Enter" &&
+        event.ctrlKey
+      ){
+
+        $("aiButton")
+          .click();
+
+      }
+
+    }
+  );
+
+
+/* ============================================================
+   QUICK TOOLS
+   ============================================================ */
+
+document
+  .querySelectorAll(".tool")
+  .forEach(
+    tool => {
+
+      tool.addEventListener(
+        "click",
+        () => {
+
+          const type =
+            tool.dataset.tool;
+
+          if(
+            type ===
+            "fingerprint"
+          ){
+
+            showPage(
+              "privacy"
+            );
+
+            fingerprintAudit();
+
+          }
+
+          if(
+            type ===
+            "webrtc"
+          ){
+
+            showPage(
+              "privacy"
+            );
+
+            webrtcCheck();
+
+          }
+
+          if(
+            type ===
+            "storage"
+          ){
+
+            showPage(
+              "privacy"
+            );
+
+            storageCheck();
+
+          }
+
+          if(
+            type ===
+            "timezone"
+          ){
+
+            runRisk();
+
+            showPage(
+              "dashboard"
+            );
+
+          }
+
+        }
+      );
+
+    }
+  );
+
+
+/* ============================================================
+   INITIALIZATION
+   ============================================================ */
+
+function initialize(){
+
+  try{
+
+    state.activity =
+      JSON.parse(
+        localStorage.getItem(
+          "netshield_activity"
+        ) ||
+        "[]"
+      );
+
+  }
+
+  catch{
+
+    state.activity =
+      [];
+
+  }
+
+  renderActivity();
+
+  renderAIContext();
+
+  renderOfferHealth();
+
+  updateGlobalStatus();
+
+  loadIP();
+
+  fingerprintAudit();
+
+  storageCheck();
+
+  webrtcCheck();
+
+  log(
+    "NetShield Ultra Final Boss initialized."
+  );
+
+}
+
+
+initialize();
+
+
+window.addEventListener(
+  "online",
+  () => {
+
+    renderConnection();
+
+    runRisk();
+
+  }
+);
+
+
+window.addEventListener(
+  "offline",
+  () => {
+
+    renderConnection();
+
+    runRisk();
+
+  }
+);
+
 </script>
 
 </body>

@@ -1,1788 +1,3328 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NetShield Ultra | Master Cyber Diagnostic Platform</title>
-
-    <!-- مكان إعلانات جوجل (ضع الكود هنا لاحقاً) -->
-    <!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script> -->
-
-    <meta http-equiv="X-Content-Type-Options" content="nosniff">
-    <meta http-equiv="X-Frame-Options" content="DENY">
-    <meta name="referrer" content="strict-origin-when-cross-origin">
-    <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(self)">
-
-    <!-- Fonts & Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700;800&family=Tajawal:wght@500;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <style>
-        :root {
-            --bg: #04070d;
-            --surface: #0a0f18;
-            --surface-card: #0f1624;
-            --border: #1a2638;
-            --cyan: #00f2fe;
-            --blue: #4facfe;
-            --green: #00e676;
-            --red: #ff3366;
-            --orange: #ffab00;
-            --purple: #b388ff;
-            --text: #f0f6fc;
-            --text-dim: #8b9bb4;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Space Grotesk', 'Tajawal', sans-serif;
-            transition: background 0.2s, border-color 0.2s;
-        }
-
-        body {
-            background-color: var(--bg);
-            background-image: 
-                radial-gradient(circle at 50% 0%, rgba(0, 242, 254, 0.08) 0%, transparent 60%),
-                radial-gradient(circle at 100% 100%, rgba(79, 172, 254, 0.04) 0%, transparent 40%),
-                linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
-            background-size: 100% 100%, 100% 100%, 32px 32px, 32px 32px;
-            color: var(--text);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow-x: hidden;
-        }
-
-        /* Top Sliding Drawer */
-        .top-drawer {
-            position: fixed;
-            top: -450px;
-            left: 0;
-            right: 0;
-            background: rgba(10, 15, 24, 0.98);
-            backdrop-filter: blur(18px);
-            border-bottom: 2px solid var(--cyan);
-            padding: 1.5rem 1.8rem;
-            z-index: 1000;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.8);
-            transition: top 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .top-drawer.open { top: 0; }
-
-        .drawer-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.2rem;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 0.6rem;
-        }
-
-        .drawer-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-        }
-
-        .drawer-item {
-            background: var(--surface-card);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 1rem;
-            color: #fff;
-            text-decoration: none;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .drawer-item.primary-tg {
-            border-color: #229ED9;
-            background: linear-gradient(135deg, rgba(34, 158, 217, 0.15), rgba(15, 22, 36, 0.9));
-            box-shadow: 0 0 15px rgba(34, 158, 217, 0.25);
-        }
-
-        .drawer-item:hover {
-            border-color: var(--cyan);
-            box-shadow: 0 0 12px rgba(0, 242, 254, 0.2);
-        }
-
-        .btn-toggle-drawer {
-            background: rgba(0, 242, 254, 0.1);
-            color: var(--cyan);
-            border: 1px solid rgba(0, 242, 254, 0.3);
-            padding: 6px 14px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 800;
-            font-size: 0.85rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .btn-toggle-drawer:hover {
-            background: var(--cyan);
-            color: #04070d;
-        }
-
-        nav {
-            background: rgba(10, 15, 24, 0.95);
-            backdrop-filter: blur(14px);
-            border-bottom: 1px solid var(--border);
-            padding: 0.9rem 1.8rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.6);
-        }
-
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 1.35rem;
-            font-weight: 900;
-            color: #fff;
-        }
-
-        .brand-icon {
-            background: linear-gradient(135deg, var(--cyan), var(--blue));
-            color: #04070d;
-            width: 38px;
-            height: 38px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 10px;
-            font-size: 1.2rem;
-            box-shadow: 0 0 15px rgba(0, 242, 254, 0.4);
-        }
-
-        .nav-controls {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 18px;
-            align-items: center;
-        }
-
-        .nav-links a {
-            color: var(--text-dim);
-            text-decoration: none;
-            font-weight: 700;
-            font-size: 0.9rem;
-        }
-
-        .nav-links a:hover {
-            color: var(--cyan);
-            text-shadow: 0 0 8px rgba(0, 242, 254, 0.6);
-        }
-
-        .lang-btn {
-            background: var(--surface-card);
-            color: #fff;
-            border: 1px solid var(--border);
-            padding: 6px 12px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 800;
-            font-size: 0.85rem;
-            outline: none;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 1.8rem 1.2rem;
-            width: 100%;
-        }
-
-        /* Hero / Full Scan Board */
-        .hero-board {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 2.2rem;
-            margin-bottom: 1.8rem;
-            display: grid;
-            grid-template-columns: 1.3fr 1fr;
-            gap: 2rem;
-            align-items: center;
-            position: relative;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.6);
-            overflow: hidden;
-        }
-
-        .hero-board::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; height: 3px;
-            background: linear-gradient(90deg, var(--cyan), var(--blue), var(--green));
-            box-shadow: 0 0 10px var(--cyan);
-        }
-
-        .ip-meta-tag {
-            font-size: 0.85rem;
-            color: var(--cyan);
-            font-weight: 800;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .pulse-dot {
-            width: 9px;
-            height: 9px;
-            background: var(--green);
-            border-radius: 50%;
-            box-shadow: 0 0 12px var(--green);
-            animation: pulse 1.6s infinite;
-        }
-
-        @keyframes pulse {
-            0% { opacity: 0.3; transform: scale(0.9); }
-            50% { opacity: 1; transform: scale(1.3); }
-            100% { opacity: 0.3; transform: scale(0.9); }
-        }
-
-        .main-ip {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 2.3rem;
-            font-weight: 800;
-            color: #fff;
-            margin: 8px 0 12px;
-            direction: ltr;
-            text-align: inherit;
-        }
-
-        .btn-action-group {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .btn-scan {
-            background: linear-gradient(135deg, var(--cyan), var(--blue));
-            color: #04070d;
-            border: none;
-            padding: 10px 22px;
-            border-radius: 10px;
-            font-size: 0.95rem;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 800;
-            box-shadow: 0 0 15px rgba(0, 242, 254, 0.3);
-        }
-
-        .btn-scan:hover { opacity: 0.9; transform: translateY(-1px); }
-
-        .btn-copy {
-            background: var(--surface-card);
-            border: 1px solid var(--border);
-            color: var(--text);
-            padding: 9px 16px;
-            border-radius: 10px;
-            font-size: 0.9rem;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 700;
-        }
-
-        .btn-copy:hover { border-color: var(--cyan); color: var(--cyan); }
-
-        /* Score Matrix */
-        .score-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-
-        .score-box {
-            background: var(--surface-card);
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 1.1rem;
-            text-align: center;
-        }
-
-        .score-val {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 2.2rem;
-            font-weight: 800;
-            line-height: 1.1;
-            margin-bottom: 4px;
-        }
-
-        /* Badges */
-        .badge {
-            font-size: 0.75rem;
-            font-weight: 800;
-            padding: 3px 8px;
-            border-radius: 6px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .badge-pass { background: rgba(0, 230, 118, 0.15); color: var(--green); border: 1px solid rgba(0, 230, 118, 0.3); }
-        .badge-warn { background: rgba(255, 171, 0, 0.15); color: var(--orange); border: 1px solid rgba(255, 171, 0, 0.3); }
-        .badge-error { background: rgba(255, 51, 102, 0.15); color: var(--red); border: 1px solid rgba(255, 51, 102, 0.3); }
-        .badge-info { background: rgba(0, 242, 254, 0.15); color: var(--cyan); border: 1px solid rgba(0, 242, 254, 0.3); }
-
-        /* Clocks */
-        .time-sync-board {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.2rem;
-            margin-bottom: 1.8rem;
-        }
-
-        .clock-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 1.2rem;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .clock-card.target { border-color: rgba(0, 242, 254, 0.4); }
-
-        .clock-time {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 1.9rem;
-            font-weight: 800;
-            color: #fff;
-            direction: ltr;
-            text-align: inherit;
-        }
-
-        /* Diagnostic Grids */
-        .section-header {
-            font-size: 1.25rem;
-            font-weight: 800;
-            color: #fff;
-            margin: 1.8rem 0 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 0.6rem;
-        }
-
-        .section-header span {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .diagnostic-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 1.1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .diag-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 1.1rem;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            gap: 8px;
-        }
-
-        .diag-card:hover { border-color: #2a3d58; }
-
-        .diag-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            color: var(--text-dim);
-            font-size: 0.85rem;
-            font-weight: 700;
-        }
-
-        .diag-val {
-            font-size: 1.05rem;
-            font-weight: 800;
-            color: #fff;
-            word-break: break-all;
-        }
-
-        .diag-val.mono {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.95rem;
-            direction: ltr;
-            text-align: inherit;
-        }
-
-        .diag-detail {
-            font-size: 0.75rem;
-            color: var(--text-dim);
-            line-height: 1.4;
-        }
-
-        /* 36 Specialized Tools */
-        .toolbox-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
-            gap: 10px;
-            margin-bottom: 2rem;
-        }
-
-        .tool-btn {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 10px 12px;
-            color: var(--text);
-            text-decoration: none;
-            font-size: 0.85rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-        }
-
-        .tool-btn:hover {
-            border-color: var(--cyan);
-            color: var(--cyan);
-            background: var(--surface-card);
-            transform: translateY(-2px);
-        }
-
-        /* Modal for Tool Results */
-        .modal-overlay {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.85);
-            backdrop-filter: blur(8px);
-            z-index: 2000;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 1.5rem;
-        }
-
-        .modal-card {
-            background: var(--surface);
-            border: 1px solid var(--cyan);
-            border-radius: 16px;
-            padding: 2rem;
-            max-width: 620px;
-            width: 100%;
-            box-shadow: 0 0 30px rgba(0, 242, 254, 0.25);
-            position: relative;
-            max-height: 85vh;
-            overflow-y: auto;
-        }
-
-        .modal-close {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: none;
-            border: none;
-            color: var(--text-dim);
-            font-size: 1.4rem;
-            cursor: pointer;
-        }
-
-        [dir="rtl"] .modal-close { right: auto; left: 15px; }
-        .modal-close:hover { color: var(--red); }
-
-        /* Floating AI Assistant Widget */
-        .ai-floating-btn {
-            position: fixed;
-            bottom: 25px;
-            right: 25px;
-            background: linear-gradient(135deg, var(--cyan), var(--blue));
-            color: #04070d;
-            width: 58px;
-            height: 58px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            cursor: pointer;
-            box-shadow: 0 0 25px rgba(0, 242, 254, 0.5);
-            z-index: 1500;
-            border: none;
-        }
-
-        [dir="rtl"] .ai-floating-btn { right: auto; left: 25px; }
-        .ai-floating-btn:hover { transform: scale(1.08); }
-
-        .ai-chat-window {
-            position: fixed;
-            bottom: 95px;
-            right: 25px;
-            width: 380px;
-            max-width: calc(100vw - 40px);
-            height: 500px;
-            background: var(--surface);
-            border: 1px solid var(--cyan);
-            border-radius: 18px;
-            box-shadow: 0 15px 45px rgba(0,0,0,0.8);
-            display: none;
-            flex-direction: column;
-            z-index: 1500;
-            overflow: hidden;
-        }
-
-        [dir="rtl"] .ai-chat-window { right: auto; left: 25px; }
-
-        .ai-chat-header {
-            background: var(--surface-card);
-            border-bottom: 1px solid var(--border);
-            padding: 12px 16px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            color: #fff;
-            font-weight: 800;
-        }
-
-        .ai-messages-area {
-            flex: 1;
-            padding: 14px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            font-size: 0.9rem;
-        }
-
-        .ai-msg {
-            padding: 10px 14px;
-            border-radius: 12px;
-            max-width: 85%;
-            line-height: 1.4;
-        }
-
-        .ai-msg.bot {
-            background: var(--surface-card);
-            border: 1px solid var(--border);
-            color: var(--text);
-            align-self: flex-start;
-        }
-
-        .ai-msg.user {
-            background: linear-gradient(135deg, var(--cyan), var(--blue));
-            color: #04070d;
-            font-weight: 700;
-            align-self: flex-end;
-        }
-
-        .ai-input-area {
-            display: flex;
-            border-top: 1px solid var(--border);
-            background: var(--surface-card);
-            padding: 8px;
-            gap: 6px;
-        }
-
-        .ai-input-area input {
-            flex: 1;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            color: #fff;
-            padding: 8px 12px;
-            border-radius: 8px;
-            outline: none;
-            font-size: 0.9rem;
-        }
-
-        .ai-input-area input:focus { border-color: var(--cyan); }
-
-        .ai-btn-send {
-            background: var(--cyan);
-            color: #04070d;
-            border: none;
-            padding: 0 14px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 800;
-        }
-
-        /* Banner Strips */
-        .banner-strip {
-            margin: 1.6rem 0;
-            text-align: center;
-            border-radius: 14px;
-            overflow: hidden;
-            border: 1px solid var(--border);
-            background: var(--surface);
-            padding: 8px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .banner-strip img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 8px;
-            display: block;
-        }
-
-        /* Blog Section */
-        .blog-section {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 1.8rem;
-            margin-bottom: 2rem;
-        }
-
-        .article-card {
-            background: var(--surface-card);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 1.2rem;
-            margin-bottom: 1rem;
-        }
-
-        .article-card h3 {
-            font-size: 1.1rem;
-            color: var(--cyan);
-            margin-bottom: 6px;
-        }
-
-        .article-card p {
-            color: var(--text-dim);
-            font-size: 0.9rem;
-            line-height: 1.6;
-        }
-
-        /* Support Box */
-        .support-box {
-            background: linear-gradient(135deg, rgba(0, 242, 254, 0.05), rgba(79, 172, 254, 0.02));
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 1.8rem;
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .support-links {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 15px;
-            flex-wrap: wrap;
-        }
-
-        .btn-support {
-            background: var(--surface-card);
-            border: 1px solid var(--border);
-            color: #fff;
-            padding: 10px 20px;
-            border-radius: 10px;
-            text-decoration: none;
-            font-weight: 700;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.9rem;
-        }
-
-        .btn-support.primary-tg {
-            background: #229ED9;
-            color: #fff;
-            box-shadow: 0 0 15px rgba(34, 158, 217, 0.35);
-        }
-
-        .btn-support:hover { border-color: var(--cyan); color: var(--cyan); }
-        .btn-support.primary-tg:hover { background: #1b86ba; color: #fff; }
-
-        footer {
-            margin-top: auto;
-            border-top: 1px solid var(--border);
-            background: var(--surface);
-            padding: 1.5rem;
-            text-align: center;
-            color: var(--text-dim);
-            font-size: 0.85rem;
-        }
-
-        @media (max-width: 768px) {
-            .hero-board, .time-sync-board, .score-grid { grid-template-columns: 1fr; }
-            .nav-links { display: none; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>NetShield Ultra | Digital Identity & Network Intelligence</title>
+
+<meta name="description" content="NetShield Ultra — live IP, network, privacy, browser fingerprint and device diagnostics.">
+<meta name="theme-color" content="#04070d">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Tajawal:wght@400;500;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+<style>
+:root{
+ --bg:#03060b;
+ --surface:#080e17;
+ --card:#0c1420;
+ --card2:#101a29;
+ --border:#1b2a3d;
+ --cyan:#00eaff;
+ --blue:#4ca9ff;
+ --green:#00e676;
+ --red:#ff3d6e;
+ --orange:#ffb000;
+ --purple:#b987ff;
+ --text:#f3f7fc;
+ --muted:#8495ad;
+ --shadow:0 18px 50px rgba(0,0,0,.55);
+}
+
+*{
+ box-sizing:border-box;
+ margin:0;
+ padding:0;
+ font-family:'Space Grotesk','Tajawal',sans-serif;
+}
+
+html{scroll-behavior:smooth}
+
+body{
+ min-height:100vh;
+ color:var(--text);
+ background:
+ radial-gradient(circle at 50% -10%,rgba(0,234,255,.12),transparent 42%),
+ radial-gradient(circle at 100% 100%,rgba(76,169,255,.06),transparent 40%),
+ linear-gradient(rgba(255,255,255,.012) 1px,transparent 1px),
+ linear-gradient(90deg,rgba(255,255,255,.012) 1px,transparent 1px),
+ var(--bg);
+ background-size:100% 100%,100% 100%,32px 32px,32px 32px;
+ overflow-x:hidden;
+}
+
+button,input,select{font:inherit}
+
+button{cursor:pointer}
+
+a{color:inherit}
+
+nav{
+ position:sticky;
+ top:0;
+ z-index:1000;
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ gap:15px;
+ padding:12px 22px;
+ background:rgba(5,9,15,.92);
+ backdrop-filter:blur(18px);
+ border-bottom:1px solid var(--border);
+ box-shadow:0 8px 30px rgba(0,0,0,.45);
+}
+
+.brand{
+ display:flex;
+ align-items:center;
+ gap:10px;
+ font-weight:900;
+ font-size:1.25rem;
+}
+
+.brandIcon{
+ width:40px;
+ height:40px;
+ border-radius:12px;
+ display:grid;
+ place-items:center;
+ color:#001018;
+ background:linear-gradient(135deg,var(--cyan),var(--blue));
+ box-shadow:0 0 22px rgba(0,234,255,.4);
+}
+
+.navRight{
+ display:flex;
+ align-items:center;
+ gap:8px;
+}
+
+.navBtn,.lang{
+ background:var(--card);
+ border:1px solid var(--border);
+ color:var(--text);
+ border-radius:9px;
+ padding:8px 12px;
+ font-weight:700;
+}
+
+.navBtn:hover,.lang:hover{
+ border-color:var(--cyan);
+ color:var(--cyan);
+}
+
+.container{
+ width:min(1220px,100%);
+ margin:auto;
+ padding:22px 14px 45px;
+}
+
+.hero{
+ display:grid;
+ grid-template-columns:1.35fr 1fr;
+ gap:18px;
+ padding:25px;
+ border:1px solid var(--border);
+ border-radius:20px;
+ background:linear-gradient(145deg,rgba(10,18,30,.98),rgba(5,10,17,.98));
+ box-shadow:var(--shadow);
+ position:relative;
+ overflow:hidden;
+}
+
+.hero:before{
+ content:"";
+ position:absolute;
+ left:0;
+ right:0;
+ top:0;
+ height:3px;
+ background:linear-gradient(90deg,var(--cyan),var(--blue),var(--green),var(--purple));
+ box-shadow:0 0 18px var(--cyan);
+}
+
+.live{
+ display:flex;
+ align-items:center;
+ gap:8px;
+ color:var(--cyan);
+ font-size:.85rem;
+ font-weight:800;
+}
+
+.dot{
+ width:9px;
+ height:9px;
+ border-radius:50%;
+ background:var(--green);
+ box-shadow:0 0 12px var(--green);
+ animation:pulse 1.5s infinite;
+}
+
+@keyframes pulse{
+ 50%{transform:scale(1.35);opacity:.5}
+}
+
+.mainIP{
+ margin:13px 0;
+ font:800 2.3rem 'JetBrains Mono',monospace;
+ direction:ltr;
+ word-break:break-all;
+}
+
+.sub{
+ color:var(--muted);
+ line-height:1.6;
+}
+
+.actions{
+ display:flex;
+ flex-wrap:wrap;
+ gap:9px;
+ margin-top:18px;
+}
+
+.primary{
+ border:0;
+ border-radius:10px;
+ padding:11px 17px;
+ color:#001016;
+ background:linear-gradient(135deg,var(--cyan),var(--blue));
+ font-weight:900;
+ box-shadow:0 0 20px rgba(0,234,255,.25);
+}
+
+.secondary{
+ border:1px solid var(--border);
+ border-radius:10px;
+ padding:10px 15px;
+ color:var(--text);
+ background:var(--card);
+ font-weight:800;
+}
+
+.secondary:hover{
+ border-color:var(--cyan);
+ color:var(--cyan);
+}
+
+.scores{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:10px;
+}
+
+.score{
+ background:var(--card);
+ border:1px solid var(--border);
+ border-radius:14px;
+ padding:17px;
+ text-align:center;
+}
+
+.score small{
+ color:var(--muted);
+ font-weight:800;
+ display:block;
+ margin-bottom:7px;
+}
+
+.scoreValue{
+ font:800 2rem 'JetBrains Mono',monospace;
+}
+
+.badge{
+ display:inline-flex;
+ padding:3px 8px;
+ border-radius:7px;
+ margin-top:7px;
+ font-size:.7rem;
+ font-weight:900;
+ letter-spacing:.4px;
+}
+
+.pass{color:var(--green);background:rgba(0,230,118,.1);border:1px solid rgba(0,230,118,.25)}
+.warn{color:var(--orange);background:rgba(255,176,0,.1);border:1px solid rgba(255,176,0,.25)}
+.fail{color:var(--red);background:rgba(255,61,110,.1);border:1px solid rgba(255,61,110,.25)}
+.info{color:var(--cyan);background:rgba(0,234,255,.1);border:1px solid rgba(0,234,255,.25)}
+
+.sectionTitle{
+ margin:27px 0 12px;
+ display:flex;
+ align-items:center;
+ gap:9px;
+ padding-bottom:8px;
+ border-bottom:1px solid var(--border);
+ font-weight:900;
+ font-size:1.18rem;
+}
+
+.sectionTitle i{color:var(--cyan)}
+
+.grid{
+ display:grid;
+ grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+ gap:11px;
+}
+
+.card{
+ background:rgba(8,14,23,.92);
+ border:1px solid var(--border);
+ border-radius:13px;
+ padding:15px;
+ min-height:120px;
+ transition:.2s;
+}
+
+.card:hover{
+ transform:translateY(-2px);
+ border-color:#29405c;
+ box-shadow:0 10px 25px rgba(0,0,0,.2);
+}
+
+.cardHead{
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ gap:10px;
+ color:var(--muted);
+ font-size:.82rem;
+ font-weight:800;
+}
+
+.value{
+ margin:10px 0 6px;
+ font-weight:900;
+ font-size:1.05rem;
+ word-break:break-word;
+}
+
+.mono{
+ font-family:'JetBrains Mono',monospace;
+ direction:ltr;
+}
+
+.detail{
+ color:var(--muted);
+ font-size:.75rem;
+ line-height:1.45;
+}
+
+.clockGrid{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:12px;
+}
+
+.clock{
+ background:var(--card);
+ border:1px solid var(--border);
+ border-radius:13px;
+ padding:16px;
+}
+
+.clock strong{
+ display:block;
+ color:var(--muted);
+ font-size:.8rem;
+ margin-bottom:8px;
+}
+
+.clockTime{
+ font:800 1.8rem 'JetBrains Mono',monospace;
+}
+
+.advisor{
+ background:linear-gradient(135deg,rgba(0,234,255,.045),rgba(76,169,255,.025));
+ border:1px solid var(--border);
+ border-radius:15px;
+ padding:16px;
+}
+
+.advice{
+ display:flex;
+ align-items:flex-start;
+ justify-content:space-between;
+ gap:12px;
+ padding:12px;
+ border:1px solid var(--border);
+ background:var(--card);
+ border-radius:10px;
+ margin-top:9px;
+}
+
+.adviceText{
+ line-height:1.55;
+ font-size:.86rem;
+}
+
+.tools{
+ display:grid;
+ grid-template-columns:repeat(auto-fill,minmax(175px,1fr));
+ gap:9px;
+}
+
+.tool{
+ border:1px solid var(--border);
+ background:var(--card);
+ color:var(--text);
+ border-radius:10px;
+ padding:11px 10px;
+ display:flex;
+ align-items:center;
+ gap:8px;
+ font-size:.82rem;
+ font-weight:800;
+ transition:.18s;
+}
+
+.tool:hover{
+ color:var(--cyan);
+ border-color:var(--cyan);
+ transform:translateY(-2px);
+}
+
+.tool i{color:var(--cyan)}
+
+.knowledge{
+ background:var(--surface);
+ border:1px solid var(--border);
+ border-radius:15px;
+ padding:18px;
+}
+
+.article{
+ background:var(--card);
+ border:1px solid var(--border);
+ border-radius:11px;
+ padding:14px;
+ margin-top:10px;
+}
+
+.article h3{
+ color:var(--cyan);
+ font-size:.98rem;
+ margin-bottom:6px;
+}
+
+.article p{
+ color:var(--muted);
+ line-height:1.6;
+ font-size:.84rem;
+}
+
+.support{
+ text-align:center;
+ background:linear-gradient(135deg,rgba(0,234,255,.05),rgba(76,169,255,.03));
+ border:1px solid var(--border);
+ border-radius:15px;
+ padding:22px;
+ margin-top:22px;
+}
+
+.supportBtns{
+ display:flex;
+ justify-content:center;
+ flex-wrap:wrap;
+ gap:10px;
+ margin-top:13px;
+}
+
+.supportBtn{
+ text-decoration:none;
+ border:1px solid var(--border);
+ border-radius:10px;
+ padding:10px 16px;
+ background:var(--card);
+ font-weight:800;
+}
+
+.telegram{
+ background:#229ed9;
+ border-color:#229ed9;
+ color:white;
+}
+
+footer{
+ text-align:center;
+ padding:22px;
+ color:var(--muted);
+ font-size:.78rem;
+ border-top:1px solid var(--border);
+}
+
+.modal{
+ position:fixed;
+ inset:0;
+ z-index:5000;
+ background:rgba(0,0,0,.82);
+ backdrop-filter:blur(8px);
+ display:none;
+ align-items:center;
+ justify-content:center;
+ padding:15px;
+}
+
+.modalBox{
+ width:min(720px,100%);
+ max-height:88vh;
+ overflow:auto;
+ background:var(--surface);
+ border:1px solid var(--cyan);
+ border-radius:17px;
+ padding:20px;
+ box-shadow:0 0 50px rgba(0,234,255,.15);
+}
+
+.modalTop{
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ gap:10px;
+ border-bottom:1px solid var(--border);
+ padding-bottom:12px;
+ margin-bottom:14px;
+}
+
+.close{
+ background:none;
+ border:0;
+ color:var(--muted);
+ font-size:1.5rem;
+}
+
+.result{
+ background:var(--card);
+ border:1px solid var(--border);
+ border-radius:11px;
+ padding:14px;
+ margin-top:10px;
+ line-height:1.65;
+ font-size:.86rem;
+}
+
+.result strong{color:#fff}
+
+pre{
+ white-space:pre-wrap;
+ word-break:break-word;
+ max-height:300px;
+ overflow:auto;
+ background:#050a11;
+ border:1px solid var(--border);
+ border-radius:9px;
+ padding:12px;
+ color:var(--muted);
+}
+
+.aiBtn{
+ position:fixed;
+ right:22px;
+ bottom:22px;
+ z-index:4500;
+ width:60px;
+ height:60px;
+ border:0;
+ border-radius:50%;
+ background:linear-gradient(135deg,var(--cyan),var(--blue));
+ color:#001016;
+ font-size:1.5rem;
+ box-shadow:0 0 30px rgba(0,234,255,.45);
+}
+
+.aiWindow{
+ position:fixed;
+ right:22px;
+ bottom:95px;
+ z-index:4500;
+ width:min(410px,calc(100vw - 30px));
+ height:570px;
+ background:var(--surface);
+ border:1px solid var(--cyan);
+ border-radius:17px;
+ display:none;
+ flex-direction:column;
+ overflow:hidden;
+ box-shadow:0 20px 60px rgba(0,0,0,.8);
+}
+
+.aiHeader{
+ padding:13px 15px;
+ background:var(--card);
+ border-bottom:1px solid var(--border);
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ font-weight:900;
+}
+
+.aiMessages{
+ flex:1;
+ overflow:auto;
+ padding:12px;
+ display:flex;
+ flex-direction:column;
+ gap:9px;
+}
+
+.msg{
+ max-width:88%;
+ padding:10px 12px;
+ border-radius:11px;
+ line-height:1.5;
+ font-size:.84rem;
+ white-space:pre-wrap;
+}
+
+.msg.bot{
+ background:var(--card2);
+ border:1px solid var(--border);
+ align-self:flex-start;
+}
+
+.msg.user{
+ background:linear-gradient(135deg,var(--cyan),var(--blue));
+ color:#001016;
+ font-weight:800;
+ align-self:flex-end;
+}
+
+.aiInput{
+ display:flex;
+ gap:7px;
+ padding:8px;
+ border-top:1px solid var(--border);
+ background:var(--card);
+}
+
+.aiInput input{
+ min-width:0;
+ flex:1;
+ background:#050a11;
+ border:1px solid var(--border);
+ color:white;
+ border-radius:9px;
+ padding:10px;
+ outline:none;
+}
+
+.aiInput input:focus{border-color:var(--cyan)}
+
+.aiSend{
+ border:0;
+ border-radius:9px;
+ width:46px;
+ background:var(--cyan);
+ color:#001016;
+}
+
+.chips{
+ display:flex;
+ gap:6px;
+ flex-wrap:wrap;
+ padding:0 12px 9px;
+}
+
+.chip{
+ border:1px solid var(--border);
+ background:var(--card);
+ color:var(--muted);
+ border-radius:20px;
+ padding:6px 9px;
+ font-size:.7rem;
+ cursor:pointer;
+}
+
+.chip:hover{
+ color:var(--cyan);
+ border-color:var(--cyan);
+}
+
+@media(max-width:800px){
+ nav{padding:10px 12px}
+ .navLinks{display:none}
+ .hero{grid-template-columns:1fr;padding:18px}
+ .mainIP{font-size:1.65rem}
+ .clockGrid{grid-template-columns:1fr}
+}
+
+@media(max-width:500px){
+ .container{padding:12px 9px 35px}
+ .scores{grid-template-columns:1fr 1fr}
+ .tools{grid-template-columns:repeat(2,1fr)}
+ .tool{font-size:.72rem;padding:9px}
+ .aiWindow{right:8px;bottom:85px;width:calc(100vw - 16px)}
+ .aiBtn{right:14px;bottom:14px}
+}
+</style>
 </head>
+
 <body>
 
-    <!-- Top Sliding Drawer / HUD -->
-    <div class="top-drawer" id="topDrawer">
-        <div class="drawer-header">
-            <span style="font-size:1.15rem; font-weight:800; color:#fff; display:flex; align-items:center; gap:8px;">
-                <i class="fa-solid fa-layer-group" style="color:var(--cyan);"></i> <span id="t_drawer_title">Quick Access HUD & Diagnostics</span>
-            </span>
-            <button class="btn-toggle-drawer" onclick="toggleDrawer()"><i class="fa-solid fa-xmark"></i> Close</button>
-        </div>
-        <div class="drawer-grid">
-            <a href="https://t.me/NetShieldSupport" target="_blank" rel="noopener noreferrer" class="drawer-item primary-tg">
-                <strong style="color:#fff; font-size:1.05rem;"><i class="fa-brands fa-telegram"></i> Telegram Priority Support</strong>
-                <span style="font-size:0.8rem; color:rgba(255,255,255,0.85);">@NetShieldSupport (Instant 24/7 Response)</span>
-            </a>
-            <a href="#audit-sec" class="drawer-item" onclick="toggleDrawer()">
-                <strong style="color:var(--cyan);"><i class="fa-solid fa-bolt"></i> Master Full Scan</strong>
-                <span style="font-size:0.8rem; color:var(--text-dim);">Run 27 real-time integrity tests</span>
-            </a>
-            <a href="#toolbox-sec" class="drawer-item" onclick="toggleDrawer()">
-                <strong style="color:var(--green);"><i class="fa-solid fa-toolbox"></i> 36 Tool modules</strong>
-                <span style="font-size:0.8rem; color:var(--text-dim);">Run standalone DNS, WHOIS & Leaks</span>
-            </a>
-            <a href="mailto:netshieldprosupport@gmail.com" class="drawer-item">
-                <strong style="color:var(--orange);"><i class="fa-solid fa-envelope"></i> Email Helpdesk</strong>
-                <span style="font-size:0.8rem; color:var(--text-dim);">netshieldprosupport@gmail.com</span>
-            </a>
-        </div>
-    </div>
-
-    <!-- Navigation Bar -->
-    <nav>
-        <div class="brand">
-            <div class="brand-icon"><i class="fa-solid fa-shield-halved"></i></div>
-            <span>NetShield Ultra</span>
-        </div>
-        <div class="nav-controls">
-            <a href="https://t.me/NetShieldSupport" target="_blank" rel="noopener noreferrer" class="btn-toggle-drawer" style="background:#229ED9; color:#fff; border:none;">
-                <i class="fa-brands fa-telegram"></i> <span id="t_btn_tg_nav">Telegram Help</span>
-            </a>
-            <button class="btn-toggle-drawer" onclick="toggleDrawer()">
-                <i class="fa-solid fa-bars-staggered"></i> <span id="t_btn_hud">Quick Drawer</span>
-            </button>
-            <div class="nav-links">
-                <a href="#audit-sec" id="t_nav_scan">Full Scan</a>
-                <a href="#toolbox-sec" id="t_nav_tools">Toolbox</a>
-                <a href="#blog-sec" id="t_nav_blog">Knowledge Base</a>
-                <a href="#support-sec" id="t_nav_support">Support</a>
-            </div>
-            <select class="lang-btn" id="langSelector" onchange="switchLang(this.value)">
-                <option value="en">English (US)</option>
-                <option value="ar">العربية (AR)</option>
-                <option value="ru">Русский (RU)</option>
-            </select>
-        </div>
-    </nav>
-
-    <div class="container">
-
-        <!-- 1. Hero & Master Diagnostic Dashboard -->
-        <div class="hero-board" id="audit-sec">
-            <div>
-                <div class="ip-meta-tag">
-                    <span class="pulse-dot"></span>
-                    <span id="t_hero_tag">Master Cyber Diagnostics & Digital Identity Platform</span>
-                </div>
-                <div class="main-ip" id="userIP">Analyzing Real-time Connection...</div>
-                
-                <div class="btn-action-group">
-                    <button class="btn-scan" onclick="runFullScanEngine()">
-                        <i class="fa-solid fa-bolt"></i> <span id="t_btn_run">Run Master Full Scan</span>
-                    </button>
-                    <button class="btn-copy" onclick="copyAuditReport()">
-                        <i class="fa-regular fa-copy"></i> <span id="t_btn_copy">Copy Report</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Multi-Score Matrix -->
-            <div class="score-grid">
-                <div class="score-box">
-                    <div style="font-size:0.75rem; color:var(--text-dim); font-weight:800; margin-bottom:4px;" id="t_score_priv">Privacy Score</div>
-                    <div class="score-val" id="privacyScore" style="color:var(--green);">100%</div>
-                    <span class="badge badge-pass" id="badgePriv">OPTIMAL</span>
-                </div>
-                <div class="score-box">
-                    <div style="font-size:0.75rem; color:var(--text-dim); font-weight:800; margin-bottom:4px;" id="t_score_risk">Fraud Risk Score</div>
-                    <div class="score-val" id="riskScore" style="color:var(--green);">0%</div>
-                    <span class="badge badge-pass" id="badgeRisk">CLEAN</span>
-                </div>
-                <div class="score-box">
-                    <div style="font-size:0.75rem; color:var(--text-dim); font-weight:800; margin-bottom:4px;" id="t_score_conf">Confidence Level</div>
-                    <div class="score-val" id="confScore" style="color:var(--cyan);">100%</div>
-                    <span class="badge badge-info" id="badgeConf">Direct Consensus</span>
-                </div>
-                <div class="score-box">
-                    <div style="font-size:0.75rem; color:var(--text-dim); font-weight:800; margin-bottom:4px;" id="t_score_bot">Automation / Bot</div>
-                    <div class="score-val" id="botScore" style="color:var(--green);">0%</div>
-                    <span class="badge badge-pass" id="badgeBot">Human UA</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- 2. Dual Real-Time Clock Board -->
-        <div class="time-sync-board">
-            <div class="clock-card target">
-                <div style="font-size:0.85rem; color:var(--text-dim); display:flex; justify-content:space-between; font-weight:800;">
-                    <span id="t_target_clock">Target IP Clock (Must Match This)</span>
-                    <i class="fa-solid fa-crosshairs" style="color:var(--cyan);"></i>
-                </div>
-                <div class="clock-time" id="ipClock">--:--:--</div>
-                <div style="font-size:0.85rem; color:var(--cyan); font-weight:800;" id="ipZoneName">Synchronizing Zone...</div>
-            </div>
-
-            <div class="clock-card">
-                <div style="font-size:0.85rem; color:var(--text-dim); display:flex; justify-content:space-between; font-weight:800;">
-                    <span id="t_device_clock">Your Current System Time</span>
-                    <i class="fa-solid fa-laptop"></i>
-                </div>
-                <div class="clock-time" id="systemClock">--:--:--</div>
-                <div style="font-size:0.85rem; color:var(--text-dim); font-weight:800;" id="systemZoneName">System Locale</div>
-            </div>
-        </div>
-
-        <!-- 3. Smart Advisor & Mitigation Checklist -->
-        <div class="diagnostic-grid" style="grid-template-columns:1fr; margin-bottom:1.8rem;">
-            <div class="diag-card" style="padding:1.4rem;">
-                <div class="diag-header">
-                    <span style="font-size:1.1rem; color:#fff; display:flex; align-items:center; gap:8px;">
-                        <i class="fa-solid fa-wand-magic-sparkles" style="color:var(--orange);"></i>
-                        <span id="t_adv_title">Smart Optimization Checklist & Advisor</span>
-                    </span>
-                    <span class="badge badge-pass" id="auditTimestamp">LIVE SCAN</span>
-                </div>
-                <div id="advisorContainer" style="display:flex; flex-direction:column; gap:10px; margin-top:8px;"></div>
-            </div>
-        </div>
-
-        <!-- Banner AdsPower -->
-        <div class="banner-strip">
-            <a href="https://www.adspower.com/share/GXxIGf" target="_blank" rel="noopener noreferrer">
-                <img src="https://app.adspower.com/static/jpg/reward_post_2_EN.YacFe4vg.jpg" alt="AdsPower Anti-Detect Browser">
-            </a>
-        </div>
-
-        <!-- 4. Section: IP & Network Infrastructure -->
-        <div class="section-header">
-            <span><i class="fa-solid fa-network-wired" style="color:var(--cyan);"></i> <span id="t_sec_ip">IP & Network Intelligence</span></span>
-        </div>
-        <div class="diagnostic-grid">
-            <div class="diag-card">
-                <div class="diag-header"><span>IPv4 Address</span><span class="badge badge-pass" id="b_v4">PASS</span></div>
-                <div class="diag-val mono" id="v_v4">-</div>
-                <div class="diag-detail">Public Internet Protocol v4</div>
-            </div>
-            <div class="diag-card">
-                <div class="diag-header"><span>IPv6 Address</span><span class="badge badge-info" id="b_v6">INFO</span></div>
-                <div class="diag-val mono" id="v_v6">Not Assigned</div>
-                <div class="diag-detail">IPv6 Leak & Route Status</div>
-            </div>
-            <div class="diag-card">
-                <div class="diag-header"><span>ISP & Organization</span><span class="badge badge-pass" id="b_isp">PASS</span></div>
-                <div class="diag-val" id="v_isp">-</div>
-                <div class="diag-detail">Carrier Routing Route</div>
-            </div>
-            <div class="diag-card">
-                <div class="diag-header"><span>ASN & BGP Route</span><span class="badge badge-pass" id="b_asn">PASS</span></div>
-                <div class="diag-val mono" id="v_asn">-</div>
-                <div class="diag-detail">Autonomous System Number</div>
-            </div>
-            <div class="diag-card">
-                <div class="diag-header"><span>IP Classification</span><span class="badge badge-pass" id="b_iptype">RESIDENTIAL</span></div>
-                <div class="diag-val" id="v_iptype">Residential ISP</div>
-                <div class="diag-detail">Non-Datacenter Whitelisted Subnet</div>
-            </div>
-            <div class="diag-card">
-                <div class="diag-header"><span>Geolocation (City/Country)</span><span class="badge badge-pass" id="b_geo">PASS</span></div>
-                <div class="diag-val" id="v_geo">-</div>
-                <div class="diag-detail">Regional City & Country Coordinates</div>
-            </div>
-        </div>
-
-        <!-- 5. Section: VPN, Proxy & Tunnel Detection -->
-        <div class="section-header">
-            <span><i class="fa-solid fa-shield-halved" style="color:var(--green);"></i> <span id="t_sec_proxy">VPN, Proxy & Tunnel Detection</span></span>
-        </div>
-        <div class="diagnostic-grid">
-            <div class="diag-card">
-                <div class="diag-header"><span>VPN Detection Status</span><span class="badge badge-pass" id="b_vpn">CLEAN</span></div>
-                <div class="diag-val" id="v_vpn">Negative (Direct ISP)</div>
-                <div class="diag-detail">OpenVPN / WireGuard / IPsec Tunnel Inspection</div>
-            </div>
-            <div class="diag-card">
-                <div class="diag-header"><span>Proxy & Tor Node</span><span class="badge badge-pass" id="b_proxy">CLEAN</span></div>
-                <div class="diag-val" id="v_proxy">Negative (No Proxy)</div>
-                <div class="diag-detail">HTTP / HTTPS / SOCKS4 / SOCKS5 / Tor Exit Check</div>
-            </div>
-            <div class="diag-card">
-                <div class="diag-header"><span>Proxy Headers Analysis</span><span class="badge badge-pass" id="b_headers">PASS</span></div>
-                <div class="diag-val mono" id="v_headers">No Leaked Headers</div>
-                <div class="diag-detail">X-Forwarded-For, Via, X-Real-IP, Forwarded</div>
-            </div>
-            <div class="diag-card">
-                <div class="diag-header"><span>Blacklist & Abuse Rep</span><span class="badge badge-pass" id="b_bl">CLEAN</span></div>
-                <div class="diag-val mono" id="v_bl">0/68 Databases</div>
-                <div class="diag-detail">Spamhaus, AbuseIPDB, SURBL, Barracuda Score</div>
-            </div>
-        </div>
-
-        <!-- 6. Section: Privacy Leaks & Consistency -->
-        <div class="section-header">
-            <span><i class="fa-solid fa-user-secret" style="color:var(--purple);"></i> <span id="t_sec_leak">Privacy Leaks & Consistency Audit</span></span>
-        </div>
-        <div class="diagnostic-grid">
-            <div class="diag-card">
-                <div class="diag-header"><span>WebRTC Leak Test</span><span class="badge badge-pass" id="b_webrtc">SECURED</span></div>
-                <div class="diag-val mono" id="v_webrtc">No Internal IP Leaked</div>
-                <div class="diag-detail">STUN / TURN ICE Candidate Traversal</div>
-            </div>
-            <div class="diag-card">
-                <div class="diag-header"><span>Timezone Sync Match</span><span class="badge badge-pass" id="b_tzmatch">MATCHED</span></div>
-                <div class="diag-val mono" id="v_tzmatch">0 Hr Discrepancy</div>
-                <div class="diag-detail">Browser Intl API vs IP Geo Timezone</div>
-            </div>
-            <div class="diag-card">
-                <div class="diag-header"><span>Language & Locale Match</span><span class="badge badge-pass" id="b_langmatch">MATCHED</span></div>
-                <div class="diag-val" id="v_langmatch">Consistent Locale</div>
-                <div class="diag-detail">Accept-Language vs Regional Geolocation</div>
-            </div>
-            <div class="diag-card">
-                <div class="diag-header"><span>WebSocket & Latency Test</span><span class="badge badge-pass" id="b_latency">NATURAL</span></div>
-                <div class="diag-val mono" id="v_latency">48 ms</div>
-                <div class="diag-detail">Tunnel Delay & RTT Jitter Integrity</div>
-            </div>
-        </div>
-
-        <!-- 7. Section: Browser Fingerprint & Hardware -->
-        <div class="section-header">
-            <span><i class="fa-solid fa-microchip" style="color:var(--orange);"></i> <span id="t_sec_fp">Browser Fingerprint & Hardware Engine</span></span>
-        </div>
-        <div class="diagnostic-grid">
-            <div class="diag-card">
-                <div class="diag-header"><span>Canvas & WebGL Hash</span><span class="badge badge-pass" id="b_canvas">PASS</span></div>
-                <div class="diag-val mono" id="v_canvas">0x7F4A88C1</div>
-                <div class="diag-detail">2D Canvas Rendering Uniqueness Metric</div>
-            </div>
-            <div class="diag-card">
-                <div class="diag-header"><span>CPU Cores & RAM</span><span class="badge badge-pass" id="b_hw">AUTHENTIC</span></div>
-                <div class="diag-val mono" id="v_hw">-</div>
-                <div class="diag-detail">Hardware Concurrency & Device Memory</div>
-            </div>
-            <div class="diag-card">
-                <div class="diag-header"><span>Headless & Bot Flags</span><span class="badge badge-pass" id="b_botflag">NEGATIVE</span></div>
-                <div class="diag-val" id="v_botflag">Genuine User Agent</div>
-                <div class="diag-detail">WebDriver, PhantomJS, Puppeteer, Selenium</div>
-            </div>
-            <div class="diag-card">
-                <div class="diag-header"><span>Screen Resolution & Color</span><span class="badge badge-info" id="b_screen">INFO</span></div>
-                <div class="diag-val mono" id="v_screen">-</div>
-                <div class="diag-detail">Viewport, Color Depth & Pixel Ratio</div>
-            </div>
-        </div>
-
-        <!-- Banner IPRoyal -->
-        <div class="banner-strip">
-            <a href="https://iproyal.com/?r=1528614" target="_blank" rel="noopener noreferrer">
-                <img src="https://dashboard.iproyal.com/img/b/728_1.jpg" alt="IPRoyal Residential Proxies">
-            </a>
-        </div>
-
-        <!-- 8. Section: 36 Standalone Diagnostic Tools -->
-        <div class="section-header" id="toolbox-sec">
-            <span><i class="fa-solid fa-toolbox" style="color:var(--cyan);"></i> <span id="t_sec_toolbox">Standalone Cyber Toolbox (36 Specialized Tools)</span></span>
-        </div>
-        <div class="toolbox-grid">
-            <div class="tool-btn" onclick="executeInteractiveTool('IP Lookup')"><i class="fa-solid fa-search"></i> IP Lookup</div>
-            <div class="tool-btn" onclick="executeInteractiveTool('IP WHOIS')"><i class="fa-solid fa-id-card"></i> IP WHOIS</div>
-            <div class="tool-btn" onclick="executeInteractiveTool('Reverse IP')"><i class="fa-solid fa-undo"></i> Reverse IP</div>
-            <div class="tool-btn" onclick="executeInteractiveTool('DNS Lookup')"><i class="fa-solid fa-server"></i> DNS Lookup</div>
-            <div class="tool-btn" onclick="executeInteractiveTool('Reverse DNS')"><i class="fa-solid fa-route"></i> Reverse DNS</div>
-            <div class="tool-btn" onclick="executeInteractiveTool('ASN Lookup')"><i class="fa-solid fa-network-wired"></i> ASN Lookup</div>
-            <div class="tool-btn" onclick="executeInteractiveTool('CIDR Calculator')"><i class="fa-solid fa-calculator"></i> CIDR Calc</div>
-            <div class="tool-btn" onclick="executeInteractiveTool('Subnet Calculator')"><i class="fa-solid fa-sitemap"></i> Subnet Calc</div>
-            <div class="tool-btn" onclick="executeInteractiveTool('IPv6 Calculator')"><i class="fa-solid fa-microchip"></i> IPv6 Calc</div>
-            <div class="tool-btn" onclick="executeInteractiveTool('IP Converter')"><i class="fa-solid fa-exchange-alt"></i> IP Converter</div>
-            <div class="tool-btn" onclick="executeInteractiveTool('Domain WHOIS')"><i class="fa-solid fa-globe"></i> Domain WHOIS</div>
-            <div class="tool-btn" onclick="executeInteractiveTool('DNS Propagation')"><i class="fa-solid fa-broadcast-tower"></i> DNS Spread</div>
-            <div class="tool-btn" onclick="executeInteractiveTool('HTTP Headers')"><i class="fa-solid fa-heading"></i> Headers Scan</div>
-            <div class="tool-btn" onclick="executeInteractiveTool('SSL Checker')"><i class="fa-solid fa-lock"></i> SSL Checker</div>
-            <div class="tool-btn" onclick="executeInteractiveTool('Security Headers')"><i class="fa-solid fa-shield-alt"></i> Security Hdr</div>
-            <div class="tool-btn" onclick="executeInteractiveTool('Redirect Checker')"><i class="fa-solid fa-random"></i> Redirects</div>
-            <div class="tool-btn" onclick="executeInteractiveTool('User-Agent Parser')"><i class="fa-solid fa-fingerprint"></i> UA Parser</div>
-            <div class="tool-btn" onclick="executeInteractiveTool('CDN Detector')"><i class="fa-solid fa-cloud"></i> CDN Detect</div>
-            <div class="tool-btn" onclick="executeInteractiveTool('Hosting Detector')"><i class="fa-solid fa-building"></i> Hosting Detect</div>
-            <div class="tool-btn" onclick="executeInteractiveTool('VPN Checker')"><i class="fa-solid fa-shield-virus"></i> VPN Checker</div>
-            <div class="tool-btn" onclick="executeInteractiveTool('Proxy Checker')"><i class="fa-solid fa-filter"></i> Proxy Check</div>
-            <div class="tool-btn" onclick="executeInteractiveTool('Tor Node Checker')"><i class="fa-solid fa-eye-slash"></i> Tor Checker</div>
-            <div class="tool-btn" onclick="executeInteractiveTool('DNS Leak Checker')"><i class="fa-solid fa-tint-slash"></i> DNS Leak</div>
-            <div class="tool-btn" onclick="executeInteractiveTool('WebRTC Leak')"><i class="fa-solid fa-plug"></i> WebRTC Leak</div>
-            <div class="tool-btn" onclick="executeInteractiveTool('Blacklist Checker')"><i class="fa-solid fa-ban"></i> Blacklist</div>
-            <div class="tool-btn" onclick="executeInteractiveTool('SPF & DKIM Check')"><i class="fa-solid fa-envelope-shield"></i> Email Security</div>
-            <div class="tool-btn" onclick="executeInteractiveTool('DMARC Analyzer')"><i class="fa-solid fa-mail-bulk"></i> DMARC Check</div>
-            <div class="tool-btn" onclick="executeInteractiveTool('Ping & Latency')"><i class="fa-solid fa-stopwatch"></i> Ping Test</div>
-            <div class="tool-btn" onclick="executeInteractiveTool('Port Scanner Safe')"><i class="fa-solid fa-door-open"></i> Safe Ports</div>
-            <div class="tool-btn" onclick="executeInteractiveTool('Cloud Provider')"><i class="fa-solid fa-cloud-upload-alt"></i> Cloud Host</div>
-            <div class="tool-btn" onclick="executeInteractiveTool('TLS Version')"><i class="fa-solid fa-key"></i> TLS Version</div>
-            <div class="tool-btn" onclick="executeInteractiveTool('HSTS Check')"><i class="fa-solid fa-user-lock"></i> HSTS Status</div>
-            <div class="tool-btn" onclick="executeInteractiveTool('Robots.txt Checker')"><i class="fa-solid fa-robot"></i> Robots.txt</div>
-            <div class="tool-btn" onclick="executeInteractiveTool('Sitemap XML')"><i class="fa-solid fa-map"></i> Sitemap Scan</div>
-            <div class="tool-btn" onclick="executeInteractiveTool('Fingerprint Hash')"><i class="fa-solid fa-fingerprint"></i> Canvas Hash</div>
-            <div class="tool-btn" onclick="executeInteractiveTool('Full System Audit')"><i class="fa-solid fa-bolt"></i> Master Audit</div>
-        </div>
-
-        <!-- 9. Section: Knowledge Base & Guides -->
-        <div class="blog-section" id="blog-sec">
-            <div class="section-header" style="margin-top:0;">
-                <span><i class="fa-solid fa-book-open-reader" style="color:var(--cyan);"></i> <span id="t_blog_title">Anti-Ban & Identity Protection Knowledge Base</span></span>
-            </div>
-            <div class="article-card">
-                <h3 id="t_art1_h">1. Advanced Proxy & VPN Detection Mechanics</h3>
-                <p id="t_art1_p">Modern firewalls detect tunnels via Datacenter ASN filters, latency discrepancies, and WebRTC STUN leaks. Using genuine residential proxies with perfect timezone sync is critical to prevent automatic bans.</p>
-            </div>
-            <div class="article-card">
-                <h3 id="t_art2_h">2. Defending Against Canvas & Hardware Fingerprinting</h3>
-                <p id="t_art2_p">Platforms identify multi-accounting through invisible Canvas hashing and hardware signatures. Dedicated anti-detect browsers like AdsPower isolate and spoof these environments natively.</p>
-            </div>
-        </div>
-
-        <!-- 10. Support & Helpdesk -->
-        <div class="support-box" id="support-sec">
-            <h3 style="color:#fff; margin-bottom:8px; font-size:1.25rem;"><i class="fa-solid fa-headset" style="color:var(--cyan);"></i> <span id="t_sup_title">Technical Support & Helpdesk</span></h3>
-            <p style="color:var(--text-dim); font-size:0.92rem;" id="t_sup_desc">Need assistance with your proxy audit or timezone configuration? Reach out:</p>
-            
-            <div class="support-links">
-                <a href="https://t.me/NetShieldSupport" target="_blank" rel="noopener noreferrer" class="btn-support primary-tg">
-                    <i class="fa-brands fa-telegram"></i> <span id="t_sup_tg">Telegram Support (@NetShieldSupport)</span>
-                </a>
-                <a href="mailto:netshieldprosupport@gmail.com" class="btn-support">
-                    <i class="fa-solid fa-envelope" style="color:var(--orange);"></i> <span id="t_sup_mail">Email Helpdesk</span>
-                </a>
-            </div>
-        </div>
-
-    </div>
-
-    <!-- Live Interactive Tool Result Modal -->
-    <div class="modal-overlay" id="toolModal" onclick="if(event.target===this) closeToolModal()">
-        <div class="modal-card">
-            <button class="modal-close" onclick="closeToolModal()" aria-label="Close Modal">&times;</button>
-            <h3 id="modalToolTitle" style="color:var(--cyan); margin-bottom:12px; font-size:1.3rem;">Tool Execution Result</h3>
-            <div id="modalToolContent" style="color:var(--text); line-height:1.6; font-size:0.95rem;"></div>
-        </div>
-    </div>
-
-    <!-- Floating AI Cyber Assistant Widget -->
-    <button class="ai-floating-btn" onclick="toggleAIChat()" title="Ask NetShield Cyber AI">
-        <i class="fa-solid fa-robot"></i>
-    </button>
-
-    <div class="ai-chat-window" id="aiChatWindow">
-        <div class="ai-chat-header">
-            <span><i class="fa-solid fa-brain" style="color:var(--cyan);"></i> NetShield Cyber AI</span>
-            <button onclick="toggleAIChat()" style="background:none; border:none; color:var(--text-dim); font-size:1.2rem; cursor:pointer;" aria-label="Close Chat"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-        <div class="ai-messages-area" id="aiMessages">
-            <div class="ai-msg bot">
-                Hello! I am your Cyber Intelligence Assistant. Ask me anything about your IP audit, timezone discrepancies, anti-detect setups, or how to bypass offerwall bans!
-            </div>
-        </div>
-        <div class="ai-input-area">
-            <input type="text" id="aiUserInput" placeholder="Ask AI about IP, Proxy, Ban solutions..." maxlength="200" onkeydown="if(event.key==='Enter') sendAIMessage()">
-            <button class="ai-btn-send" onclick="sendAIMessage()" aria-label="Send Message"><i class="fa-solid fa-paper-plane"></i></button>
-        </div>
-    </div>
-
-    <footer>
-        <p id="t_footer_text">© 2026 NetShield Ultra. All rights reserved | High-Precision Cyber & Privacy Diagnostic Platform.</p>
-    </footer>
-
-    <!-- Hardened & Instant Responsive Diagnostic Scripts -->
-    <script>
-        if (window.top !== window.self) {
-            window.top.location = window.self.location;
-        }
-
-        try {
-            Object.freeze(Object.prototype);
-            Object.freeze(Array.prototype);
-        } catch (e) {}
-
-        function sanitizeText(str) {
-            if (typeof str !== 'string') return '';
-            const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#x27;', "/": '&#x2F;' };
-            return str.replace(/[&<>"'/]/g, (s) => map[s]);
-        }
-
-        const RateLimiter = {
-            lastScanTime: 0,
-            lastAIMsgTime: 0,
-            canScan: function() {
-                const now = Date.now();
-                if (now - this.lastScanTime < 2000) return false;
-                this.lastScanTime = now;
-                return true;
-            },
-            canSendAIMessage: function() {
-                const now = Date.now();
-                if (now - this.lastAIMsgTime < 800) return false;
-                this.lastAIMsgTime = now;
-                return true;
-            }
-        };
-
-        const i18n = {
-            en: {
-                dir: 'ltr',
-                btn_hud: 'Quick Drawer',
-                btn_tg_nav: 'Telegram Help',
-                drawer_title: 'Quick Access HUD & Diagnostics',
-                nav_scan: 'Full Scan',
-                nav_tools: 'Toolbox',
-                nav_blog: 'Knowledge Base',
-                nav_support: 'Support',
-                hero_tag: 'Master Cyber Diagnostics & Digital Identity Platform',
-                btn_run: 'Run Master Full Scan',
-                btn_copy: 'Copy Report',
-                score_priv: 'Privacy Score',
-                score_risk: 'Fraud Risk Score',
-                score_conf: 'Confidence Level',
-                score_bot: 'Automation / Bot',
-                target_clock: 'Target IP Clock (Must Match This)',
-                device_clock: 'Your Current System Time',
-                adv_title: 'Smart Optimization Checklist & Advisor',
-                sec_ip: 'IP & Network Intelligence',
-                sec_proxy: 'VPN, Proxy & Tunnel Detection',
-                sec_leak: 'Privacy Leaks & Consistency Audit',
-                sec_fp: 'Browser Fingerprint & Hardware Engine',
-                sec_toolbox: 'Standalone Cyber Toolbox (36 Specialized Tools)',
-                blog_title: 'Anti-Ban & Identity Protection Knowledge Base',
-                art1_h: '1. Advanced Proxy & VPN Detection Mechanics',
-                art1_p: 'Modern firewalls detect tunnels via Datacenter ASN filters, latency discrepancies, and WebRTC STUN leaks. Using genuine residential proxies with perfect timezone sync is critical to prevent automatic bans.',
-                art2_h: '2. Defending Against Canvas & Hardware Fingerprinting',
-                art2_p: 'Platforms identify multi-accounting through invisible Canvas hashing and hardware signatures. Dedicated anti-detect browsers like AdsPower isolate and spoof these environments natively.',
-                sup_title: 'Technical Support & Helpdesk',
-                sup_desc: 'Need assistance with your proxy audit or timezone configuration? Reach out:',
-                sup_tg: 'Telegram Priority Support (@NetShieldSupport)',
-                sup_mail: 'Email Helpdesk',
-                footer_text: '© 2026 NetShield Ultra. All rights reserved | High-Precision Cyber & Privacy Diagnostic Platform.'
-            },
-            ar: {
-                dir: 'rtl',
-                btn_hud: 'القائمة السريعة',
-                btn_tg_nav: 'دعم تليجرام',
-                drawer_title: 'لوحة الوصول السريع والتشخيص',
-                nav_scan: 'الفحص الشامل',
-                nav_tools: 'صندوق الأدوات',
-                nav_blog: 'الدليل المعرفي',
-                nav_support: 'الدعم الفني',
-                hero_tag: 'منصة الفحص السيبراني الشامل وتحليل الهوية الرقمية',
-                btn_run: 'بدء الفحص الشامل (Full Scan)',
-                btn_copy: 'نسخ التقرير',
-                score_priv: 'درجة الخصوصية (Privacy)',
-                score_risk: 'مؤشر الخطورة (Fraud Risk)',
-                score_conf: 'نسبة الثقة (Confidence)',
-                score_bot: 'كشف البوت (Automation)',
-                target_clock: 'ساعة وتوقيت الـ IP (المطلوب ضبطه)',
-                device_clock: 'ساعة وتوقيت جهازك الحالي',
-                adv_title: 'خطة العمل والتوصيات الذكية (Smart Advisor)',
-                sec_ip: 'بيانات الـ IP والشبكة (IP & Network Intelligence)',
-                sec_proxy: 'فحص البروكسي والـ VPN والأنفاق (VPN & Proxy Detection)',
-                sec_leak: 'فحص التسريبات والتطابق (Privacy Leaks & Integrity)',
-                sec_fp: 'بصمة المتصفح والعتاد (Browser Fingerprint & Hardware)',
-                sec_toolbox: 'صندوق الأدوات السيبراني المستقل (36 Specialized Tools)',
-                blog_title: 'الدليل الفني للأمن وتفادي حظر الحسابات (Knowledge Base)',
-                art1_h: '1. معايير كشف البروكسي والـ VPN في المنصات الصارمة (Offerwalls & CPA)',
-                art1_p: 'تعتمد منصات الحماية على أنظمة متعددة لفحص جودة الاتصال تشمل: كشف استضافات السيرفرات (Datacenter ASN)، وتحليل زمن الاستجابة (Latency RTT)، والتحقق من تسريب الـ WebRTC والـ DNS.',
-                art2_h: '2. كيف تحمي هويتك من بصمة المتصفح (Browser Fingerprinting)؟',
-                art2_p: 'تقوم المواقع بإنشاء رمز تعريفي لجهازك من خلال رسم Canvas خفي ومطابقة عتاد المعالج والذاكرة. استخدام متصفحات عزل الهوية مثل AdsPower يضمن تغيير هذه البصمة بشكل طبيعي.',
-                sup_title: 'الدعم الفني والمساعدة المباشرة',
-                sup_desc: 'تواجه مشكلة في فحص الـ IP أو ضبط التوقيت؟ تواصل مع فريق الدعم الفني مباشرة:',
-                sup_tg: 'الدعم المباشر عبر تليجرام (@NetShieldSupport)',
-                sup_mail: 'مراسلة الدعم عبر الجيميل',
-                footer_text: '© 2026 NetShield Ultra. جميع الحقوق محفوظة | منصة التشخيص السيبراني الشامل.'
-            },
-            ru: {
-                dir: 'ltr',
-                btn_hud: 'Быстрое меню',
-                btn_tg_nav: 'Telegram Поддержка',
-                drawer_title: 'Быстрый доступ и диагностика',
-                nav_scan: 'Полный аудит',
-                nav_tools: 'Инструменты',
-                nav_blog: 'База знаний',
-                nav_support: 'Поддержка',
-                hero_tag: 'Платформа глубокого аудита сети и цифрового отпечатка',
-                btn_run: 'Запустить полный аудит',
-                btn_copy: 'Копировать отчет',
-                score_priv: 'Уровень приватности',
-                score_risk: 'Уровень риска (Fraud)',
-                score_conf: 'Точность данных',
-                score_bot: 'Бот / Автоматизация',
-                target_clock: 'Время IP (Синхронизируйте)',
-                device_clock: 'Время на устройстве',
-                adv_title: 'Советник по оптимизации и устранению рисков',
-                sec_ip: 'Информация о сети и IP',
-                sec_proxy: 'Обнаружение VPN, Proxy и туннелей',
-                sec_leak: 'Проверка утечек и синхронизации',
-                sec_fp: 'Фингерпринт браузера и железо',
-                sec_toolbox: 'Набор из 36 специализированных утилит',
-                blog_title: 'База знаний по защите от блокировок',
-                art1_h: '1. Механизмы обнаружения Proxy и VPN систем фрода',
-                art1_p: 'Системы безопасности выявляют датацентровые подсети ASN, сетевую задержку и утечки WebRTC. Резидентские прокси обеспечивают максимальную чистоту сессии.',
-                art2_h: '2. Защита от фингерпринтинга Canvas и WebGL',
-                art2_p: 'Антидетект-браузеры (AdsPower) подменяют цифровой отпечаток железа и видеокарты, обеспечивая полную изоляцию мультиаккаунтов.',
-                sup_title: 'Техническая поддержка',
-                sup_desc: 'Нужна помощь в настройке? Свяжитесь с нами напрямую:',
-                sup_tg: 'Telegram поддержка (@NetShieldSupport)',
-                sup_mail: 'Написать на почту',
-                footer_text: '© 2026 NetShield Ultra. Все права защищены | Диагностика безопасности.'
-            }
-        };
-
-        let currentLang = 'en';
-        let targetTimezone = null;
-        let lastReportData = {};
-
-        function toggleDrawer() {
-            document.getElementById('topDrawer').classList.toggle('open');
-        }
-
-        function toggleAIChat() {
-            const win = document.getElementById('aiChatWindow');
-            win.style.display = (win.style.display === 'flex') ? 'none' : 'flex';
-        }
-
-        window.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                closeToolModal();
-                document.getElementById('topDrawer').classList.remove('open');
-                document.getElementById('aiChatWindow').style.display = 'none';
-            }
-        });
-
-        // Strict Domain-Focused AI Assistant
-        function sendAIMessage() {
-            if (!RateLimiter.canSendAIMessage()) {
-                alert('Please wait a moment before sending another message.');
-                return;
-            }
-
-            const input = document.getElementById('aiUserInput');
-            const query = input.value.trim();
-            if (!query) return;
-
-            const area = document.getElementById('aiMessages');
-            
-            const userMsgDiv = document.createElement('div');
-            userMsgDiv.className = 'ai-msg user';
-            userMsgDiv.textContent = query;
-            area.appendChild(userMsgDiv);
-
-            input.value = '';
-            area.scrollTop = area.scrollHeight;
-
-            setTimeout(() => {
-                let reply = "";
-                const q = query.toLowerCase();
-                const currentIp = lastReportData.ip || 'Detecting...';
-                const currentTz = targetTimezone || Intl.DateTimeFormat().resolvedOptions().timeZone;
-                const localTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-                const isTzMismatch = currentTz.toLowerCase() !== localTz.toLowerCase();
-                const org = (lastReportData.org || '').toLowerCase();
-                const isDatacenter = org.includes('cloud') || org.includes('hosting') || org.includes('amazon') || org.includes('digitalocean') || org.includes('hetzner');
-
-                const platformKeywords = [
-                    'hi', 'hello', 'hey', 'greetings', 'welcome', 'sup', 'yo',
-                    'ازيك', 'عامل ايه', 'سلام', 'مرحبا', 'اهلا', 'صباح الخير', 'مساء الخير', 'يا هلا', 'مين انت', 'مين انتِ', 'من انت',
-                    'ip', 'proxy', 'vpn', 'tor', 'dns', 'webrtc', 'timezone', 'time', 'clock', 'fingerprint', 'canvas', 'webgl',
-                    'offer', 'survey', 'cpa', 'gpt', 'freecash', 'testerup', 'adspower', 'iproyal', 'ban', 'block', 'audit',
-                    'leak', 'asn', 'isp', 'hardware', 'port', 'latency', 'ping', 'whois', 'cidr', 'subnet',
-                    'بروكسي', 'في بي ان', 'توقيت', 'ساعة', 'ساعه', 'وقت', 'بصمة', 'عروض', 'استطلاع', 'استبيان', 'حظر', 'باند', 'تبنيد',
-                    'تسريب', 'فحص', 'نتشيلد', 'موقع'
-                ];
-
-                const isRelevant = platformKeywords.some(keyword => q.includes(keyword));
-
-                if (!isRelevant) {
-                    if (currentLang === 'ar' || /[\u0600-\u06FF]/.test(q)) {
-                        reply = `⚠️ عذراً يا غالي، أنا مساعد ذكاء اصطناعي متخصص حصرياً في **NetShield Pro** لفحص الشبكات، الـ IP، البروكسيات، تعديل التوقيت، وحل مشاكل حظر حسابات العروض.\n\nلا يمكنني الإجابة على أي أسئلة خارج نطاق فحص الأمان والشبكات. تفضل بسؤالي عن فحص اتصالك الحالي (${currentIp}) وسأساعدك فوراً!`;
-                    } else if (currentLang === 'ru') {
-                        reply = `⚠️ Извините, я специализированный ассистент платформы **NetShield Ultra**. Я отвечаю только на вопросы, связанные с аудитом IP, Proxy, VPN, утечками WebRTC и защитой от блокировок.\n\nЗадайте вопрос о вашей текущей сессии (${currentIp})!`;
-                    } else {
-                        reply = `⚠️ I apologize, but I am a dedicated security assistant exclusively trained for **NetShield Ultra**. I can only assist with IP diagnostics, proxies, VPNs, timezone matching, and offerwall anti-ban strategies.\n\nPlease ask me anything related to your current audit for IP (${currentIp})!`;
-                    }
-                } else if (/^(hi|hello|hey|greetings|welcome|sup|yo)\b/i.test(q)) {
-                    const greetings = [
-                        `Hey there! I'm monitoring your connection on IP ${currentIp}. How can I assist you with bypass setups or security tests today?`,
-                        `Hello! Ready to help you optimize your browser fingerprint, verify your proxy, or debug timezone leaks. What are you working on?`,
-                        `Hi! I'm your NetShield security partner. Feel free to ask me anything about your current session (${currentIp}).`
-                    ];
-                    reply = greetings[Math.floor(Math.random() * greetings.length)];
-                } else if (/^(ازيك|عامل ايه|سلام|مرحبا|اهلا|صباح الخير|مساء الخير|يا هلا)/i.test(q)) {
-                    reply = `أهلاً بيك يا غالي! أنا مساعد NetShield لمتابعة اتصالك (${currentIp}). قول لي محتاج تظبط ايه في فحص البروكسي، تعديل الوقت، أو تخطي حظر العروض والاستطلاعات؟`;
-                } else if (q.includes('offer') || q.includes('survey') || q.includes('cpa') || q.includes('gpt') || q.includes('عروض') || q.includes('استطلاع') || q.includes('استبيان') || q.includes('فلوس') || q.includes('ربح') || q.includes('freecash') || q.includes('testerup')) {
-                    reply = `💰 **Expert Offerwall Blueprint:**\nTo complete offers and surveys safely without getting banned:\n1. **IP Quality:** Ensure you are using a Clean Residential ISP (not Datacenter/Hosting).\n2. **Timezone:** Your system clock must match the IP location (${currentTz}). Currently: ${isTzMismatch ? '⚠️ MISMATCHED with ' + localTz + ' (Must Change!)' : '✅ PERFECT MATCH'}.\n3. **Fingerprint:** Use AdsPower to isolate your Canvas/WebGL profiles so platforms cannot link multiple accounts.`;
-                } else if (q.includes('time') || q.includes('clock') || q.includes('توقيت') || q.includes('ساعه') || q.includes('ساعة') || q.includes('وقت')) {
-                    reply = isTzMismatch 
-                        ? `⚠️ **Timezone Alert:** Your IP is located in '${currentTz}', but your computer/emulator is running on '${localTz}'. You need to open your Windows/device settings and adjust the timezone to '${currentTz}' immediately. Otherwise, anti-fraud systems will flag your connection instantly!`
-                        : `✅ **Timezone Status:** Everything looks solid! Both your IP location and device clock are in perfect harmony on '${currentTz}'.`;
-                } else if (q.includes('proxy') || q.includes('vpn') || q.includes('بروكسي') || q.includes('iproyal')) {
-                    reply = isDatacenter
-                        ? `🚨 **Datacenter IP Detected:** Your current IP provider is '${lastReportData.org}', which is recognized as a server/hosting facility. Most CPA and survey sites block these right away. I recommend switching to an authentic **IPRoyal Residential Proxy**.`
-                        : `🛡️ **Residential Proxy Status:** Your IP is recognized as a genuine consumer line (${lastReportData.org}). Make sure your WebRTC is protected and your latency stays under 300ms.`;
-                } else if (q.includes('ban') || q.includes('block') || q.includes('حظر') || q.includes('باند') || q.includes('تبنيد') || q.includes('adspower') || q.includes('fingerprint') || q.includes('بصمة')) {
-                    reply = `🔒 **Anti-Ban Protocol:** When you get banned, platforms usually track your Canvas 2D fingerprint, WebGL shaders, and audio buffer IDs. Using **AdsPower Anti-Detect Browser** creates isolated browser environments with randomized authentic hardware specs to prevent cross-account tracking completely.`;
-                } else {
-                    reply = `🔍 **Live Status for ${currentIp}:**\n- ISP: ${lastReportData.org || 'Standard'}\n- IP Timezone: ${currentTz}\n- Your Timezone: ${localTz}\n- Ping Latency: ${lastReportData.latency || 40}ms\n\nAsk me specifically about how to fix time discrepancies, choose the best proxies, or bypass offerwall fraud filters!`;
-                }
-
-                const botMsgDiv = document.createElement('div');
-                botMsgDiv.className = 'ai-msg bot';
-                botMsgDiv.innerHTML = sanitizeText(reply).replace(/\n/g, '<br>');
-                area.appendChild(botMsgDiv);
-                area.scrollTop = area.scrollHeight;
-            }, 400);
-        }
-
-        function switchLang(lang) {
-            currentLang = lang;
-            const t = i18n[lang];
-            document.documentElement.lang = lang;
-            document.documentElement.dir = t.dir;
-
-            for (const key in t) {
-                const el = document.getElementById('t_' + key);
-                if (el) el.textContent = t[key];
-            }
-            if (lastReportData.ip) renderAdvisorAndScores(lastReportData);
-        }
-
-        function updateClocks() {
-            const now = new Date();
-            document.getElementById('systemClock').textContent = now.toLocaleTimeString('en-US', { hour12: true });
-            document.getElementById('systemZoneName').textContent = Intl.DateTimeFormat().resolvedOptions().timeZone;
-
-            if (targetTimezone) {
-                try {
-                    document.getElementById('ipClock').textContent = now.toLocaleTimeString('en-US', { timeZone: targetTimezone, hour12: true });
-                    document.getElementById('ipZoneName').textContent = targetTimezone;
-                } catch(e) {
-                    document.getElementById('ipClock').textContent = now.toLocaleTimeString('en-US', { hour12: true });
-                }
-            }
-        }
-        setInterval(updateClocks, 1000);
-
-        async function secureFetch(url, timeoutMs = 3500) {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
-            try {
-                const response = await fetch(url, { signal: controller.signal });
-                clearTimeout(timeoutId);
-                return response;
-            } catch (err) {
-                clearTimeout(timeoutId);
-                throw err;
-            }
-        }
-
-        async function fetchIntelligence() {
-            const endpoints = [
-                { url: 'https://ipwhois.app/json/', map: d => ({ ip: d.ip, org: d.isp || d.org, asn: d.asn, country: d.country, city: d.city, timezone: d.timezone }) },
-                { url: 'https://freeipapi.com/api/json', map: d => ({ ip: d.ipAddress, org: d.asn || 'Consumer Line', asn: d.asn || 'AS-Standard', country: d.countryName, city: d.cityName, timezone: d.timeZones?.[0] || Intl.DateTimeFormat().resolvedOptions().timeZone }) },
-                { url: 'https://ipapi.co/json/', map: d => ({ ip: d.ip, org: d.org, asn: d.asn, country: d.country_name, city: d.city, timezone: d.timezone }) }
-            ];
-
-            for (const ep of endpoints) {
-                try {
-                    const start = performance.now();
-                    const res = await secureFetch(ep.url);
-                    const latency = Math.round(performance.now() - start);
-                    if (res.ok) {
-                        const raw = await res.json();
-                        const parsed = ep.map(raw);
-                        if (parsed.ip && !parsed.ip.includes('127.0.0.1')) {
-                            return {
-                                ip: sanitizeText(parsed.ip),
-                                org: sanitizeText(parsed.org || 'Broadband ISP'),
-                                asn: sanitizeText(parsed.asn || 'AS-Standard'),
-                                country: sanitizeText(parsed.country || 'Global'),
-                                city: sanitizeText(parsed.city || 'Metropolitan'),
-                                timezone: sanitizeText(parsed.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone),
-                                latency: latency
-                            };
-                        }
-                    }
-                } catch (e) {}
-            }
-
-            // آمن تماماً: لا يوجد أي IP ثابت، يعرض Unavailable للمستخدم فقط في حال انقطاع الإنترنت
-            const localTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-            return {
-                ip: 'Unavailable',
-                org: 'Network Error / Check Connection',
-                asn: 'N/A',
-                country: 'N/A',
-                city: 'N/A',
-                timezone: localTz,
-                latency: 0
-            };
-        }
-
-        async function runFullScanEngine() {
-            if (!RateLimiter.canScan()) {
-                return;
-            }
-
-            document.getElementById('userIP').textContent = 'Analyzing Real-time Connection...';
-            
-            const cores = navigator.hardwareConcurrency || 4;
-            const ram = navigator.deviceMemory ? `${navigator.deviceMemory} GB` : '>= 4 GB';
-            document.getElementById('v_hw').textContent = `${cores} Cores / ${ram}`;
-            document.getElementById('v_screen').textContent = `${window.screen.width}x${window.screen.height} (${window.screen.colorDepth}-bit)`;
-
-            try {
-                const c = document.createElement('canvas');
-                const ctx = c.getContext('2d');
-                ctx.fillText('NetShield#Defense2026', 2, 2);
-                document.getElementById('v_canvas').textContent = '0x' + Math.abs(c.toDataURL().length * 8971).toString(16).toUpperCase();
-            } catch(e) {
-                document.getElementById('v_canvas').textContent = '0xPROTECTED';
-            }
-
-            const isBot = navigator.webdriver || window.__nightmare || window._phantom || false;
-            document.getElementById('v_botflag').textContent = isBot ? 'Automation Flagged' : 'Genuine User Agent';
-            document.getElementById('b_botflag').className = isBot ? 'badge badge-error' : 'badge badge-pass';
-            document.getElementById('botScore').textContent = isBot ? '95%' : '0%';
-            document.getElementById('botScore').style.color = isBot ? 'var(--red)' : 'var(--green)';
-
-            const data = await fetchIntelligence();
-            lastReportData = data;
-            targetTimezone = data.timezone;
-            updateClocks();
-
-            document.getElementById('userIP').textContent = data.ip;
-            document.getElementById('v_v4').textContent = data.ip;
-            document.getElementById('v_isp').textContent = data.org;
-            document.getElementById('v_asn').textContent = data.asn;
-            document.getElementById('v_geo').textContent = `${data.country} (${data.city})`;
-            document.getElementById('v_latency').textContent = `${data.latency} ms`;
-
-            renderAdvisorAndScores(data);
-        }
-
-        function renderAdvisorAndScores(data) {
-            const orgLower = (data.org || '').toLowerCase();
-            const isDatacenter = orgLower.includes('cloud') || orgLower.includes('hosting') || orgLower.includes('amazon') || orgLower.includes('digitalocean') || orgLower.includes('hetzner') || orgLower.includes('ovh') || orgLower.includes('m247') || data.latency > 600;
-            
-            const localTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-            const isTzMismatch = data.timezone && localTz && (data.timezone.toLowerCase() !== localTz.toLowerCase()) && data.ip !== 'Connecting...';
-
-            let risk = 0;
-            let privacy = 100;
-
-            if (isDatacenter) { risk += 65; privacy -= 50; }
-            if (isTzMismatch) { risk += 10; privacy -= 10; }
-
-            document.getElementById('riskScore').textContent = `${risk}%`;
-            document.getElementById('riskScore').style.color = risk > 40 ? 'var(--red)' : (risk > 0 ? 'var(--orange)' : 'var(--green)');
-            document.getElementById('badgeRisk').className = risk > 40 ? 'badge badge-error' : (risk > 0 ? 'badge badge-warn' : 'badge badge-pass');
-            document.getElementById('badgeRisk').textContent = risk > 40 ? 'HIGH RISK' : (risk > 0 ? 'SUSPICIOUS' : 'CLEAN');
-
-            document.getElementById('privacyScore').textContent = `${privacy}%`;
-            document.getElementById('privacyScore').style.color = privacy < 60 ? 'var(--red)' : 'var(--green)';
-            document.getElementById('badgePriv').className = privacy < 60 ? 'badge badge-error' : 'badge badge-pass';
-            document.getElementById('badgePriv').textContent = privacy < 60 ? 'ACTION NEEDED' : 'OPTIMAL';
-
-            if (isDatacenter) {
-                document.getElementById('v_iptype').textContent = 'Datacenter / Server IP';
-                document.getElementById('b_iptype').className = 'badge badge-error';
-                document.getElementById('b_iptype').textContent = 'DATACENTER';
-                document.getElementById('v_vpn').textContent = 'Detected Tunnel / Hosting';
-                document.getElementById('b_vpn').className = 'badge badge-error';
-                document.getElementById('b_vpn').textContent = 'DETECTED';
-            } else {
-                document.getElementById('v_iptype').textContent = 'Clean Residential Line';
-                document.getElementById('b_iptype').className = 'badge badge-pass';
-                document.getElementById('b_iptype').textContent = 'RESIDENTIAL';
-                document.getElementById('v_vpn').textContent = 'Negative (Direct ISP)';
-                document.getElementById('b_vpn').className = 'badge badge-pass';
-                document.getElementById('b_vpn').textContent = 'CLEAN';
-            }
-
-            document.getElementById('v_tzmatch').textContent = isTzMismatch ? 'Timezone Discrepancy' : 'Exact Sync';
-            document.getElementById('b_tzmatch').className = isTzMismatch ? 'badge badge-error' : 'badge badge-pass';
-            document.getElementById('b_tzmatch').textContent = isTzMismatch ? 'MISMATCH' : 'MATCHED';
-
-            const container = document.getElementById('advisorContainer');
-            container.textContent = '';
-
-            if (isDatacenter) {
-                const item = document.createElement('div');
-                item.style.cssText = 'background:rgba(255,171,0,0.06); border:1px solid rgba(255,171,0,0.3); padding:10px 14px; border-radius:8px; display:flex; align-items:center; justify-content:space-between;';
-                item.innerHTML = `<span style="font-size:0.88rem; color:#fff;"><i class="fa-solid fa-server" style="color:var(--orange); margin-right:6px;"></i> <b>Recommendation:</b> Datacenter subnet detected. Switch to authentic IPRoyal Residential IPs to bypass bans.</span><span class="badge badge-warn">RECOMMENDED</span>`;
-                container.appendChild(item);
-            } else {
-                const item = document.createElement('div');
-                item.style.cssText = 'background:rgba(0,230,118,0.06); border:1px solid rgba(0,230,118,0.3); padding:10px 14px; border-radius:8px; display:flex; align-items:center; justify-content:space-between;';
-                item.innerHTML = `<span style="font-size:0.88rem; color:#fff;"><i class="fa-solid fa-check-circle" style="color:var(--green); margin-right:6px;"></i> <b>Optimal Connection:</b> Environment and network path are fully secure and clean.</span><span class="badge badge-pass">PASS</span>`;
-                container.appendChild(item);
-            }
-        }
-
-        // Live Real-Time Interactive Tool Execution Engine
-        function executeInteractiveTool(toolName) {
-            const modal = document.getElementById('toolModal');
-            const title = document.getElementById('modalToolTitle');
-            const content = document.getElementById('modalToolContent');
-
-            const safeToolName = sanitizeText(toolName);
-            title.textContent = `Diagnostic Result: ${safeToolName}`;
-            
-            const ip = sanitizeText(lastReportData.ip || 'Unavailable');
-            const org = sanitizeText(lastReportData.org || 'Broadband ISP');
-            const asn = sanitizeText(lastReportData.asn || 'AS-Standard');
-            const geo = sanitizeText(`${lastReportData.country || 'Global'} (${lastReportData.city || 'Local'})`);
-            const latency = lastReportData.latency || 35;
-            const ua = navigator.userAgent;
-
-            let resultHtml = `
-                <div style="background:var(--surface-card); border:1px solid var(--border); border-radius:10px; padding:1.2rem; margin-bottom:1rem;">
-                    <p style="margin-bottom:6px;"><strong>Target Scope:</strong> <span style="color:var(--cyan); font-family:'JetBrains Mono';">${ip}</span></p>
-                    <p style="margin-bottom:6px;"><strong>Execution Status:</strong> <span class="badge badge-pass">SUCCESS & LIVE</span></p>
-                    <p style="margin-bottom:6px;"><strong>Execution Timestamp:</strong> ${new Date().toUTCString()}</p>
-                </div>
-            `;
-
-            switch(safeToolName) {
-                case 'Domain WHOIS':
-                    resultHtml += `
-                        <p><strong>Query Target:</strong> ${ip}</p>
-                        <p><strong>Registry Domain ID:</strong> NOT-APPLICABLE-IPV4</p>
-                        <p><strong>Registrar:</strong> IANA / RIPE / ARIN Regional Allocation</p>
-                        <p><strong>NetRange:</strong> ${ip !== 'Unavailable' ? ip.split('.').slice(0, 2).join('.') + '.0.0 - ' + ip.split('.').slice(0, 2).join('.') + '.255.255' : 'N/A'}</p>
-                        <p><strong>Abuse Contact:</strong> abuse@${org.replace(/\s+/g, '').toLowerCase()}.com</p>
-                    `;
-                    break;
-
-                case 'CDN Detector':
-                    resultHtml += `
-                        <p><strong>Detected Edge CDN:</strong> <span style="color:var(--cyan); font-weight:bold;">Direct ISP / No Edge CDN Proxied</span></p>
-                        <p><strong>Anycast Routing:</strong> Unicast Consumer Routing</p>
-                        <p><strong>Origin IP Exposure:</strong> Direct Gateway Exposed</p>
-                    `;
-                    break;
-
-                case 'Hosting Detector':
-                case 'Cloud Provider':
-                    resultHtml += `
-                        <p><strong>Infrastructure Classification:</strong> <span style="color:var(--green); font-weight:bold;">Authentic Consumer Home Broadband (FTTH/DSL)</span></p>
-                        <p><strong>Autonomous System Organization:</strong> ${org}</p>
-                        <p><strong>Hosting Risk Level:</strong> Low / Whitelisted</p>
-                    `;
-                    break;
-
-                case 'DMARC Analyzer':
-                case 'SPF & DKIM Check':
-                    resultHtml += `
-                        <p><strong>Domain Security Protocol:</strong> DNS TXT Record Scanned</p>
-                        <p><strong>SPF Policy Record:</strong> v=spf1 +a +mx ~all (Pass)</p>
-                        <p><strong>DMARC Validation:</strong> v=DMARC1; p=reject</p>
-                        <p><strong>Email Spoofing Protection:</strong> 100% Strict Enforcement</p>
-                    `;
-                    break;
-
-                case 'DNS Propagation':
-                case 'DNS Lookup':
-                    resultHtml += `
-                        <p><strong>Authoritative Nameservers:</strong> ns1.gateway.net, ns2.gateway.net</p>
-                        <p><strong>Global Propagation Score:</strong> 18/18 Worldwide Resolvers Synced</p>
-                        <p><strong>Query Response Time:</strong> 18 ms</p>
-                    `;
-                    break;
-
-                case 'Port Scanner Safe':
-                    resultHtml += `
-                        <p><strong>Safe Passive Audit:</strong> Standard Web & Proxy Ports</p>
-                        <p><strong>Port 80 (HTTP):</strong> Filtered / Normal</p>
-                        <p><strong>Port 443 (HTTPS):</strong> Open (Standard)</p>
-                        <p><strong>Port 8080 / 1080 / 3128:</strong> CLOSED (No Open Relay Leaks)</p>
-                    `;
-                    break;
-
-                case 'Robots.txt Checker':
-                case 'Sitemap XML':
-                    resultHtml += `
-                        <p><strong>Robots.txt Directive:</strong> User-agent: * Allow: /</p>
-                        <p><strong>Crawl-Delay:</strong> None (Optimized for Web Indexing)</p>
-                        <p><strong>Sitemap Architecture:</strong> Standard Schema Validated</p>
-                    `;
-                    break;
-
-                case 'Redirect Checker':
-                case 'HTTP Headers':
-                    resultHtml += `
-                        <p><strong>HTTP Status Code:</strong> 200 OK</p>
-                        <p><strong>HTTPS Strict Redirection:</strong> 301 Moved Permanently -> 200 HTTPS</p>
-                        <p><strong>Server Signature:</strong> Cloudflare / NetShield Edge Gateway</p>
-                    `;
-                    break;
-
-                case 'Blacklist Checker':
-                    resultHtml += `
-                        <p><strong>Spamhaus SBL/XBL:</strong> CLEAN (0 Matches)</p>
-                        <p><strong>AbuseIPDB Score:</strong> 0% Abuse Confidence</p>
-                        <p><strong>Barracuda Reputation:</strong> Excellent / Whitelisted</p>
-                        <p><strong>SORBS / SURBL Status:</strong> No Listings Found</p>
-                    `;
-                    break;
-
-                case 'IP Lookup':
-                case 'IP WHOIS':
-                    resultHtml += `
-                        <p><strong>ISP Carrier:</strong> ${org}</p>
-                        <p><strong>ASN Routing:</strong> ${asn}</p>
-                        <p><strong>Geolocation:</strong> ${geo}</p>
-                        <p><strong>BGP Prefix:</strong> ${ip}/24 Subnet</p>
-                    `;
-                    break;
-
-                case 'Reverse IP':
-                case 'Reverse DNS':
-                    resultHtml += `
-                        <p><strong>PTR Record:</strong> ${ip !== 'Unavailable' ? ip.split('.').reverse().join('.') + '.in-addr.arpa' : 'N/A'}</p>
-                        <p><strong>Resolved Hostname:</strong> dynamic-${ip.replace(/\./g, '-')}.${org.replace(/\s+/g, '').toLowerCase()}.net</p>
-                        <p><strong>DNS Consistency:</strong> Valid Pointer Verified</p>
-                    `;
-                    break;
-
-                case 'User-Agent Parser':
-                    resultHtml += `
-                        <p><strong>Raw User-Agent:</strong> <span style="font-family:'JetBrains Mono'; font-size:0.8rem;">${sanitizeText(ua)}</span></p>
-                        <p><strong>Browser Engine:</strong> ${navigator.appName || 'Blink / WebKit'}</p>
-                        <p><strong>Platform / OS:</strong> ${navigator.platform}</p>
-                        <p><strong>System Language:</strong> ${navigator.language || 'en-US'}</p>
-                    `;
-                    break;
-
-                case 'Fingerprint Hash':
-                case 'Canvas Hash':
-                    let canvasVal = '0xPROTECTED';
-                    try {
-                        const c = document.createElement('canvas');
-                        const ctx = c.getContext('2d');
-                        ctx.textBaseline = 'top';
-                        ctx.font = '14px Arial';
-                        ctx.fillText('NetShieldLiveFingerprint', 2, 2);
-                        canvasVal = '0x' + Math.abs(c.toDataURL().length * 104729).toString(16).toUpperCase();
-                    } catch(e) {}
-                    resultHtml += `
-                        <p><strong>Canvas Hash:</strong> <span style="color:var(--cyan); font-family:'JetBrains Mono'; font-weight:bold;">${canvasVal}</span></p>
-                        <p><strong>Hardware Concurrency:</strong> ${navigator.hardwareConcurrency || 4} Cores</p>
-                        <p><strong>Device RAM:</strong> ${navigator.deviceMemory ? navigator.deviceMemory + ' GB' : '>= 4 GB'}</p>
-                        <p><strong>Color Depth:</strong> ${window.screen.colorDepth}-bit</p>
-                    `;
-                    break;
-
-                case 'WebRTC Leak':
-                case 'DNS Leak Checker':
-                    resultHtml += `
-                        <p><strong>STUN Binding Test:</strong> PASS (No local 192.168.x.x or 10.x.x.x leaked)</p>
-                        <p><strong>Public Candidate Mapped:</strong> ${ip}</p>
-                        <p><strong>DNS Server Hierarchy:</strong> Matches ${org} Resolver</p>
-                        <p><strong>Leak Status:</strong> 100% SECURED</p>
-                    `;
-                    break;
-
-                case 'Ping & Latency':
-                    resultHtml += `
-                        <p><strong>Direct RTT Latency:</strong> <span style="color:var(--green); font-weight:bold;">${latency} ms</span></p>
-                        <p><strong>Jitter Variance:</strong> &plusmn; 1.4 ms</p>
-                        <p><strong>Packet Delivery Ratio:</strong> 100% (0.0% Lost)</p>
-                        <p><strong>Routing Performance:</strong> High Speed</p>
-                    `;
-                    break;
-
-                case 'IP Converter':
-                case 'CIDR Calculator':
-                case 'Subnet Calculator':
-                case 'IPv6 Calculator':
-                    const parts = ip !== 'Unavailable' ? ip.split('.').map(Number) : [127,0,0,1];
-                    const intVal = (parts[0] << 24) | (parts[1] << 16) | (parts[2] << 8) | parts[3];
-                    resultHtml += `
-                        <p><strong>Decimal (Integer):</strong> ${(intVal >>> 0)}</p>
-                        <p><strong>Hexadecimal:</strong> 0x${(intVal >>> 0).toString(16).toUpperCase()}</p>
-                        <p><strong>CIDR Block (/24):</strong> ${parts[0]}.${parts[1]}.${parts[2]}.0/24</p>
-                        <p><strong>Usable IP Range:</strong> ${parts[0]}.${parts[1]}.${parts[2]}.1 - ${parts[0]}.${parts[1]}.${parts[2]}.254</p>
-                    `;
-                    break;
-
-                case 'VPN Checker':
-                case 'Proxy Checker':
-                case 'Tor Node Checker':
-                    resultHtml += `
-                        <p><strong>Proxy / VPN Tunnel:</strong> <span style="color:var(--green); font-weight:bold;">CLEAN (Direct ISP)</span></p>
-                        <p><strong>Tor Exit Node Status:</strong> Negative (Not in Tor Directory)</p>
-                        <p><strong>Standard Proxy Ports:</strong> 1080, 8080, 3128, 4444 Closed</p>
-                        <p><strong>Tunnel Score:</strong> Low Risk</p>
-                    `;
-                    break;
-
-                case 'Security Headers':
-                case 'SSL Checker':
-                case 'TLS Version':
-                case 'HSTS Check':
-                    resultHtml += `
-                        <p><strong>Transport Security:</strong> HTTPS / TLS 1.3 Active</p>
-                        <p><strong>Certificate Authority:</strong> Let's Encrypt / DigiCert Validated</p>
-                        <p><strong>HSTS Header:</strong> Enabled (max-age=31536000)</p>
-                        <p><strong>Framebusting / CSP:</strong> Strict CSP & X-Frame-Options Enforced</p>
-                    `;
-                    break;
-
-                default:
-                    resultHtml += `
-                        <p><strong>Diagnostic Scope:</strong> Complete inspection on ${ip}</p>
-                        <p><strong>Integrity Score:</strong> 100% Normal Parameters</p>
-                        <p><strong>Status:</strong> Strict compliance validated. No leak vectors identified.</p>
-                    `;
-            }
-
-            content.innerHTML = resultHtml;
-            modal.style.display = 'flex';
-        }
-
-        function closeToolModal() {
-            document.getElementById('toolModal').style.display = 'none';
-        }
-
-        function copyAuditReport() {
-            const r = `NetShield Ultra Audit:\nIP: ${lastReportData.ip}\nISP: ${lastReportData.org}\nASN: ${lastReportData.asn}\nGeo: ${lastReportData.country} (${lastReportData.city})\nTarget Zone: ${targetTimezone}\nRisk Score: ${document.getElementById('riskScore').textContent}`;
-            navigator.clipboard.writeText(r);
-            alert('Full Audit Report copied to clipboard!');
-        }
-
-        // Automatic instant trigger upon initial page DOM load
-        document.addEventListener('DOMContentLoaded', runFullScanEngine);
-    </script>
+<nav>
+ <div class="brand">
+  <div class="brandIcon"><i class="fa-solid fa-shield-halved"></i></div>
+  <span>NetShield Ultra</span>
+ </div>
+
+ <div class="navRight">
+  <a class="navBtn" href="https://t.me/NetShieldSupport" target="_blank">
+   <i class="fa-brands fa-telegram"></i> Support
+  </a>
+
+  <select class="lang" id="language" onchange="changeLanguage(this.value)">
+   <option value="en">English</option>
+   <option value="ar">العربية</option>
+   <option value="ru">Русский</option>
+  </select>
+ </div>
+</nav>
+
+<main class="container">
+
+<section class="hero" id="audit">
+ <div>
+  <div class="live">
+   <span class="dot"></span>
+   <span id="heroTitle">LIVE DIGITAL IDENTITY AUDIT</span>
+  </div>
+
+  <div class="mainIP" id="mainIP">Analyzing connection...</div>
+
+  <p class="sub" id="heroDesc">
+   Real-time analysis of your public IP, network, timezone,
+   browser fingerprint and device signals.
+  </p>
+
+  <div class="actions">
+   <button class="primary" onclick="runAudit()">
+    <i class="fa-solid fa-bolt"></i>
+    <span id="runText">Run Full Audit</span>
+   </button>
+
+   <button class="secondary" onclick="copyReport()">
+    <i class="fa-regular fa-copy"></i>
+    Copy Report
+   </button>
+
+   <button class="secondary" onclick="openAI()">
+    <i class="fa-solid fa-brain"></i>
+    Ask Cyber AI
+   </button>
+  </div>
+ </div>
+
+ <div class="scores">
+
+  <div class="score">
+   <small>Privacy Score</small>
+   <div class="scoreValue" id="privacy">—</div>
+   <span class="badge info" id="privacyBadge">SCANNING</span>
+  </div>
+
+  <div class="score">
+   <small>Risk Score</small>
+   <div class="scoreValue" id="risk">—</div>
+   <span class="badge info" id="riskBadge">SCANNING</span>
+  </div>
+
+  <div class="score">
+   <small>Confidence</small>
+   <div class="scoreValue" id="confidence">—</div>
+   <span class="badge info" id="confidenceBadge">LIVE</span>
+  </div>
+
+  <div class="score">
+   <small>Automation Signal</small>
+   <div class="scoreValue" id="bot">—</div>
+   <span class="badge info" id="botBadge">SCANNING</span>
+  </div>
+
+ </div>
+</section>
+
+<div class="sectionTitle">
+ <i class="fa-solid fa-clock"></i>
+ <span>Timezone & Session Synchronization</span>
+</div>
+
+<div class="clockGrid">
+
+ <div class="clock">
+  <strong>IP / Geo Timezone</strong>
+  <div class="clockTime" id="ipClock">--:--:--</div>
+  <div class="detail" id="ipZone">Detecting...</div>
+ </div>
+
+ <div class="clock">
+  <strong>Device Timezone</strong>
+  <div class="clockTime" id="deviceClock">--:--:--</div>
+  <div class="detail" id="deviceZone">Detecting...</div>
+ </div>
+
+</div>
+
+<div class="sectionTitle">
+ <i class="fa-solid fa-wand-magic-sparkles"></i>
+ <span>Smart Diagnostic Advisor</span>
+</div>
+
+<div class="advisor">
+ <div id="advisor"></div>
+</div>
+
+<div class="sectionTitle">
+ <i class="fa-solid fa-network-wired"></i>
+ <span>IP & Network Intelligence</span>
+</div>
+
+<div class="grid">
+
+ <div class="card">
+  <div class="cardHead">
+   IPv4 Address
+   <span class="badge pass" id="b-ip">LIVE</span>
+  </div>
+  <div class="value mono" id="v-ip">—</div>
+  <div class="detail">Public Internet Protocol address</div>
+ </div>
+
+ <div class="card">
+  <div class="cardHead">ISP / Organization</div>
+  <div class="value" id="v-isp">—</div>
+  <div class="detail">Network operator reported by IP intelligence provider</div>
+ </div>
+
+ <div class="card">
+  <div class="cardHead">ASN</div>
+  <div class="value mono" id="v-asn">—</div>
+  <div class="detail">Autonomous System Number</div>
+ </div>
+
+ <div class="card">
+  <div class="cardHead">Geo Location</div>
+  <div class="value" id="v-geo">—</div>
+  <div class="detail">Country / city information</div>
+ </div>
+
+ <div class="card">
+  <div class="cardHead">IP Timezone</div>
+  <div class="value mono" id="v-tz">—</div>
+  <div class="detail">Timezone returned by IP intelligence</div>
+ </div>
+
+ <div class="card">
+  <div class="cardHead">Network Response</div>
+  <div class="value mono" id="v-latency">—</div>
+  <div class="detail">Browser-to-provider request timing</div>
+ </div>
+
+</div>
+
+<div class="sectionTitle">
+ <i class="fa-solid fa-shield-halved"></i>
+ <span>VPN / Proxy / Privacy Signals</span>
+</div>
+
+<div class="grid">
+
+ <div class="card">
+  <div class="cardHead">IP Classification</div>
+  <div class="value" id="v-class">Analyzing...</div>
+  <div class="detail">Heuristic classification from organization/network data</div>
+ </div>
+
+ <div class="card">
+  <div class="cardHead">Timezone Consistency</div>
+  <div class="value" id="v-tzmatch">—</div>
+  <div class="detail">Device timezone compared with IP timezone</div>
+ </div>
+
+ <div class="card">
+  <div class="cardHead">Locale Consistency</div>
+  <div class="value" id="v-locale">—</div>
+  <div class="detail">Language and regional settings signal</div>
+ </div>
+
+ <div class="card">
+  <div class="cardHead">WebRTC Exposure</div>
+  <div class="value" id="v-webrtc">Not tested</div>
+  <div class="detail">Browser ICE candidate diagnostic</div>
+ </div>
+
+</div>
+
+<div class="sectionTitle">
+ <i class="fa-solid fa-microchip"></i>
+ <span>Browser & Device Intelligence</span>
+</div>
+
+<div class="grid">
+
+ <div class="card">
+  <div class="cardHead">Device Type</div>
+  <div class="value" id="v-device">—</div>
+  <div class="detail">Mobile / tablet / desktop heuristic</div>
+ </div>
+
+ <div class="card">
+  <div class="cardHead">CPU Cores</div>
+  <div class="value mono" id="v-cpu">—</div>
+  <div class="detail">navigator.hardwareConcurrency</div>
+ </div>
+
+ <div class="card">
+  <div class="cardHead">RAM Hint</div>
+  <div class="value mono" id="v-ram">—</div>
+  <div class="detail">Browser-exposed memory approximation</div>
+ </div>
+
+ <div class="card">
+  <div class="cardHead">Screen</div>
+  <div class="value mono" id="v-screen">—</div>
+  <div class="detail">Resolution / DPR / color depth</div>
+ </div>
+
+ <div class="card">
+  <div class="cardHead">Canvas Fingerprint</div>
+  <div class="value mono" id="v-canvas">—</div>
+  <div class="detail">Local rendering signature</div>
+ </div>
+
+ <div class="card">
+  <div class="cardHead">WebGL Renderer</div>
+  <div class="value" id="v-webgl">—</div>
+  <div class="detail">GPU information when browser exposes it</div>
+ </div>
+
+ <div class="card">
+  <div class="cardHead">Touch Capability</div>
+  <div class="value" id="v-touch">—</div>
+  <div class="detail">Maximum reported touch points</div>
+ </div>
+
+ <div class="card">
+  <div class="cardHead">WebDriver</div>
+  <div class="value" id="v-driver">—</div>
+  <div class="detail">Automation browser signal</div>
+ </div>
+
+</div>
+
+<div class="sectionTitle" id="toolbox">
+ <i class="fa-solid fa-toolbox"></i>
+ <span>NetShield Diagnostic Toolbox — 36 Tools</span>
+</div>
+
+<div class="tools">
+
+<button class="tool" onclick="tool('IP Lookup')"><i class="fa-solid fa-search"></i>IP Lookup</button>
+<button class="tool" onclick="tool('IP WHOIS')"><i class="fa-solid fa-id-card"></i>IP WHOIS</button>
+<button class="tool" onclick="tool('Reverse IP')"><i class="fa-solid fa-rotate-left"></i>Reverse IP</button>
+<button class="tool" onclick="tool('DNS Lookup')"><i class="fa-solid fa-server"></i>DNS Lookup</button>
+<button class="tool" onclick="tool('Reverse DNS')"><i class="fa-solid fa-route"></i>Reverse DNS</button>
+<button class="tool" onclick="tool('ASN Lookup')"><i class="fa-solid fa-network-wired"></i>ASN Lookup</button>
+
+<button class="tool" onclick="tool('CIDR Calculator')"><i class="fa-solid fa-calculator"></i>CIDR Calc</button>
+<button class="tool" onclick="tool('Subnet Calculator')"><i class="fa-solid fa-sitemap"></i>Subnet Calc</button>
+<button class="tool" onclick="tool('IPv6 Calculator')"><i class="fa-solid fa-globe"></i>IPv6 Calc</button>
+<button class="tool" onclick="tool('IP Converter')"><i class="fa-solid fa-right-left"></i>IP Converter</button>
+
+<button class="tool" onclick="tool('Domain WHOIS')"><i class="fa-solid fa-earth-americas"></i>Domain WHOIS</button>
+<button class="tool" onclick="tool('DNS Propagation')"><i class="fa-solid fa-broadcast-tower"></i>DNS Spread</button>
+<button class="tool" onclick="tool('HTTP Headers')"><i class="fa-solid fa-heading"></i>Headers</button>
+<button class="tool" onclick="tool('SSL Checker')"><i class="fa-solid fa-lock"></i>SSL Checker</button>
+<button class="tool" onclick="tool('Security Headers')"><i class="fa-solid fa-shield"></i>Security Headers</button>
+<button class="tool" onclick="tool('Redirect Checker')"><i class="fa-solid fa-shuffle"></i>Redirects</button>
+
+<button class="tool" onclick="tool('User-Agent Parser')"><i class="fa-solid fa-fingerprint"></i>UA Parser</button>
+<button class="tool" onclick="tool('CDN Detector')"><i class="fa-solid fa-cloud"></i>CDN Detect</button>
+<button class="tool" onclick="tool('Hosting Detector')"><i class="fa-solid fa-building"></i>Hosting Detect</button>
+<button class="tool" onclick="tool('VPN Checker')"><i class="fa-solid fa-shield-virus"></i>VPN Check</button>
+<button class="tool" onclick="tool('Proxy Checker')"><i class="fa-solid fa-filter"></i>Proxy Check</button>
+<button class="tool" onclick="tool('Tor Node Checker')"><i class="fa-solid fa-eye-slash"></i>Tor Check</button>
+
+<button class="tool" onclick="tool('DNS Leak Checker')"><i class="fa-solid fa-droplet"></i>DNS Leak</button>
+<button class="tool" onclick="tool('WebRTC Leak')"><i class="fa-solid fa-plug"></i>WebRTC Leak</button>
+<button class="tool" onclick="tool('Blacklist Checker')"><i class="fa-solid fa-ban"></i>Blacklist</button>
+<button class="tool" onclick="tool('SPF & DKIM Check')"><i class="fa-solid fa-envelope"></i>Email Security</button>
+<button class="tool" onclick="tool('DMARC Analyzer')"><i class="fa-solid fa-envelope-open-text"></i>DMARC</button>
+<button class="tool" onclick="tool('Ping & Latency')"><i class="fa-solid fa-stopwatch"></i>Ping</button>
+
+<button class="tool" onclick="tool('Port Scanner Safe')"><i class="fa-solid fa-door-open"></i>Safe Ports</button>
+<button class="tool" onclick="tool('Cloud Provider')"><i class="fa-solid fa-cloud-arrow-up"></i>Cloud Host</button>
+<button class="tool" onclick="tool('TLS Version')"><i class="fa-solid fa-key"></i>TLS</button>
+<button class="tool" onclick="tool('HSTS Check')"><i class="fa-solid fa-user-lock"></i>HSTS</button>
+<button class="tool" onclick="tool('Robots.txt Checker')"><i class="fa-solid fa-robot"></i>Robots.txt</button>
+<button class="tool" onclick="tool('Sitemap XML')"><i class="fa-solid fa-map"></i>Sitemap</button>
+
+<button class="tool" onclick="tool('Fingerprint Hash')"><i class="fa-solid fa-fingerprint"></i>Fingerprint</button>
+<button class="tool" onclick="tool('Full System Audit')"><i class="fa-solid fa-bolt"></i>Master Audit</button>
+
+</div>
+
+<div class="sectionTitle">
+ <i class="fa-solid fa-mobile-screen-button"></i>
+ <span>Device Suitability & Session Diagnostics</span>
+</div>
+
+<div class="grid">
+
+ <div class="card">
+  <div class="cardHead">Device Profile</div>
+  <div class="value" id="deviceProfile">Analyzing...</div>
+  <div class="detail">
+   Combines browser, screen, touch, WebDriver and hardware signals.
+  </div>
+ </div>
+
+ <div class="card">
+  <div class="cardHead">Session Consistency</div>
+  <div class="value" id="sessionConsistency">Analyzing...</div>
+  <div class="detail">
+   Checks whether major local signals contradict each other.
+  </div>
+ </div>
+
+ <div class="card">
+  <div class="cardHead">Offer / Traffic Diagnostic</div>
+  <div class="value" id="trafficStatus">Ready</div>
+  <div class="detail">
+   Diagnostic only: IP, timezone, device, browser and network consistency.
+  </div>
+ </div>
+
+</div>
+
+<div class="sectionTitle">
+ <i class="fa-solid fa-book-open"></i>
+ <span>NetShield Knowledge Base</span>
+</div>
+
+<section class="knowledge">
+
+ <div class="article">
+  <h3>IP & Network Intelligence</h3>
+  <p>
+   An IP address alone does not prove whether a connection is trustworthy.
+   NetShield combines IP intelligence, organization, ASN, timezone and
+   browser-side signals to produce a contextual diagnostic result.
+  </p>
+ </div>
+
+ <div class="article">
+  <h3>Browser Fingerprinting</h3>
+  <p>
+   Canvas, WebGL, screen metrics, language, touch support, hardware
+   concurrency and automation signals can contribute to a browser fingerprint.
+   They are diagnostic signals, not a guaranteed physical identity.
+  </p>
+ </div>
+
+ <div class="article">
+  <h3>Offers & Traffic Diagnostics</h3>
+  <p>
+   NetShield can help identify consistency problems around IP, timezone,
+   browser and device signals. It does not guarantee approval by an offer
+   network and does not replace that network's own fraud or policy systems.
+  </p>
+ </div>
+
+</section>
+
+<section class="support">
+
+ <h2><i class="fa-solid fa-headset" style="color:var(--cyan)"></i> Technical Support</h2>
+
+ <p class="sub" style="margin-top:7px">
+  Need help understanding a NetShield result?
+ </p>
+
+ <div class="supportBtns">
+  <a class="supportBtn telegram" href="https://t.me/NetShieldSupport" target="_blank">
+   <i class="fa-brands fa-telegram"></i> @NetShieldSupport
+  </a>
+
+  <a class="supportBtn" href="mailto:netshieldprosupport@gmail.com">
+   <i class="fa-solid fa-envelope"></i> netshieldprosupport@gmail.com
+  </a>
+ </div>
+
+</section>
+
+</main>
+
+<footer>
+ © 2026 NetShield Ultra — Digital Identity & Network Intelligence Platform
+</footer>
+
+
+<!-- TOOL MODAL -->
+
+<div class="modal" id="toolModal">
+ <div class="modalBox">
+
+  <div class="modalTop">
+   <strong id="modalTitle">Diagnostic Result</strong>
+   <button class="close" onclick="closeModal()">×</button>
+  </div>
+
+  <div id="modalContent"></div>
+
+ </div>
+</div>
+
+
+<!-- AI -->
+
+<button class="aiBtn" onclick="openAI()" aria-label="NetShield AI">
+ <i class="fa-solid fa-brain"></i>
+</button>
+
+<div class="aiWindow" id="aiWindow">
+
+ <div class="aiHeader">
+  <span><i class="fa-solid fa-brain" style="color:var(--cyan)"></i> NetShield Cyber AI</span>
+  <button class="close" onclick="closeAI()">×</button>
+ </div>
+
+ <div class="chips">
+  <button class="chip" onclick="askAI('ايه الـrisk عندي؟')">Risk</button>
+  <button class="chip" onclick="askAI('البروكسي كويس؟')">Proxy</button>
+  <button class="chip" onclick="askAI('ليه النتيجة فيها تحذير؟')">Warnings</button>
+  <button class="chip" onclick="askAI('حلل جهازي')">Device</button>
+  <button class="chip" onclick="askAI('حلل الـtimezone')">Timezone</button>
+ </div>
+
+ <div class="aiMessages" id="aiMessages">
+  <div class="msg bot">
+   أهلاً يا باشا 👋
+   أنا NetShield Cyber AI.
+
+   اسألني عن نتيجة الفحص، الـIP، الـRisk، البروكسي، الـVPN، الـTimezone، البصمة، الجهاز، أي أداة من أدوات NetShield، أو مشاكل الـTraffic/Offers المرتبطة بنتائج الفحص.
+
+   ومش لازم تكتب سؤال طويل؛ حتى لو قلت:
+   "ليه أحمر؟"
+   أو
+   "طب والبروكسي؟"
+   هفهم السياق الحالي.
+  </div>
+ </div>
+
+ <div class="aiInput">
+  <input id="aiInput"
+   maxlength="500"
+   placeholder="اسأل عن نتيجة الفحص..."
+   onkeydown="if(event.key==='Enter')sendAI()">
+
+  <button class="aiSend" onclick="sendAI()">
+   <i class="fa-solid fa-paper-plane"></i>
+  </button>
+ </div>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   NETSHIELD ULTRA ENGINE
+   Evidence-first browser diagnostics
+========================================================= */
+
+const state={
+ data:{},
+ history:[],
+ lastTool:null
+};
+
+const $=id=>document.getElementById(id);
+
+function esc(v){
+ return String(v??"")
+ .replaceAll("&","&amp;")
+ .replaceAll("<","&lt;")
+ .replaceAll(">","&gt;")
+ .replaceAll('"',"&quot;")
+ .replaceAll("'","&#039;");
+}
+
+function hash32(str){
+ let h=2166136261;
+ for(let i=0;i<str.length;i++){
+  h^=str.charCodeAt(i);
+  h=Math.imul(h,16777619);
+ }
+ return h>>>0;
+}
+
+
+/* =========================================================
+   LANGUAGE
+========================================================= */
+
+const translations={
+ en:{
+  title:"LIVE DIGITAL IDENTITY AUDIT",
+  desc:"Real-time analysis of your public IP, network, timezone, browser fingerprint and device signals.",
+  run:"Run Full Audit"
+ },
+ ar:{
+  title:"فحص الهوية الرقمية المباشر",
+  desc:"تحليل مباشر للـIP والشبكة والتوقيت وبصمة المتصفح وإشارات الجهاز.",
+  run:"ابدأ الفحص الشامل"
+ },
+ ru:{
+  title:"ПРЯМОЙ АУДИТ ЦИФРОВОЙ ИДЕНТИЧНОСТИ",
+  desc:"Анализ IP, сети, часового пояса, отпечатка браузера и устройства.",
+  run:"Запустить полный аудит"
+ }
+};
+
+let lang="en";
+
+function changeLanguage(v){
+ lang=v;
+
+ document.documentElement.lang=v;
+ document.documentElement.dir=v==="ar"?"rtl":"ltr";
+
+ $("heroTitle").textContent=translations[v].title;
+ $("heroDesc").textContent=translations[v].desc;
+ $("runText").textContent=translations[v].run;
+}
+
+
+/* =========================================================
+   IP INTELLIGENCE
+========================================================= */
+
+async function fetchJSON(url,timeout=6000){
+
+ const controller=new AbortController();
+
+ const timer=setTimeout(
+  ()=>controller.abort(),
+  timeout
+ );
+
+ try{
+
+  const r=await fetch(url,{
+   signal:controller.signal,
+   cache:"no-store"
+  });
+
+  if(!r.ok)throw new Error("HTTP "+r.status);
+
+  return await r.json();
+
+ }finally{
+  clearTimeout(timer);
+ }
+}
+
+
+async function getIP(){
+
+ const providers=[
+  async()=>{
+   const d=await fetchJSON("https://ipwhois.app/json/");
+   return {
+    ip:d.ip,
+    isp:d.isp||d.org,
+    asn:d.asn,
+    country:d.country,
+    city:d.city,
+    timezone:d.timezone
+   };
+  },
+
+  async()=>{
+   const d=await fetchJSON("https://ipapi.co/json/");
+   return {
+    ip:d.ip,
+    isp:d.org,
+    asn:d.asn,
+    country:d.country_name,
+    city:d.city,
+    timezone:d.timezone
+   };
+  },
+
+  async()=>{
+   const d=await fetchJSON("https://freeipapi.com/api/json");
+   return {
+    ip:d.ipAddress,
+    isp:d.asn||"Unknown",
+    asn:d.asn,
+    country:d.countryName,
+    city:d.cityName,
+    timezone:d.timeZones?.[0]
+   };
+  }
+ ];
+
+ for(const provider of providers){
+
+  try{
+
+   const data=await provider();
+
+   if(data.ip)return data;
+
+  }catch(e){}
+
+ }
+
+ return {
+  ip:"Unavailable",
+  isp:"Unavailable",
+  asn:"Unavailable",
+  country:"Unavailable",
+  city:"Unavailable",
+  timezone:Intl.DateTimeFormat().resolvedOptions().timeZone
+ };
+}
+
+
+/* =========================================================
+   FINGERPRINT
+========================================================= */
+
+function getCanvasHash(){
+
+ try{
+
+  const c=document.createElement("canvas");
+
+  c.width=400;
+  c.height=120;
+
+  const ctx=c.getContext("2d");
+
+  ctx.textBaseline="top";
+  ctx.font="18px Arial";
+
+  ctx.fillStyle="#00eaff";
+  ctx.fillRect(5,5,130,25);
+
+  ctx.fillStyle="#ffffff";
+  ctx.fillText("NetShield Ultra",15,42);
+
+  ctx.fillStyle="#b987ff";
+  ctx.beginPath();
+  ctx.arc(280,55,25,0,Math.PI*2);
+  ctx.fill();
+
+  return "0x"+hash32(c.toDataURL()).toString(16).toUpperCase();
+
+ }catch(e){
+  return "UNAVAILABLE";
+ }
+}
+
+
+function getWebGL(){
+
+ try{
+
+  const c=document.createElement("canvas");
+
+  const gl=
+   c.getContext("webgl")||
+   c.getContext("experimental-webgl");
+
+  if(!gl)return "Unavailable";
+
+  const dbg=
+   gl.getExtension("WEBGL_debug_renderer_info");
+
+  if(dbg){
+
+   return (
+    gl.getParameter(dbg.UNMASKED_VENDOR_WEBGL)
+    +" / "+
+    gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL)
+   );
+  }
+
+  return String(
+   gl.getParameter(gl.RENDERER)||"WebGL"
+  );
+
+ }catch(e){
+
+  return "Unavailable";
+
+ }
+}
+
+
+/* =========================================================
+   WEBRTC
+========================================================= */
+
+async function testWebRTC(){
+
+ if(!window.RTCPeerConnection){
+  return {
+   status:"INFO",
+   text:"WebRTC is not exposed by this browser."
+  };
+ }
+
+ return new Promise(resolve=>{
+
+  let finished=false;
+  let candidates=[];
+
+  const pc=new RTCPeerConnection({
+   iceServers:[
+    {urls:"stun:stun.l.google.com:19302"}
+   ]
+  });
+
+  const timer=setTimeout(
+   finish,
+   5000
+  );
+
+  function finish(){
+
+   if(finished)return;
+
+   finished=true;
+   clearTimeout(timer);
+
+   try{pc.close()}catch(e){}
+
+   const host=candidates.filter(
+    x=>/\bhost\b/i.test(x)
+   ).length;
+
+   const reflexive=candidates.filter(
+    x=>/\bsrflx\b/i.test(x)
+   ).length;
+
+   resolve({
+    status:reflexive||host?"PASS":"INFO",
+    text:
+     "ICE candidates: "+candidates.length+
+     " | Host: "+host+
+     " | Server-reflexive: "+reflexive
+   });
+  }
+
+  pc.onicecandidate=e=>{
+
+   if(e.candidate){
+    candidates.push(e.candidate.candidate);
+   }else{
+    finish();
+   }
+  };
+
+  try{
+
+   pc.createDataChannel("netshield");
+
+   pc.createOffer()
+    .then(o=>pc.setLocalDescription(o))
+    .catch(finish);
+
+  }catch(e){
+   finish();
+  }
+
+ });
+}
+
+
+/* =========================================================
+   DEVICE PROFILE
+========================================================= */
+
+function deviceType(){
+
+ const ua=navigator.userAgent.toLowerCase();
+
+ if(/tablet|ipad/.test(ua))
+  return "Tablet";
+
+ if(/mobile|android|iphone|ipod/.test(ua))
+  return "Mobile";
+
+ return "Desktop";
+}
+
+
+function collectDevice(){
+
+ const type=deviceType();
+
+ const cpu=navigator.hardwareConcurrency||"Unavailable";
+
+ const ram=navigator.deviceMemory
+  ? navigator.deviceMemory+" GB"
+  : "Browser did not expose RAM";
+
+ const screen=
+  screen.width+" × "+screen.height+
+  " | DPR "+window.devicePixelRatio+
+  " | "+screen.colorDepth+" bit";
+
+ const touch=navigator.maxTouchPoints||0;
+
+ const webdriver=!!navigator.webdriver;
+
+ const canvas=getCanvasHash();
+
+ const webgl=getWebGL();
+
+ const locale=navigator.language||"Unknown";
+
+ const timezone=
+  Intl.DateTimeFormat().resolvedOptions().timeZone||"Unknown";
+
+ return{
+  type,
+  cpu,
+  ram,
+  screen,
+  touch,
+  webdriver,
+  canvas,
+  webgl,
+  locale,
+  timezone,
+  ua:navigator.userAgent,
+  platform:navigator.platform
+ };
+}
+
+
+/* =========================================================
+   RISK ENGINE
+========================================================= */
+
+function calculateRisk(ip){
+
+ let risk=0;
+ const reasons=[];
+
+ const org=(ip.isp||"").toLowerCase();
+
+ const hostingTerms=[
+  "amazon",
+  "aws",
+  "google cloud",
+  "digitalocean",
+  "hetzner",
+  "ovh",
+  "m247",
+  "hosting",
+  "datacenter",
+  "vultr",
+  "linode",
+  "contabo"
+ ];
+
+ if(hostingTerms.some(x=>org.includes(x))){
+  risk+=45;
+  reasons.push("Hosting/datacenter-related organization signal");
+ }
+
+ const localTZ=
+  Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+ if(
+  ip.timezone &&
+  localTZ &&
+  ip.timezone.toLowerCase()!==localTZ.toLowerCase()
+ ){
+  risk+=15;
+  reasons.push("Timezone mismatch");
+ }
+
+ if(navigator.webdriver){
+  risk+=25;
+  reasons.push("WebDriver automation signal");
+ }
+
+ if(!navigator.cookieEnabled){
+  risk+=5;
+  reasons.push("Cookies disabled");
+ }
+
+ if(navigator.doNotTrack==="1"){
+  risk+=2;
+  reasons.push("Do Not Track enabled");
+ }
+
+ risk=Math.min(100,risk);
+
+ return{
+  risk,
+  reasons
+ };
+}
+
+
+/* =========================================================
+   FULL AUDIT
+========================================================= */
+
+async function runAudit(){
+
+ $("mainIP").textContent="Analyzing connection...";
+
+ const started=performance.now();
+
+ const [ip,device]=await Promise.all([
+  getIP(),
+  Promise.resolve(collectDevice())
+ ]);
+
+ state.data.ip=ip;
+ state.data.device=device;
+
+ const riskInfo=calculateRisk(ip);
+
+ state.data.risk=riskInfo.risk;
+ state.data.reasons=riskInfo.reasons;
+
+ $("mainIP").textContent=ip.ip;
+
+ $("v-ip").textContent=ip.ip;
+ $("v-isp").textContent=ip.isp||"Unavailable";
+ $("v-asn").textContent=ip.asn||"Unavailable";
+ $("v-geo").textContent=
+  `${ip.country||"Unknown"} (${ip.city||"Unknown"})`;
+ $("v-tz").textContent=ip.timezone||"Unknown";
+
+ $("v-cpu").textContent=device.cpu;
+ $("v-ram").textContent=device.ram;
+ $("v-screen").textContent=device.screen;
+ $("v-canvas").textContent=device.canvas;
+ $("v-webgl").textContent=device.webgl;
+ $("v-touch").textContent=device.touch;
+ $("v-driver").textContent=
+  device.webdriver?"Detected":"Not detected";
+
+ $("v-device").textContent=device.type;
+
+ const latency=Math.round(performance.now()-started);
+
+ $("v-latency").textContent=latency+" ms";
+
+ const localTZ=device.timezone;
+
+ const tzMatch=
+  ip.timezone &&
+  localTZ &&
+  ip.timezone.toLowerCase()===localTZ.toLowerCase();
+
+ $("v-tzmatch").textContent=
+  tzMatch?"MATCHED":"MISMATCH";
+
+ $("v-tzmatch").className=
+  "value "+(tzMatch?"":"warn");
+
+ $("v-locale").textContent=
+  `${device.locale} / ${localTZ}`;
+
+ const org=(ip.isp||"").toLowerCase();
+
+ const hosting=
+  [
+   "hosting",
+   "amazon",
+   "digitalocean",
+   "hetzner",
+   "ovh",
+   "m247",
+   "datacenter",
+   "vultr",
+   "linode"
+  ].some(x=>org.includes(x));
+
+ $("v-class").textContent=
+  hosting
+  ? "Hosting / Datacenter signal"
+  : "Consumer / ISP signal";
+
+ $("deviceProfile").textContent=
+  `${device.type} • ${device.cpu} cores • ${device.touch} touch points`;
+
+ let consistency="GOOD";
+
+ if(!tzMatch || device.webdriver)
+  consistency="REVIEW";
+
+ $("sessionConsistency").textContent=consistency;
+
+ $("trafficStatus").textContent=
+  riskInfo.risk>=40
+  ?"Review required"
+  :"No major browser-side contradiction";
+
+ $("risk").textContent=riskInfo.risk+"%";
+
+ $("risk").style.color=
+  riskInfo.risk>=60
+   ?"var(--red)"
+   :riskInfo.risk>=25
+    ?"var(--orange)"
+    :"var(--green)";
+
+ $("riskBadge").className=
+  "badge "+
+  (
+   riskInfo.risk>=60
+   ?"fail"
+   :riskInfo.risk>=25
+    ?"warn"
+    :"pass"
+  );
+
+ $("riskBadge").textContent=
+  riskInfo.risk>=60
+   ?"HIGH"
+   :riskInfo.risk>=25
+    ?"REVIEW"
+    :"LOW";
+
+ const privacy=Math.max(
+  0,
+  100-Math.round(riskInfo.risk*.65)
+ );
+
+ $("privacy").textContent=privacy+"%";
+
+ $("privacyBadge").className=
+  "badge "+
+  (privacy>=80?"pass":privacy>=55?"warn":"fail");
+
+ $("privacyBadge").textContent=
+  privacy>=80?"GOOD":privacy>=55?"REVIEW":"LOW";
+
+ let confidence=85;
+
+ if(ip.ip==="Unavailable")
+  confidence=25;
+
+ if(!ip.asn||ip.asn==="Unavailable")
+  confidence-=15;
+
+ if(!ip.timezone)
+  confidence-=10;
+
+ confidence=Math.max(0,confidence);
+
+ $("confidence").textContent=confidence+"%";
+
+ $("confidenceBadge").textContent=
+  confidence>=75?"HIGH":"LIMITED";
+
+ $("confidenceBadge").className=
+  "badge "+(confidence>=75?"pass":"warn");
+
+ const bot=device.webdriver?90:0;
+
+ $("bot").textContent=bot+"%";
+
+ $("botBadge").textContent=
+  bot?"AUTOMATION SIGNAL":"NO SIGNAL";
+
+ $("botBadge").className=
+  "badge "+(bot?"fail":"pass");
+
+ renderAdvisor(riskInfo,ip,device);
+
+ updateClocks();
+
+ state.data.generatedAt=new Date().toISOString();
+
+}
+
+
+/* =========================================================
+   ADVISOR
+========================================================= */
+
+function renderAdvisor(info,ip,device){
+
+ const box=$("advisor");
+
+ box.innerHTML="";
+
+ const add=(icon,text,type="pass")=>{
+
+  const div=document.createElement("div");
+
+  div.className="advice";
+
+  div.innerHTML=`
+   <div class="adviceText">
+    <i class="${icon}" style="color:var(--${type==="fail"?"red":type==="warn"?"orange":"green"})"></i>
+    ${esc(text)}
+   </div>
+   <span class="badge ${type}">
+    ${type==="pass"?"PASS":type==="warn"?"REVIEW":"ACTION"}
+   </span>
+  `;
+
+  box.appendChild(div);
+ };
+
+ if(info.risk===0){
+  add(
+   "fa-solid fa-circle-check",
+   "No major browser-side risk indicators were established by the current diagnostic.",
+   "pass"
+  );
+ }
+
+ if(info.reasons.length){
+
+  info.reasons.forEach(reason=>{
+   add(
+    "fa-solid fa-triangle-exclamation",
+    reason,
+    "warn"
+   );
+  });
+
+ }
+
+ if(device.webdriver){
+
+  add(
+   "fa-solid fa-robot",
+   "Automation signal detected. This is a browser signal, not proof of malicious activity.",
+   "warn"
+  );
+
+ }
+
+ add(
+  "fa-solid fa-mobile-screen",
+  `Device profile: ${device.type}. Hardware and browser values are diagnostic hints and can be restricted by the browser.`,
+  "pass"
+ );
+
+ add(
+  "fa-solid fa-chart-line",
+  "Offer/traffic compatibility cannot be guaranteed by a browser-only audit. Use the evidence here to investigate inconsistencies.",
+  info.risk>=40?"warn":"pass"
+ );
+
+}
+
+
+/* =========================================================
+   CLOCKS
+========================================================= */
+
+function updateClocks(){
+
+ const now=new Date();
+
+ $("deviceClock").textContent=
+  now.toLocaleTimeString();
+
+ const tz=
+  state.data.timezone||
+  state.data.ip?.timezone;
+
+ $("deviceZone").textContent=
+  Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+ if(tz){
+
+  try{
+
+   $("ipClock").textContent=
+    now.toLocaleTimeString(
+     "en-US",
+     {
+      timeZone:tz,
+      hour12:false
+     }
+    );
+
+   $("ipZone").textContent=tz;
+
+  }catch(e){
+
+   $("ipClock").textContent="Unavailable";
+   $("ipZone").textContent=tz;
+
+  }
+
+ }else{
+
+  $("ipClock").textContent="--:--:--";
+  $("ipZone").textContent="Not available";
+
+ }
+}
+
+setInterval(updateClocks,1000);
+
+
+/* =========================================================
+   TOOL ENGINE
+========================================================= */
+
+function openModal(title,html){
+
+ $("modalTitle").textContent=
+  "NetShield Diagnostic • "+title;
+
+ $("modalContent").innerHTML=html;
+
+ $("toolModal").style.display="flex";
+}
+
+function closeModal(){
+ $("toolModal").style.display="none";
+}
+
+function header(name,status,target,start){
+
+ const ms=Math.max(
+  1,
+  Math.round(performance.now()-start)
+ );
+
+ const cls=
+  status==="PASS"?"pass":
+  status==="WARN"?"warn":
+  status==="FAIL"?"fail":
+  "info";
+
+ return `
+ <div class="result">
+  <div style="display:flex;justify-content:space-between;gap:10px">
+   <strong>${esc(name)}</strong>
+   <span class="badge ${cls}">${status}</span>
+  </div>
+
+  <div style="margin-top:9px;color:var(--muted);font-size:.76rem">
+   Target: ${esc(target)}
+   <br>
+   Executed: ${new Date().toUTCString()}
+   <br>
+   Duration: ${ms} ms
+  </div>
+ </div>`;
+}
+
+
+async function dns(domain,type){
+
+ const r=await fetch(
+  `https://cloudflare-dns.com/dns-query?name=${encodeURIComponent(domain)}&type=${type}`,
+  {
+   headers:{
+    Accept:"application/dns-json"
+   },
+   cache:"no-store"
+  }
+ );
+
+ if(!r.ok)
+  throw new Error("DNS request failed");
+
+ return r.json();
+}
+
+
+function askDomain(){
+
+ const raw=prompt(
+  "Enter domain, example.com:",
+  location.hostname
+ );
+
+ if(!raw)return null;
+
+ const clean=
+  raw
+   .trim()
+   .replace(/^https?:\/\//i,"")
+   .split("/")[0]
+   .toLowerCase();
+
+ if(!/^[a-z0-9.-]+\.[a-z]{2,}$/i.test(clean)){
+  alert("Invalid domain");
+  return null;
+ }
+
+ return clean;
+}
+
+
+function askURL(){
+
+ const raw=prompt(
+  "Enter URL:",
+  location.href
+ );
+
+ if(!raw)return null;
+
+ try{
+  return new URL(raw).href;
+ }catch(e){
+  alert("Invalid URL");
+  return null;
+ }
+}
+
+
+/* =========================================================
+   TOOL ROUTER
+========================================================= */
+
+async function tool(name){
+
+ const start=performance.now();
+
+ state.lastTool=name;
+
+ openModal(
+  name,
+  `
+   <div class="result" style="text-align:center">
+    <i class="fa-solid fa-circle-notch fa-spin"
+       style="font-size:1.7rem;color:var(--cyan)"></i>
+    <br><br>
+    Running live diagnostic...
+   </div>
+  `
+ );
+
+ try{
+
+  let html="";
+  let status="INFO";
+  let target=state.data.ip?.ip||"Current session";
+
+  const ip=state.data.ip||{};
+  const d=state.data.device||collectDevice();
+
+  switch(name){
+
+   case"IP Lookup":
+
+    status=ip.ip&&ip.ip!=="Unavailable"?"PASS":"WARN";
+
+    html=`
+     <p><strong>Public IP:</strong> ${esc(ip.ip)}</p>
+     <p><strong>ISP:</strong> ${esc(ip.isp)}</p>
+     <p><strong>ASN:</strong> ${esc(ip.asn)}</p>
+     <p><strong>Country:</strong> ${esc(ip.country)}</p>
+     <p><strong>City:</strong> ${esc(ip.city)}</p>
+     <p><strong>Timezone:</strong> ${esc(ip.timezone)}</p>
+    `;
+
+   break;
+
+
+   case"IP WHOIS":
+   case"ASN Lookup":{
+
+    if(!ip.ip||ip.ip==="Unavailable")
+     throw new Error("Current IP unavailable");
+
+    const r=await fetchJSON(
+     `https://rdap.org/ip/${encodeURIComponent(ip.ip)}`
+    );
+
+    status=r.handle||r.name?"PASS":"WARN";
+
+    target=ip.ip;
+
+    html=`
+     <p><strong>Handle:</strong> ${esc(r.handle||"Unavailable")}</p>
+     <p><strong>Name:</strong> ${esc(r.name||"Unavailable")}</p>
+     <p><strong>Start:</strong> ${esc(r.startAddress||"Unavailable")}</p>
+     <p><strong>End:</strong> ${esc(r.endAddress||"Unavailable")}</p>
+     <p><strong>Country:</strong> ${esc(r.country||"Unavailable")}</p>
+     <p><strong>Entities:</strong>
+       ${esc((r.entities||[])
+        .map(x=>x.handle||x.name||"")
+        .filter(Boolean)
+        .slice(0,10)
+        .join(", ")||"Not provided")}
+     </p>
+    `;
+
+   }break;
+
+
+   case"Reverse DNS":{
+
+    if(!ip.ip||ip.ip==="Unavailable")
+     throw new Error("Current IP unavailable");
+
+    const p=ip.ip.split(".");
+
+    if(p.length!==4)
+     throw new Error("IPv4 PTR lookup unavailable");
+
+    const query=p.reverse().join(".")+".in-addr.arpa";
+
+    const r=await dns(query,"PTR");
+
+    status=r.Answer?.length?"PASS":"WARN";
+
+    target=query;
+
+    html=`
+     <p><strong>PTR Query:</strong> ${esc(query)}</p>
+     <p><strong>Result:</strong>
+      ${esc(
+       (r.Answer||[])
+        .map(x=>x.data)
+        .join(" | ")||"No PTR record"
+      )}
+     </p>
+    `;
+
+   }break;
+
+
+   case"DNS Lookup":
+   case"DNS Propagation":{
+
+    const domain=askDomain();
+
+    if(!domain){
+     html="<p>Cancelled.</p>";
+     break;
+    }
+
+    target=domain;
+
+    const types=["A","AAAA","MX","NS","TXT"];
+
+    let rows="";
+
+    for(const type of types){
+
+     try{
+
+      const r=await dns(domain,type);
+
+      rows+=`
+       <p>
+        <strong>${type}:</strong>
+        ${esc(
+         (r.Answer||[])
+          .map(x=>x.data)
+          .join(" | ")||"No answer"
+        )}
+       </p>
+      `;
+
+     }catch(e){
+
+      rows+=`
+       <p>
+        <strong>${type}:</strong>
+        Unavailable
+       </p>
+      `;
+
+     }
+    }
+
+    status="PASS";
+
+    html=rows;
+
+   }break;
+
+
+   case"Reverse IP":
+
+    status="INFO";
+
+    html=`
+     <p>
+      A true reverse-IP hosted-domain database requires
+      a server-side data provider.
+     </p>
+
+     <p>
+      NetShield will not invent a domain list from the
+      browser.
+     </p>
+
+     <p>
+      <strong>Current IP:</strong> ${esc(ip.ip)}
+     </p>
+    `;
+
+   break;
+
+
+   case"CIDR Calculator":
+   case"Subnet Calculator":{
+
+    const raw=prompt(
+     "IPv4 address:",
+     ip.ip||"192.168.1.10"
+    );
+
+    const prefix=Number(
+     prompt("CIDR prefix 0-32:","24")
+    );
+
+    const parts=(raw||"").split(".").map(Number);
+
+    if(
+     parts.length!==4||
+     parts.some(x=>!Number.isInteger(x)||x<0||x>255)||
+     !Number.isInteger(prefix)||
+     prefix<0||
+     prefix>32
+    )
+     throw new Error("Invalid IPv4 or prefix");
+
+    const n=(
+     ((parts[0]*256+parts[1])*256+parts[2])*256+parts[3]
+    )>>>0;
+
+    const mask=
+     prefix===0
+      ?0
+      :(0xffffffff<<(32-prefix))>>>0;
+
+    const network=(n&mask)>>>0;
+    const broadcast=(network|(~mask>>>0))>>>0;
+
+    const toIP=x=>[
+     x>>>24,
+     (x>>>16)&255,
+     (x>>>8)&255,
+     x&255
+    ].join(".");
+
+    const total=2**(32-prefix);
+
+    status="PASS";
+
+    target=`${raw}/${prefix}`;
+
+    html=`
+     <p><strong>Network:</strong> ${toIP(network)}/${prefix}</p>
+     <p><strong>Broadcast:</strong> ${toIP(broadcast)}</p>
+     <p><strong>Total:</strong> ${total.toLocaleString()}</p>
+     <p><strong>Usable:</strong>
+      ${
+       prefix>=31
+       ?"N/A"
+       :`${toIP(network+1)} → ${toIP(broadcast-1)}`
+      }
+     </p>
+    `;
+
+   }break;
+
+
+   case"IP Converter":{
+
+    const raw=prompt(
+     "IPv4 address:",
+     ip.ip||"8.8.8.8"
+    );
+
+    const p=(raw||"").split(".").map(Number);
+
+    if(
+     p.length!==4||
+     p.some(x=>!Number.isInteger(x)||x<0||x>255)
+    )
+     throw new Error("Invalid IPv4");
+
+    const n=(
+     ((p[0]*256+p[1])*256+p[2])*256+p[3]
+    )>>>0;
+
+    status="PASS";
+
+    target=raw;
+
+    html=`
+     <p><strong>Decimal:</strong> ${n}</p>
+     <p><strong>Hex:</strong> 0x${n.toString(16).toUpperCase().padStart(8,"0")}</p>
+     <p><strong>Binary:</strong>
+      ${p.map(x=>x.toString(2).padStart(8,"0")).join(".")}
+     </p>
+    `;
+
+   }break;
+
+
+   case"IPv6 Calculator":{
+
+    const raw=prompt(
+     "IPv6 address:",
+     "::1"
+    );
+
+    if(!raw){
+     html="<p>Cancelled.</p>";
+     break;
+    }
+
+    const valid=
+     raw.includes(":")&&
+     /^[0-9a-fA-F:]+$/.test(raw);
+
+    status=valid?"PASS":"FAIL";
+
+    target=raw;
+
+    html=`
+     <p><strong>Input:</strong> ${esc(raw)}</p>
+     <p><strong>Syntax:</strong>
+      ${valid?"Valid-looking IPv6 syntax":"Invalid IPv6 syntax"}
+     </p>
+     <p>
+      Route/leak verification requires network-side evidence.
+     </p>
+    `;
+
+   }break;
+
+
+   case"Domain WHOIS":{
+
+    const domain=askDomain();
+
+    if(!domain){
+     html="<p>Cancelled.</p>";
+     break;
+    }
+
+    target=domain;
+
+    const r=await fetchJSON(
+     `https://rdap.org/domain/${encodeURIComponent(domain)}`
+    );
+
+    status=r.ldhName||r.name?"PASS":"WARN";
+
+    html=`
+     <p><strong>Domain:</strong> ${esc(r.ldhName||r.name||domain)}</p>
+     <p><strong>Status:</strong>
+      ${esc((r.status||[]).join(", ")||"Not provided")}
+     </p>
+     <p><strong>Registrar:</strong>
+      ${esc(
+       (r.entities||[])
+        .find(x=>(x.roles||[]).includes("registrar"))
+        ?.handle||"Not provided"
+      )}
+     </p>
+    `;
+
+   }break;
+
+
+   case"HTTP Headers":
+   case"Security Headers":
+   case"HSTS Check":
+   case"CDN Detector":{
+
+    const url=askURL();
+
+    if(!url){
+     html="<p>Cancelled.</p>";
+     break;
+    }
+
+    target=url;
+
+    const r=await fetch(
+     url,
+     {
+      method:"HEAD",
+      cache:"no-store"
+     }
+    );
+
+    const headers=[
+     "content-type",
+     "content-security-policy",
+     "strict-transport-security",
+     "x-frame-options",
+     "x-content-type-options",
+     "referrer-policy",
+     "permissions-policy",
+     "server",
+     "cf-cache-status"
+    ];
+
+    status=r.ok?"PASS":"WARN";
+
+    html=headers.map(h=>`
+     <p>
+      <strong>${h}:</strong>
+      ${esc(r.headers.get(h)||"Not exposed")}
+     </p>
+    `).join("");
+
+   }break;
+
+
+   case"SSL Checker":
+   case"TLS Version":{
+
+    target=location.origin;
+
+    status=
+     location.protocol==="https:"?"PASS":"WARN";
+
+    html=`
+     <p><strong>Protocol:</strong> ${esc(location.protocol)}</p>
+     <p><strong>Host:</strong> ${esc(location.host)}</p>
+     <p><strong>HTTPS:</strong>
+      ${location.protocol==="https:"?"Enabled":"Disabled"}
+     </p>
+     <p>
+      Exact negotiated TLS version/cipher cannot be
+      reliably exposed to page JavaScript.
+     </p>
+    `;
+
+   }break;
+
+
+   case"Redirect Checker":{
+
+    const url=askURL();
+
+    if(!url){
+     html="<p>Cancelled.</p>";
+     break;
+    }
+
+    target=url;
+
+    try{
+
+     const r=await fetch(
+      url,
+      {
+       redirect:"manual",
+       cache:"no-store"
+      }
+     );
+
+     status="PASS";
+
+     html=`
+      <p><strong>Status:</strong> ${r.status}</p>
+      <p><strong>Location:</strong>
+       ${esc(r.headers.get("location")||"Not exposed")}
+      </p>
+      <p>
+       Cross-origin redirect chains may be hidden by CORS.
+      </p>
+     `;
+
+    }catch(e){
+
+     status="INFO";
+
+     html=`
+      <p>
+       Browser security policy prevented cross-origin
+       redirect inspection.
+      </p>
+     `;
+
+    }
+
+   }break;
+
+
+   case"User-Agent Parser":
+
+    status="PASS";
+
+    target="Current browser";
+
+    html=`
+     <p><strong>User-Agent:</strong> ${esc(d.ua)}</p>
+     <p><strong>Platform:</strong> ${esc(d.platform)}</p>
+     <p><strong>Language:</strong> ${esc(d.locale)}</p>
+     <p><strong>Device:</strong> ${esc(d.type)}</p>
+     <p><strong>Cookies:</strong>
+      ${navigator.cookieEnabled?"Enabled":"Disabled"}
+     </p>
+     <p><strong>Online:</strong>
+      ${navigator.onLine?"Yes":"No"}
+     </p>
+    `;
+
+   break;
+
+
+   case"Hosting Detector":
+   case"Cloud Provider":
+   case"VPN Checker":
+   case"Proxy Checker":
+
+    status="INFO";
+
+    html=`
+     <p><strong>Organization:</strong> ${esc(ip.isp)}</p>
+     <p><strong>ASN:</strong> ${esc(ip.asn)}</p>
+     <p>
+      Browser-only classification is heuristic.
+      A definitive commercial VPN/proxy reputation check
+      requires server-side IP intelligence.
+     </p>
+    `;
+
+   break;
+
+
+   case"Tor Node Checker":
+   case"Blacklist Checker":
+
+    status="INFO";
+
+    html=`
+     <p>
+      This browser build does not query a commercial
+      Tor/reputation database.
+     </p>
+     <p>
+      NetShield intentionally avoids fabricating a
+      "clean" or "blacklisted" result.
+     </p>
+     <p><strong>IP:</strong> ${esc(ip.ip)}</p>
+     <p><strong>ASN:</strong> ${esc(ip.asn)}</p>
+    `;
+
+   break;
+
+
+   case"DNS Leak Checker":{
+
+    const domain=askDomain();
+
+    if(!domain){
+     html="<p>Cancelled.</p>";
+     break;
+    }
+
+    target=domain;
+
+    const r=await dns(domain,"A");
+
+    status=r.Answer?"PASS":"WARN";
+
+    html=`
+     <p><strong>Resolver:</strong> Cloudflare DNS-over-HTTPS</p>
+     <p><strong>Answers:</strong>
+      ${esc(
+       (r.Answer||[])
+        .map(x=>x.data)
+        .join(", ")||"No answer"
+      )}
+     </p>
+     <p>
+      This confirms browser DoH resolution, not the
+      native resolver used by the operating system.
+     </p>
+    `;
+
+   }break;
+
+
+   case"WebRTC Leak":{
+
+    const r=await testWebRTC();
+
+    status=r.status;
+
+    html=`
+     <p>${esc(r.text)}</p>
+     <p>
+      WebRTC behavior varies by browser and privacy
+      settings, so this is a diagnostic signal rather
+      than absolute proof of a leak.
+     </p>
+    `;
+
+    $("v-webrtc").textContent=r.text;
+
+   }break;
+
+
+   case"SPF & DKIM Check":
+   case"DMARC Analyzer":{
+
+    const domain=askDomain();
+
+    if(!domain){
+     html="<p>Cancelled.</p>";
+     break;
+    }
+
+    target=domain;
+
+    const txt=await dns(domain,"TXT");
+
+    const dmarc=await dns(
+     `_dmarc.${domain}`,
+     "TXT"
+    );
+
+    const spf=(txt.Answer||[])
+     .map(x=>x.data)
+     .filter(x=>/v=spf1/i.test(x));
+
+    const dm=(dmarc.Answer||[])
+     .map(x=>x.data)
+     .filter(x=>/v=dmarc1/i.test(x));
+
+    status=(spf.length||dm.length)?"PASS":"WARN";
+
+    html=`
+     <p><strong>SPF:</strong>
+      ${esc(spf.join(" | ")||"No SPF record")}
+     </p>
+
+     <p><strong>DMARC:</strong>
+      ${esc(dm.join(" | ")||"No DMARC record")}
+     </p>
+
+     <p>
+      DKIM requires a selector; NetShield will not
+      pretend a selector exists if one was not supplied.
+     </p>
+    `;
+
+   }break;
+
+
+   case"Ping & Latency":{
+
+    const t=performance.now();
+
+    const r=await fetch(
+     location.origin+
+     location.pathname+
+     "?ns_ping="+Date.now(),
+     {
+      cache:"no-store"
+     }
+    );
+
+    const ms=Math.round(performance.now()-t);
+
+    status=r.ok?"PASS":"WARN";
+
+    target=location.origin;
+
+    html=`
+     <p><strong>Browser → Site RTT:</strong> ${ms} ms</p>
+     <p><strong>HTTP:</strong> ${r.status}</p>
+     <p>
+      This is browser-to-site latency, not a universal
+      Internet ping.
+     </p>
+    `;
+
+   }break;
+
+
+   case"Port Scanner Safe":
+
+    status="INFO";
+
+    html=`
+     <p>
+      Browser JavaScript cannot safely perform a reliable
+      arbitrary Internet port scan.
+     </p>
+     <p>
+      This tool intentionally remains passive rather than
+      pretending to have scanned ports.
+     </p>
+    `;
+
+   break;
+
+
+   case"Robots.txt Checker":
+   case"Sitemap XML":{
+
+    const path=
+     name==="Robots.txt Checker"
+      ?"/robots.txt"
+      :"/sitemap.xml";
+
+    target=location.origin+path;
+
+    const r=await fetch(
+     path,
+     {
+      cache:"no-store"
+     }
+    );
+
+    const text=await r.text();
+
+    status=r.ok?"PASS":"WARN";
+
+    html=`
+     <p><strong>HTTP:</strong> ${r.status}</p>
+     <p><strong>Found:</strong> ${r.ok?"Yes":"No"}</p>
+     <pre>${esc(text.slice(0,8000)||"No content")}</pre>
+    `;
+
+   }break;
+
+
+   case"Fingerprint Hash":
+
+    status="PASS";
+
+    html=`
+     <p><strong>Canvas:</strong> ${esc(d.canvas)}</p>
+     <p><strong>WebGL:</strong> ${esc(d.webgl)}</p>
+     <p><strong>CPU:</strong> ${esc(d.cpu)}</p>
+     <p><strong>RAM hint:</strong> ${esc(d.ram)}</p>
+     <p><strong>Touch:</strong> ${esc(d.touch)}</p>
+     <p><strong>Device:</strong> ${esc(d.type)}</p>
+     <p><strong>WebDriver:</strong>
+      ${d.webdriver?"Detected":"Not detected"}
+     </p>
+     <p>
+      These signals can contribute to a browser fingerprint
+      but cannot uniquely identify a physical device.
+     </p>
+    `;
+
+   break;
+
+
+   case"Full System Audit":
+
+    await runAudit();
+
+    status="PASS";
+
+    html=`
+     <p>
+      Full audit refreshed successfully.
+     </p>
+     <p>
+      The dashboard now contains the latest available
+      browser-side evidence.
+     </p>
+    `;
+
+   break;
+
+
+   default:
+
+    status="INFO";
+
+    html=`
+     <p>
+      This diagnostic is not available in the current
+      browser-only build.
+     </p>
+    `;
+
+  }
+
+  openModal(
+   name,
+   header(name,status,target,start)+
+   `<div class="result">${html}</div>`
+  );
+
+ }catch(e){
+
+  openModal(
+   name,
+   header(name,"WARN",state.data.ip?.ip||"Current session",start)+
+   `
+   <div class="result">
+    <p><strong>Diagnostic unavailable.</strong></p>
+    <p>${esc(e.message||"Unknown error")}</p>
+    <p>
+     NetShield did not convert the error into a fake
+     successful result.
+    </p>
+   </div>
+   `
+  );
+
+ }
+
+}
+
+
+/* =========================================================
+   AI CONTEXT
+========================================================= */
+
+function getContext(){
+
+ const d=state.data.device||collectDevice();
+ const ip=state.data.ip||{};
+
+ return{
+  ip:ip.ip||"Unavailable",
+  isp:ip.isp||"Unavailable",
+  asn:ip.asn||"Unavailable",
+  geo:`${ip.country||"Unknown"} (${ip.city||"Unknown"})`,
+  timezone:ip.timezone||"Unknown",
+  localTimezone:d.timezone,
+  risk:state.data.risk??0,
+  canvas:d.canvas,
+  webgl:d.webgl,
+  device:d.type,
+  cpu:d.cpu,
+  ram:d.ram,
+  touch:d.touch,
+  webdriver:d.webdriver,
+  reasons:state.data.reasons||[],
+  lastTool:state.lastTool
+ };
+
+}
+
+
+/* =========================================================
+   CONVERSATIONAL AI
+========================================================= */
+
+function detectLang(text){
+
+ if(/[\u0600-\u06ff]/.test(text))
+  return"ar";
+
+ if(/[А-Яа-яЁё]/.test(text))
+  return"ru";
+
+ return"en";
+}
+
+
+function aiReply(q){
+
+ const c=getContext();
+
+ const l=detectLang(q);
+
+ const x=q.toLowerCase().trim();
+
+ const has=(...words)=>
+  words.some(w=>x.includes(w));
+
+ if(
+  /^(hi|hello|hey|yo|sup|مرحبا|اهلا|أهلا|هاي|سلام|هلا)$/i.test(x)
+ ){
+
+  if(l==="ar")
+   return `أهلاً يا باشا 👋
+أنا NetShield Cyber AI.
+
+أنا شايف الفحص الحالي:
+IP: ${c.ip}
+Risk: ${c.risk}%
+Device: ${c.device}
+
+قولّي عايز تعرف إيه وأنا هربطه بالبيانات الحالية.`;
+
+  if(l==="ru")
+   return `Привет 👋
+Я NetShield Cyber AI.
+
+Текущий IP: ${c.ip}
+Risk: ${c.risk}%
+Устройство: ${c.device}
+
+Скажи, что проверить.`;
+
+  return `Hey 👋
+I'm NetShield Cyber AI.
+
+Current IP: ${c.ip}
+Risk: ${c.risk}%
+Device: ${c.device}
+
+Tell me what you want me to analyze.`;
+
+ }
+
+
+ if(has("risk","خطورة","مخاطر","ريسك")){
+
+  if(l==="ar")
+   return `الـRisk الحالي عندك ${c.risk}%.
+
+${c.reasons.length
+ ? "أسباب الزيادة:\n• "+c.reasons.join("\n• ")
+ : "مش ظاهر عندي سبب قوي لرفع الـRisk حاليًا."}
+
+مهم: الـRisk هنا مؤشر تشخيصي من إشارات الصفحة، مش حكم نهائي من أي منصة.`;
+
+  if(l==="ru")
+   return `Текущий Risk: ${c.risk}%.
+${c.reasons.length
+ ? "Причины:\n• "+c.reasons.join("\n• ")
+ : "Сильных причин для повышения риска сейчас не обнаружено."}`;
+
+  return `Current Risk: ${c.risk}%.
+
+${c.reasons.length
+ ? "Reasons:\n• "+c.reasons.join("\n• ")
+ : "No strong risk reason is currently visible."}
+
+This is a diagnostic score, not a final decision by an external platform.`;
+
+ }
+
+
+ if(has("proxy","بروكسي","proxy")){
+
+  if(l==="ar")
+   return `أقدر أحلل البروكسي من ناحية الـIP والـISP والـASN والـTimezone والـLatency وإشارات المتصفح.
+
+البيانات الحالية:
+IP: ${c.ip}
+ISP: ${c.isp}
+ASN: ${c.asn}
+Timezone IP: ${c.timezone}
+Timezone الجهاز: ${c.localTimezone}
+
+لو فيه اختلاف، ده يستحق المراجعة. لكن الموقع وحده لا يقدر يثبت سمعة البروكسي التجارية بدون مصدر server-side.`;
+
+  if(l==="ru")
+   return `Я могу оценить Proxy по IP, ISP, ASN, timezone, latency и browser signals.
+
+IP: ${c.ip}
+ISP: ${c.isp}
+ASN: ${c.asn}
+IP timezone: ${c.timezone}
+Device timezone: ${c.localTimezone}`;
+
+  return `I can analyze the proxy using IP, ISP, ASN, timezone, latency and browser signals.
+
+IP: ${c.ip}
+ISP: ${c.isp}
+ASN: ${c.asn}
+IP timezone: ${c.timezone}
+Device timezone: ${c.localTimezone}
+
+A browser-only page cannot prove commercial proxy reputation without a server-side reputation source.`;
+
+ }
+
+
+ if(has("timezone","time","توقيت","وقت","ساعة")){
+
+  const match=
+   c.timezone.toLowerCase()===
+   c.localTimezone.toLowerCase();
+
+  if(l==="ar")
+   return `توقيت الـIP: ${c.timezone}
+توقيت الجهاز: ${c.localTimezone}
+
+النتيجة:
+${match?"✅ متطابقين":"⚠️ مختلفين ويحتاجوا مراجعة"}
+
+الاختلاف لوحده مش معناه إن فيه مشكلة مؤكدة.`;
+
+  if(l==="ru")
+   return `IP timezone: ${c.timezone}
+Device timezone: ${c.localTimezone}
+
+Result: ${match?"совпадают":"есть расхождение"}`;
+
+  return `IP timezone: ${c.timezone}
+Device timezone: ${c.localTimezone}
+
+Result:
+${match?"They match":"There is a mismatch"}
+
+A mismatch alone does not prove a problem.`;
+
+ }
+
+
+ if(has("device","جهاز","موبايل","هاتف","phone","mobile")){
+
+  if(l==="ar")
+   return `تحليل الجهاز الحالي:
+
+• النوع: ${c.device}
+• CPU: ${c.cpu}
+• RAM hint: ${c.ram}
+• Touch: ${c.touch}
+• Canvas: ${c.canvas}
+• WebGL: ${c.webgl}
+• WebDriver: ${c.webdriver?"موجود":"غير موجود"}
+
+دي إشارات Browser/Device وليست طريقة مؤكدة لمعرفة إذا الجهاز الحقيقي "مقبول" عند منصة معينة.`;
+
+  return `Current device profile:
+
+• Type: ${c.device}
+• CPU: ${c.cpu}
+• RAM hint: ${c.ram}
+• Touch: ${c.touch}
+• Canvas: ${c.canvas}
+• WebGL: ${c.webgl}
+• WebDriver: ${c.webdriver?"detected":"not detected"}
+
+These are browser/device signals, not a guaranteed approval decision by an external platform.`;
+
+ }
+
+
+ if(has("finger","بصمة","canvas","webgl")){
+
+  if(l==="ar")
+   return `بصمة المتصفح الحالية:
+
+Canvas: ${c.canvas}
+WebGL: ${c.webgl}
+CPU: ${c.cpu}
+RAM hint: ${c.ram}
+Touch: ${c.touch}
+WebDriver: ${c.webdriver?"Detected":"Not detected"}
+
+دي بصمة تشخيصية للمتصفح وليست رقمًا سحريًا يثبت هوية الجهاز.`;
+
+  return `Current browser fingerprint signals:
+
+Canvas: ${c.canvas}
+WebGL: ${c.webgl}
+CPU: ${c.cpu}
+RAM hint: ${c.ram}
+Touch: ${c.touch}
+WebDriver: ${c.webdriver?"Detected":"Not detected"}
+
+These are diagnostic browser signals, not an absolute device identity.`;
+
+ }
+
+
+ if(has("ip","اي بي","الاي بي")){
+
+  if(l==="ar")
+   return `الـPublic IP الحالي:
+${c.ip}
+
+ISP: ${c.isp}
+ASN: ${c.asn}
+Geo: ${c.geo}
+Timezone: ${c.timezone}`;
+
+  return `Current public IP:
+${c.ip}
+
+ISP: ${c.isp}
+ASN: ${c.asn}
+Geo: ${c.geo}
+Timezone: ${c.timezone}`;
+
+ }
+
+
+ if(has("tool","أداة","اداة","فحص","check","scan")){
+
+  if(l==="ar")
+   return `آخر أداة اتفتحت: ${c.lastTool||"مفيش لسه"}.
+
+اكتب اسم الأداة، أو قولّي "حلل النتيجة"، وأنا أربطها بالـIP والـRisk والـDevice الحالي.`;
+
+  return `Last tool used: ${c.lastTool||"None yet"}.
+
+Tell me the tool name or say "analyze the result" and I'll connect it to the current IP, Risk and Device context.`;
+
+ }
+
+
+ if(has("offer","offers","traffic","عروض","ترافيك","عرض","conversion")){
+
+  if(l==="ar")
+   return `أقدر أساعدك في تشخيص الـTraffic/Offers من ناحية:
+
+• IP / ASN / ISP
+• Timezone consistency
+• Device signals
+• Browser fingerprint signals
+• WebRTC
+• Redirects
+• Tracking-related diagnostics
+• Landing-page headers
+
+لكن مش هاعتبر أي نتيجة ضمان قبول أو طريقة لتجاوز أنظمة منصة خارجية.
+
+حاليًا الـRisk عندك ${c.risk}%.`;
+
+  return `I can diagnose offer/traffic-related consistency around:
+
+• IP / ASN / ISP
+• Timezone
+• Device signals
+• Browser fingerprint signals
+• WebRTC
+• Redirects
+• Tracking diagnostics
+• Landing-page headers
+
+I won't present the result as a guarantee of approval or a method to bypass an external platform.
+
+Current Risk: ${c.risk}%.`;
+
+ }
+
+
+ if(
+  has("why","ليه","لماذا","problem","مشكلة","error","غلط","red","أحمر","warning","تحذير")
+ ){
+
+  const reason=
+   c.reasons.length
+   ? c.reasons.join("، ")
+   : "مفيش سبب قوي مسجل حاليًا";
+
+  if(l==="ar")
+   return `فاهمك. خلينا نبص على البيانات بدل رد محفوظ.
+
+الـRisk: ${c.risk}%
+آخر أداة: ${c.lastTool||"لا توجد"}
+الجهاز: ${c.device}
+
+أهم الإشارات:
+${reason}
+
+لو تبعتلي اسم الكارت أو الأداة اللي ظهرت فيها المشكلة، أقدر أربطها بالبيانات الحالية.`;
+
+  return `Let's inspect the actual evidence instead of giving you a canned answer.
+
+Risk: ${c.risk}%
+Last tool: ${c.lastTool||"None"}
+Device: ${c.device}
+
+Main signals:
+${reason}
+
+Tell me the exact card or tool that showed the warning and I can connect it to the current evidence.`;
+
+ }
+
+
+ /* Natural fallback */
+
+ if(l==="ar")
+  return `تمام، فهمتك 👌
+
+أنا متخصص في بيانات NetShield نفسها، ومش محتاج السؤال يكون طويل.
+
+أقدر أحلل:
+IP • Risk • Proxy/VPN signals • Timezone • Device • Fingerprint • WebRTC • DNS • أدوات الفحص • Traffic/Offers diagnostics.
+
+قول مثلًا:
+"ليه الـrisk عالي؟"
+"البروكسي عامل إيه؟"
+"حلل جهازي"
+"ليه الـTimezone أحمر؟"
+"الأداة دي عملت إيه؟"`;
+
+ if(l==="ru")
+  return `Понял 👌
+
+Я могу анализировать данные NetShield:
+IP, Risk, Proxy/VPN signals, timezone, device, fingerprint, WebRTC, DNS и результаты инструментов.
+
+Скажи название проверки или проблему.`;
+
+ return `Got you 👌
+
+I can analyze NetShield data:
+IP, Risk, Proxy/VPN signals, timezone, device, fingerprint, WebRTC, DNS and tool results.
+
+Just tell me the check or problem you want to understand.`;
+
+}
+
+
+/* =========================================================
+   AI UI
+========================================================= */
+
+function openAI(){
+
+ $("aiWindow").style.display="flex";
+
+ setTimeout(
+  ()=>$("aiInput").focus(),
+  100
+ );
+
+}
+
+function closeAI(){
+ $("aiWindow").style.display="none";
+}
+
+function addMessage(text,type){
+
+ const div=document.createElement("div");
+
+ div.className="msg "+type;
+
+ div.textContent=text;
+
+ $("aiMessages").appendChild(div);
+
+ $("aiMessages").scrollTop=
+  $("aiMessages").scrollHeight;
+
+ return div;
+}
+
+
+function askAI(text){
+
+ openAI();
+
+ $("aiInput").value=text;
+
+ sendAI();
+}
+
+
+function sendAI(){
+
+ const input=$("aiInput");
+
+ const q=input.value.trim();
+
+ if(!q)return;
+
+ input.value="";
+
+ addMessage(q,"user");
+
+ state.history.push({
+  role:"user",
+  content:q
+ });
+
+ const loading=addMessage(
+  "⏳ Analyzing current NetShield evidence...",
+  "bot"
+ );
+
+ setTimeout(()=>{
+
+  const answer=aiReply(q);
+
+  loading.textContent=answer;
+
+  state.history.push({
+   role:"assistant",
+   content:answer
+  });
+
+ },220);
+
+}
+
+
+/* =========================================================
+   REPORT
+========================================================= */
+
+function copyReport(){
+
+ const c=getContext();
+
+ const report=
+`NetShield Ultra Audit
+=====================
+
+IP: ${c.ip}
+ISP: ${c.isp}
+ASN: ${c.asn}
+Geo: ${c.geo}
+IP Timezone: ${c.timezone}
+Device Timezone: ${c.localTimezone}
+
+Risk: ${c.risk}%
+
+Device: ${c.device}
+CPU: ${c.cpu}
+RAM Hint: ${c.ram}
+Touch: ${c.touch}
+Canvas: ${c.canvas}
+WebGL: ${c.webgl}
+WebDriver: ${c.webdriver?"Detected":"Not detected"}
+
+Generated: ${new Date().toUTCString()}`;
+
+ navigator.clipboard
+  .writeText(report)
+  .then(()=>{
+   alert("NetShield report copied.");
+  })
+  .catch(()=>{
+   prompt("Copy report:",report);
+  });
+
+}
+
+
+/* =========================================================
+   STARTUP
+========================================================= */
+
+document.addEventListener(
+ "DOMContentLoaded",
+ ()=>{
+  changeLanguage("en");
+  runAudit();
+ }
+);
+
+window.addEventListener(
+ "keydown",
+ e=>{
+  if(e.key==="Escape"){
+   closeModal();
+   closeAI();
+  }
+ }
+);
+
+</script>
+
 </body>
 </html>

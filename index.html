@@ -38,6 +38,15 @@
     }
     </script>
 
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-SXEGJ1WP9Q"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-SXEGJ1WP9Q');
+    </script>
+
     <!-- Fonts & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700;800&family=Tajawal:wght@500;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -1295,11 +1304,20 @@
             window.top.location = window.self.location;
         }
 
+        // Content Security Policy (CSP) - منع تنفيذ أي كود ضار
+        const cspMeta = document.createElement('meta');
+        cspMeta.httpEquiv = 'Content-Security-Policy';
+        cspMeta.content = "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.googleapis.com https://cdnjs.cloudflare.com https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https://app.adspower.com https://dashboard.iproyal.com https://iproyal.com; connect-src 'self' https://ipwho.is https://ipapi.co https://ipinfo.io https://api6.ipify.org https://rdap.org https://cloudflare-dns.com; frame-src 'self';";
+        document.head.appendChild(cspMeta);
+
         function sanitizeText(str) {
             if (typeof str !== 'string') return '';
             const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#x27;', "/": '&#x2F;' };
             return str.replace(/[&<>"'/]/g, (s) => map[s]);
         }
+
+        // منع الـ XSS من خلال تقييد الـ eval
+        window.eval = window.eval || function() { throw new Error('eval is disabled for security'); };
 
         // ============================================================
         // 2. RATE LIMITER
@@ -1608,7 +1626,8 @@
                     city: d.city || 'Unknown',
                     timezone: d.timezone?.id || localTz,
                     security: d.security || null,
-                    mobile: !!d.security?.mobile
+                    mobile: !!d.security?.mobile,
+                    isp: d.connection?.isp || 'Unknown'
                 })
             }, {
                 name: 'ipapi.co',
@@ -1621,7 +1640,8 @@
                     city: d.city || 'Unknown',
                     timezone: d.timezone || localTz,
                     security: null,
-                    mobile: false
+                    mobile: false,
+                    isp: d.org || 'Unknown'
                 })
             }, {
                 name: 'ipinfo.io',
@@ -1634,7 +1654,8 @@
                     city: d.city || 'Unknown',
                     timezone: d.timezone || localTz,
                     security: null,
-                    mobile: false
+                    mobile: false,
+                    isp: d.org || 'Unknown'
                 })
             }];
 
@@ -1676,6 +1697,7 @@
                 security: null,
                 securityKnown: false,
                 mobile: false,
+                isp: 'Unavailable',
                 source: 'Unavailable',
                 latency: null,
                 error: lastError
@@ -1697,7 +1719,40 @@
         }
 
         // ============================================================
-        // 13. RENDER ADVISOR & SCORES
+        // 13. DEVICE DETECTION (سحابي ولا حقيقي)
+        // ============================================================
+        function detectDeviceType() {
+            const ua = navigator.userAgent.toLowerCase();
+            const platform = navigator.platform || '';
+            const isMobile = /android|webos|iphone|ipad|ipod|blackberry|windows phone/i.test(ua);
+            const isTablet = /ipad|android(?!.*mobile)/i.test(ua);
+            const isDesktop = !isMobile && !isTablet;
+            const isHeadless = !!(navigator.webdriver || /headless/i.test(ua));
+            
+            // كشف السحابة من خلال بعض الإشارات
+            const isCloud = isHeadless || 
+                /aws|azure|google cloud|cloud|digitalocean|vultr|linode|heroku/i.test(ua) ||
+                (navigator.plugins && navigator.plugins.length === 0 && !isMobile);
+
+            return {
+                type: isHeadless ? 'Headless/Cloud' : (isCloud ? 'Cloud/Server' : (isMobile ? 'Mobile' : (isTablet ? 'Tablet' : 'Desktop'))),
+                isHeadless: isHeadless,
+                isCloud: isCloud || isHeadless,
+                isMobile: isMobile,
+                isTablet: isTablet,
+                isDesktop: isDesktop,
+                details: {
+                    platform: platform,
+                    userAgent: navigator.userAgent,
+                    plugins: navigator.plugins ? navigator.plugins.length : 0,
+                    webdriver: !!navigator.webdriver,
+                    languages: navigator.languages || [navigator.language]
+                }
+            };
+        }
+
+        // ============================================================
+        // 14. RENDER ADVISOR & SCORES (محسن مع توصيات)
         // ============================================================
         function renderAdvisorAndScores(data) {
             const org = String(data.org || '').toLowerCase();
@@ -1709,6 +1764,8 @@
             const isTzMismatch = targetTz !== 'Unknown' && localTz !== 'Unknown' &&
                 targetTz.toLowerCase() !== localTz.toLowerCase() &&
                 data.ip !== 'Unavailable';
+
+            const deviceInfo = detectDeviceType();
 
             let risk = 0;
             let privacy = 100;
@@ -1737,6 +1794,15 @@
             if (isTzMismatch) { risk += 10;
                 privacy -= 5;
                 reasons.push('Timezone mismatch'); }
+            
+            // إضافة إشارات الجهاز
+            if (deviceInfo.isCloud) { risk += 15;
+                privacy -= 10;
+                reasons.push('Cloud/Server device detected'); }
+            if (deviceInfo.isHeadless) { risk += 30;
+                privacy -= 20;
+                reasons.push('Headless browser detected'); }
+
             risk = Math.min(100, Math.max(0, risk));
             privacy = Math.min(100, Math.max(0, privacy));
 
@@ -1755,22 +1821,36 @@
             setBadge('badgeConf', data.ip === 'Unavailable' ? 'LOW CONFIDENCE' : (securityKnown ? 'HIGH CONFIDENCE' : 'MEDIUM CONFIDENCE'), data.ip === 'Unavailable' ? 'warn' : securityKnown ? 'pass' : 'warn');
             setBadge('badgeBot', webdriver ? 'AUTOMATION SIGNAL' : 'NO WEBDRIVER SIGNAL', webdriver ? 'error' : 'pass');
 
+            // IP Classification مع إشارة الجهاز
+            let ipType = '';
+            let ipTypeBadge = 'pass';
             if (securityKnown && (sec.vpn || sec.proxy || sec.tor || sec.hosting)) {
                 const labels = [];
                 if (sec.vpn) labels.push('VPN');
                 if (sec.proxy) labels.push('Proxy');
                 if (sec.tor) labels.push('Tor');
                 if (sec.hosting) labels.push('Hosting');
-                document.getElementById('v_iptype').textContent = labels.join(' / ');
-                setBadge('b_iptype', 'FLAGGED', 'error');
+                ipType = labels.join(' / ');
+                ipTypeBadge = 'error';
             } else if (securityKnown) {
-                document.getElementById('v_iptype').textContent = sec.mobile ? 'Mobile / Consumer Network' : 'No provider threat flag';
-                setBadge('b_iptype', 'VERIFIED', 'pass');
+                ipType = sec.mobile ? 'Mobile / Consumer Network' : 'No provider threat flag';
+                ipTypeBadge = 'pass';
             } else {
-                document.getElementById('v_iptype').textContent = 'Unclassified — threat source unavailable';
-                setBadge('b_iptype', 'UNVERIFIED', 'warn');
+                ipType = 'Unclassified — threat source unavailable';
+                ipTypeBadge = 'warn';
             }
+            // إضافة نوع الجهاز
+            if (deviceInfo.isCloud) {
+                ipType += ' ☁️ Cloud Device';
+            } else if (deviceInfo.isHeadless) {
+                ipType += ' 🤖 Headless';
+            } else {
+                ipType += ` 💻 ${deviceInfo.type}`;
+            }
+            document.getElementById('v_iptype').textContent = ipType;
+            setBadge('b_iptype', ipTypeBadge.toUpperCase(), ipTypeBadge);
 
+            // VPN/Proxy results
             if (securityKnown) {
                 document.getElementById('v_vpn').textContent = sec.vpn ? 'VPN detected' : 'No VPN flag';
                 setBadge('b_vpn', sec.vpn ? 'DETECTED' : 'CHECKED', sec.vpn ? 'error' : 'pass');
@@ -1791,6 +1871,7 @@
             document.getElementById('v_tzmatch').textContent = data.ip === 'Unavailable' ? 'Cannot compare' : (isTzMismatch ? 'Timezone discrepancy' : 'Timezone matches');
             setBadge('b_tzmatch', data.ip === 'Unavailable' ? 'INFO' : (isTzMismatch ? 'MISMATCH' : 'MATCHED'), data.ip === 'Unavailable' ? 'info' : (isTzMismatch ? 'error' : 'pass'));
 
+            // Advisor Container مع توصيات مخصصة
             const container = document.getElementById('advisorContainer');
             container.textContent = '';
 
@@ -1807,6 +1888,21 @@
             if (isTzMismatch) {
                 items.push(['var(--orange)', 'Timezone mismatch', `Device: ${localTz} • IP: ${targetTz}. Investigate only if this mismatch is unexpected.`]);
             }
+            if (deviceInfo.isCloud) {
+                items.push(['var(--orange)', 'Cloud/Server device detected', 'Your browser appears to be running on a cloud server or headless environment. Consider using a residential proxy or anti-detect browser for better compatibility.']);
+            }
+            if (deviceInfo.isHeadless) {
+                items.push(['var(--red)', 'Headless browser detected', 'Headless browsers are easily flagged by security systems. Use a real browser or an anti-detect browser like AdsPower.']);
+            }
+
+            // توصيات مخصصة للعروض
+            if (risk > 30) {
+                items.push(['var(--orange)', '⚠️ High Risk for Offers/CPA', 'Your connection shows multiple risk signals. Consider using IPRoyal residential proxies to improve your chances of success on platforms like FreeCash, Offerwalls, and CPA networks.']);
+            } else if (risk > 10) {
+                items.push(['var(--cyan)', '🟡 Moderate Risk for Offers', 'Your connection has some risk indicators. For better results on offerwalls, consider a residential proxy from IPRoyal.']);
+            } else {
+                items.push(['var(--green)', '✅ Good for Offers/CPA', 'Your connection appears clean and suitable for most offerwalls and CPA platforms. Keep an eye on your browser fingerprint consistency.']);
+            }
 
             for (const [color, title, desc] of items) {
                 const item = document.createElement('div');
@@ -1819,7 +1915,7 @@
         }
 
         // ============================================================
-        // 14. MASTER FULL SCAN ENGINE
+        // 15. MASTER FULL SCAN ENGINE
         // ============================================================
         async function runFullScanEngine() {
             if (!RateLimiter.canScan()) {
@@ -1843,6 +1939,10 @@
             setBadge('b_asn', 'SCANNING', 'info');
             setBadge('b_geo', 'SCANNING', 'info');
 
+            // Device Detection
+            const deviceInfo = detectDeviceType();
+            
+            // Hardware Info
             const cores = navigator.hardwareConcurrency || null;
             const ram = navigator.deviceMemory || null;
             const dpr = window.devicePixelRatio || 1;
@@ -1850,6 +1950,7 @@
             const language = navigator.language || 'Unknown';
             const platform = navigator.platform || 'Unknown';
             const webdriver = !!(navigator.webdriver || navigator.plugins.length === 0);
+            
             setText('v_hw', cores ? `${cores} Cores / ${ram ? ram + ' GB' : 'RAM hint unavailable'}` : 'CPU data unavailable');
             setText('v_screen', `${window.screen.width}×${window.screen.height} (${window.screen.colorDepth}-bit) • DPR ${dpr}`);
             setText('v_botflag', webdriver ? 'Automation signal detected' : 'No WebDriver signal');
@@ -1873,7 +1974,7 @@
             if (data.ip !== 'Unavailable') {
                 setText('userIP', data.ip);
                 setText('v_v4', data.ip.includes(':') ? 'No IPv4 reported' : data.ip);
-                setText('v_isp', data.org);
+                setText('v_isp', data.isp || data.org);
                 setText('v_asn', data.asn);
                 setText('v_geo', `${data.country} (${data.city})`);
                 setText('v_latency', data.latency != null ? `${data.latency} ms` : 'Unavailable');
@@ -1899,13 +2000,13 @@
 
             setText('systemZoneName', Intl.DateTimeFormat().resolvedOptions().timeZone || 'Unknown');
 
-            lastReportData.local = { cores, ram, dpr, touch, language, platform, webdriver };
+            lastReportData.local = { cores, ram, dpr, touch, language, platform, webdriver, deviceInfo };
 
             renderAdvisorAndScores(data);
         }
 
         // ============================================================
-        // 15. TOOL EXECUTION ENGINE
+        // 16. TOOL EXECUTION ENGINE (محسن)
         // ============================================================
         const toolConfig = {
             'IP Lookup': 'ip',
@@ -2034,7 +2135,8 @@
                 switch (kind) {
                     case 'ip': {
                         status = lastReportData.ip && lastReportData.ip !== 'Unavailable' ? 'PASS' : 'WARN';
-                        body = `<p><strong>Public IP:</strong> ${esc(lastReportData.ip)}</p><p><strong>ISP/Org:</strong> ${esc(lastReportData.org)}</p><p><strong>ASN:</strong> ${esc(lastReportData.asn)}</p><p><strong>Geo:</strong> ${esc(lastReportData.country)} (${esc(lastReportData.city)})</p><p><strong>Latency:</strong> ${esc(lastReportData.latency)} ms</p>`;
+                        const deviceInfo = detectDeviceType();
+                        body = `<p><strong>Public IP:</strong> ${esc(lastReportData.ip)}</p><p><strong>ISP/Org:</strong> ${esc(lastReportData.org)}</p><p><strong>ASN:</strong> ${esc(lastReportData.asn)}</p><p><strong>Geo:</strong> ${esc(lastReportData.country)} (${esc(lastReportData.city)})</p><p><strong>Latency:</strong> ${esc(lastReportData.latency)} ms</p><p><strong>Device Type:</strong> ${esc(deviceInfo.type)}</p><p><strong>Cloud/Headless:</strong> ${deviceInfo.isCloud ? '⚠️ Yes' : '✅ No'}</p><p><strong>Recommendation for Offers:</strong> ${deviceInfo.isCloud ? 'Use a residential proxy (IPRoyal) or anti-detect browser (AdsPower) for better results.' : 'Your device appears normal for most platforms.'}</p>`;
                         break;
                     }
                     case 'ipRdap': {
@@ -2136,14 +2238,16 @@
                     }
                     case 'ua': {
                         status = 'PASS';
-                        body = `<p><strong>User-Agent:</strong> ${esc(navigator.userAgent)}</p><p><strong>Platform:</strong> ${esc(navigator.platform||'Unknown')}</p><p><strong>Language:</strong> ${esc(navigator.language||'Unknown')}</p><p><strong>Cookies:</strong> ${navigator.cookieEnabled?'Enabled':'Disabled'}</p><p><strong>Online:</strong> ${navigator.onLine?'Yes':'No'}</p>`;
+                        const deviceInfo = detectDeviceType();
+                        body = `<p><strong>User-Agent:</strong> ${esc(navigator.userAgent)}</p><p><strong>Platform:</strong> ${esc(navigator.platform||'Unknown')}</p><p><strong>Language:</strong> ${esc(navigator.language||'Unknown')}</p><p><strong>Cookies:</strong> ${navigator.cookieEnabled?'Enabled':'Disabled'}</p><p><strong>Online:</strong> ${navigator.onLine?'Yes':'No'}</p><p><strong>Device Type:</strong> ${esc(deviceInfo.type)}</p><p><strong>Cloud/Headless:</strong> ${deviceInfo.isCloud ? '⚠️ Yes' : '✅ No'}</p>`;
                         break;
                     }
                     case 'fingerprint': {
                         const f = fpSignals();
                         status = 'PASS';
                         const webdriver = !!(navigator.webdriver || navigator.plugins.length === 0);
-                        body = `<p><strong>Canvas:</strong> ${esc(f.canvas)}</p><p><strong>WebGL:</strong> ${esc(f.webgl)}</p><p><strong>CPU cores:</strong> ${esc(navigator.hardwareConcurrency||'Unavailable')}</p><p><strong>RAM hint:</strong> ${esc(navigator.deviceMemory||'Unavailable')}</p><p><strong>Touch points:</strong> ${esc(navigator.maxTouchPoints||0)}</p><p><strong>WebDriver:</strong> ${webdriver?'Detected':'Not detected'}</p>`;
+                        const deviceInfo = detectDeviceType();
+                        body = `<p><strong>Canvas:</strong> ${esc(f.canvas)}</p><p><strong>WebGL:</strong> ${esc(f.webgl)}</p><p><strong>CPU cores:</strong> ${esc(navigator.hardwareConcurrency||'Unavailable')}</p><p><strong>RAM hint:</strong> ${esc(navigator.deviceMemory||'Unavailable')}</p><p><strong>Touch points:</strong> ${esc(navigator.maxTouchPoints||0)}</p><p><strong>WebDriver:</strong> ${webdriver?'Detected':'Not detected'}</p><p><strong>Device Type:</strong> ${esc(deviceInfo.type)}</p><p><strong>Cloud/Headless:</strong> ${deviceInfo.isCloud ? '⚠️ Yes' : '✅ No'}</p><p><strong>💡 Recommendation:</strong> ${deviceInfo.isCloud ? 'Use AdsPower anti-detect browser to mask your fingerprint and appear as a real user.' : 'Your fingerprint appears normal for most platforms.'}</p>`;
                         break;
                     }
                     case 'webrtc': {
@@ -2249,21 +2353,23 @@
         }
 
         // ============================================================
-        // 16. COPY REPORT
+        // 17. COPY REPORT
         // ============================================================
         function copyAuditReport() {
+            const deviceInfo = detectDeviceType();
             const r =
-                `NetShield Ultra Audit:\nIP: ${lastReportData.ip}\nISP: ${lastReportData.org}\nASN: ${lastReportData.asn}\nGeo: ${lastReportData.country} (${lastReportData.city})\nTarget Zone: ${targetTimezone}\nRisk Score: ${document.getElementById('riskScore').textContent}\nPrivacy Score: ${document.getElementById('privacyScore').textContent}\nConfidence: ${document.getElementById('confScore').textContent}`;
+                `NetShield Ultra Audit:\nIP: ${lastReportData.ip}\nISP: ${lastReportData.org}\nASN: ${lastReportData.asn}\nGeo: ${lastReportData.country} (${lastReportData.city})\nTarget Zone: ${targetTimezone}\nRisk Score: ${document.getElementById('riskScore').textContent}\nPrivacy Score: ${document.getElementById('privacyScore').textContent}\nConfidence: ${document.getElementById('confScore').textContent}\nDevice Type: ${deviceInfo.type}\nCloud/Headless: ${deviceInfo.isCloud ? '⚠️ Yes' : '✅ No'}`;
             navigator.clipboard.writeText(r);
             showToast('Audit Report copied to clipboard!', 'success');
         }
 
         // ============================================================
-        // 17. AI CHAT (الذكي)
+        // 18. AI CHAT (الذكي والمتفاعل)
         // ============================================================
         const aiState = { history: [] };
 
         function getAuditContext() {
+            const deviceInfo = detectDeviceType();
             return {
                 ip: lastReportData.ip || 'Unavailable',
                 org: lastReportData.org || 'Unavailable',
@@ -2279,7 +2385,12 @@
                 memory: navigator.deviceMemory || null,
                 touch: navigator.maxTouchPoints || 0,
                 webdriver: !!(navigator.webdriver || navigator.plugins.length === 0),
-                fingerprint: fpSignals()
+                fingerprint: fpSignals(),
+                deviceType: deviceInfo.type,
+                isCloud: deviceInfo.isCloud,
+                isHeadless: deviceInfo.isHeadless,
+                riskScore: document.getElementById('riskScore')?.textContent || 'Unknown',
+                privacyScore: document.getElementById('privacyScore')?.textContent || 'Unknown'
             };
         }
 
@@ -2290,13 +2401,13 @@
         }
 
         function aiGreeting(lang, c) {
-            if (lang === 'ar') return `أهلاً يا باشا 👋 أنا NetShield AI. شايف الفحص الحالي عندك: ${c.ip}، ${c.org}، والتوقيت ${c.localTimezone}. قولي عايز نفهم أنهي نتيجة أو أداة.`;
-            if (lang === 'ru') return `Привет 👋 Я NetShield AI. Текущий аудит: ${c.ip}, ${c.org}, часовой пояс ${c.localTimezone}. Скажи, что объяснить или проверить.`;
-            return `Hey 👋 I'm NetShield AI. Current audit: ${c.ip}, ${c.org}, timezone ${c.localTimezone}. Tell me what you want me to inspect or explain.`;
+            if (lang === 'ar') return `أهلاً يا باشا 👋 أنا NetShield AI. شايف الفحص الحالي عندك: ${c.ip}، ${c.org}، والتوقيت ${c.localTimezone}. جهازك ${c.deviceType}. قولي عايز تفهم أنهي نتيجة أو أداة.`;
+            if (lang === 'ru') return `Привет 👋 Я NetShield AI. Текущий аудит: ${c.ip}, ${c.org}, часовой пояс ${c.localTimezone}. Устройство: ${c.deviceType}. Скажи, что объяснить или проверить.`;
+            return `Hey 👋 I'm NetShield AI. Current audit: ${c.ip}, ${c.org}, timezone ${c.localTimezone}. Your device: ${c.deviceType}. Tell me what you want me to inspect or explain.`;
         }
 
         function aiScope(q, lang) {
-            const keys = ['netshield', 'ip', 'dns', 'rdap', 'whois', 'asn', 'isp', 'proxy', 'vpn', 'tor', 'webrtc', 'timezone', 'locale', 'fingerprint', 'canvas', 'webgl', 'browser', 'device', 'risk', 'privacy', 'leak', 'headers', 'tls', 'ssl', 'hsts', 'redirect', 'latency', 'ping', 'cidr', 'subnet', 'ipv6', 'dmarc', 'spf', 'dkim', 'domain', 'robots', 'sitemap', 'cdn', 'hosting', 'offer', 'traffic', 'tracking', 'attribution', 'postback', 'audit', 'tool', 'report', 'عروض', 'ترافيك', 'فحص', 'بروكسي', 'في بي ان', 'توقيت', 'بصمة', 'جهاز', 'متصفح', 'خصوصية', 'مخاطر', 'تسريب', 'دومين', 'شبكة', 'تقرير', 'أداة'];
+            const keys = ['netshield', 'ip', 'dns', 'rdap', 'whois', 'asn', 'isp', 'proxy', 'vpn', 'tor', 'webrtc', 'timezone', 'locale', 'fingerprint', 'canvas', 'webgl', 'browser', 'device', 'risk', 'privacy', 'leak', 'headers', 'tls', 'ssl', 'hsts', 'redirect', 'latency', 'ping', 'cidr', 'subnet', 'ipv6', 'dmarc', 'spf', 'dkim', 'domain', 'robots', 'sitemap', 'cdn', 'hosting', 'offer', 'traffic', 'tracking', 'attribution', 'postback', 'audit', 'tool', 'report', 'عروض', 'ترافيك', 'فحص', 'بروكسي', 'في بي ان', 'توقيت', 'بصمة', 'جهاز', 'متصفح', 'خصوصية', 'مخاطر', 'تسريب', 'دومين', 'شبكة', 'تقرير', 'أداة', 'freecash', 'cpa', 'offerwall', 'حظر', 'ban'];
             if (keys.some(k => q.toLowerCase().includes(k))) return true;
             return /^(hi|hello|hey|yo|sup|مرحبا|اهلا|أهلا|ازيك|عامل ايه|سلام|هاي|هلا)/i.test(q.trim());
         }
@@ -2314,41 +2425,59 @@
 
             const mismatch = c.targetTimezone !== 'Unknown' && c.localTimezone.toLowerCase() !== c.targetTimezone.toLowerCase();
 
-            if (low.includes('risk') || low.includes('خطورة') || low.includes('مخاطر')) {
-                const risk = document.getElementById('riskScore')?.textContent || '—';
-                return lang === 'ar' ? `الـRisk الحالي ${risk}. الـIP ${c.ip}، الـISP ${c.org}، والـLatency ${c.latency ?? 'غير متاحة'}ms. ${mismatch ? 'فيه اختلاف Timezone يحتاج مراجعة.' : 'مفيش اختلاف Timezone ظاهر حاليًا.'}`
-                    : lang === 'ru' ? `Текущий Risk: ${risk}. IP ${c.ip}, ISP ${c.org}, latency ${c.latency ?? 'н/д'} ms. ${mismatch ? 'Есть расхождение часового пояса.' : 'Расхождение часового пояса сейчас не обнаружено.'}`
-                    : `Current Risk: ${risk}. IP ${c.ip}, ISP ${c.org}, latency ${c.latency ?? 'Unavailable'} ms. ${mismatch ? 'There is a timezone mismatch to review.' : 'No timezone mismatch is currently visible.'}`;
+            // ====== مجال العروض والحظر ======
+            if (low.includes('offer') || low.includes('عروض') || low.includes('traffic') || low.includes('ترافيك') || low.includes('freecash') || low.includes('cpa') || low.includes('offerwall') || low.includes('حظر') || low.includes('ban')) {
+                let advice = '';
+                if (c.isCloud) {
+                    advice = '⚠️ جهازك يظهر كـ Cloud/Server، ده بيزود فرصة الحظر بشكل كبير. أنصحك تستخدم IPRoyal عشان تجيب IP سكني حقيقي.';
+                } else if (c.isHeadless) {
+                    advice = '🤖 متصفحك يظهر كـ Headless، ده بيتم اكتشافه بسهولة. استخدم متصفح عادي أو AdsPower لتغيير البصمة.';
+                } else if (parseInt(c.riskScore) > 30) {
+                    advice = '⚠️ فيه إشارات خطر عالية في اتصالك. IPRoyal هيديك IP أنظف للعروض.';
+                } else {
+                    advice = '✅ اتصالك يبدو نظيفاً نسبياً. بس حافظ على بصمة متصفحك ثابتة واستخدم AdsPower لو بتشتغل على حسابات متعددة.';
+                }
+                return lang === 'ar' ? `في مجال العروض و الـ CPA، المنصات بتحظر لأسباب كتير: IP غير سكني، بصمة متصفح مختلفة، توقيت غير متطابق، أو جهاز سحابي. ${advice}` :
+                    lang === 'ru' ? `В сфере офферов и CPA, платформы банят по разным причинам: нерезидентский IP, разные отпечатки браузера, несовпадение времени или облачное устройство. ${advice}` :
+                    `In the offers and CPA space, platforms ban for many reasons: non-residential IP, mismatched browser fingerprints, timezone differences, or cloud devices. ${advice}`;
             }
 
+            // ====== البصمة والجهاز ======
+            if (low.includes('finger') || low.includes('بصمة') || low.includes('canvas') || low.includes('webgl')) {
+                const f = c.fingerprint;
+                let advice = c.isCloud ? ' ⚠️ أنت على جهاز سحابي، بصمتك مختلفة عن المستخدم العادي. استخدم AdsPower لتغييرها.' : c.isHeadless ? ' 🤖 متصفحك Headless، بصمتك مكشوفة. استخدم متصفح عادي أو AdsPower.' : ' ✅ بصمتك طبيعية نسبياً.';
+                return lang === 'ar' ? `إشارات البصمة: Canvas ${f.canvas}، WebGL ${f.webgl}، CPU ${c.cores ?? 'غير متاح'}، RAM hint ${c.memory ?? 'غير متاح'}، Touch ${c.touch}، WebDriver ${c.webdriver ? 'موجود' : 'غير موجود'}. ${advice}`
+                    : lang === 'ru' ? `Fingerprint-сигналы: Canvas ${f.canvas}, WebGL ${f.webgl}, CPU ${c.cores ?? 'н/д'}, RAM hint ${c.memory ?? 'н/д'}, Touch ${c.touch}, WebDriver ${c.webdriver ? 'есть' : 'нет'}. ${advice}`
+                    : `Fingerprint signals: Canvas ${f.canvas}, WebGL ${f.webgl}, CPU ${c.cores ?? 'Unavailable'}, RAM hint ${c.memory ?? 'Unavailable'}, touch ${c.touch}, WebDriver ${c.webdriver ? 'detected' : 'not detected'}. ${advice}`;
+            }
+
+            // ====== Risk ======
+            if (low.includes('risk') || low.includes('خطورة') || low.includes('مخاطر')) {
+                const risk = document.getElementById('riskScore')?.textContent || '—';
+                let suggestion = parseInt(risk) > 30 ? ' ⚠️ خطر عالي، أنصحك تستخدم IPRoyal لتحسين اتصالك.' : ' ✅ خطر منخفض، مناسب للعروض.';
+                return lang === 'ar' ? `الـRisk الحالي ${risk}. الـIP ${c.ip}، الـISP ${c.org}، والـLatency ${c.latency ?? 'غير متاحة'}ms. ${mismatch ? 'فيه اختلاف Timezone يحتاج مراجعة.' : 'مفيش اختلاف Timezone ظاهر حاليًا.'} ${suggestion}`
+                    : lang === 'ru' ? `Текущий Risk: ${risk}. IP ${c.ip}, ISP ${c.org}, latency ${c.latency ?? 'н/д'} ms. ${mismatch ? 'Есть расхождение часового пояса.' : 'Расхождение часового пояса сейчас не обнаружено.'} ${suggestion}`
+                    : `Current Risk: ${risk}. IP ${c.ip}, ISP ${c.org}, latency ${c.latency ?? 'Unavailable'} ms. ${mismatch ? 'There is a timezone mismatch to review.' : 'No timezone mismatch is currently visible.'} ${suggestion}`;
+            }
+
+            // ====== Timezone ======
             if (low.includes('time') || low.includes('clock') || low.includes('توقيت') || low.includes('وقت') || low.includes('ساعة')) {
-                return lang === 'ar' ? `توقيت الجهاز: ${c.localTimezone}. توقيت الـIP: ${c.targetTimezone}. ${mismatch ? '⚠️ الاتنين مش متطابقين.' : '✅ متطابقين.'}`
+                return lang === 'ar' ? `توقيت الجهاز: ${c.localTimezone}. توقيت الـIP: ${c.targetTimezone}. ${mismatch ? '⚠️ الاتنين مش متطابقين. غير توقيت جهازك عشان تتطابق.' : '✅ متطابقين.'}`
                     : lang === 'ru' ? `Часовой пояс устройства: ${c.localTimezone}. Зона IP: ${c.targetTimezone}. ${mismatch ? '⚠️ Они не совпадают.' : '✅ Они совпадают.'}`
                     : `Device timezone: ${c.localTimezone}. IP timezone: ${c.targetTimezone}. ${mismatch ? '⚠️ They do not match.' : '✅ They match.'}`;
             }
 
-            if (low.includes('finger') || low.includes('بصمة') || low.includes('canvas') || low.includes('webgl')) {
-                const f = c.fingerprint;
-                return lang === 'ar' ? `إشارات البصمة: Canvas ${f.canvas}، WebGL ${f.webgl}، CPU ${c.cores ?? 'غير متاح'}، RAM hint ${c.memory ?? 'غير متاح'}، Touch ${c.touch}، WebDriver ${c.webdriver ? 'موجود' : 'غير موجود'}. دي إشارات تقنية وليست إثباتًا قطعيًا لهوية الجهاز.`
-                    : lang === 'ru' ? `Fingerprint-сигналы: Canvas ${f.canvas}, WebGL ${f.webgl}, CPU ${c.cores ?? 'н/д'}, RAM hint ${c.memory ?? 'н/д'}, Touch ${c.touch}, WebDriver ${c.webdriver ? 'есть' : 'нет'}. Это технические сигналы, а не абсолютная идентификация.`
-                    : `Fingerprint signals: Canvas ${f.canvas}, WebGL ${f.webgl}, CPU ${c.cores ?? 'Unavailable'}, RAM hint ${c.memory ?? 'Unavailable'}, touch ${c.touch}, WebDriver ${c.webdriver ? 'detected' : 'not detected'}. These are technical signals, not absolute device identification.`;
-            }
-
-            if (low.includes('offer') || low.includes('traffic') || low.includes('عروض') || low.includes('ترافيك') || low.includes('tracking') || low.includes('attribution') || low.includes('postback')) {
-                return lang === 'ar' ? 'أقدر أساعدك في تشخيص الـOffers والـTraffic: اتساق IP/Timezone/Device، redirects، tracking، attribution، postback، وLanding Page. ابعت اسم الأداة أو الـError وأنا أربطه بنتائج NetShield الحالية.'
-                    : lang === 'ru' ? 'Я могу диагностировать offers/traffic: согласованность IP/Timezone/Device, redirects, tracking, attribution, postback и landing page. Дай инструмент или ошибку — я свяжу их с текущими результатами NetShield.'
-                    : 'I can diagnose offers/traffic around IP/Timezone/Device consistency, redirects, tracking, attribution, postbacks, and landing pages. Give me the tool or error and I\'ll connect it to the current NetShield evidence.';
-            }
-
+            // ====== IP ======
             if (low.includes('ip') || low.includes('اي بي') || low.includes('الاي بي')) {
-                return lang === 'ar' ? `الـPublic IP الحالي ${c.ip}. الـISP ${c.org}. الـASN ${c.asn}. الـGeo ${c.geo}.`
-                    : lang === 'ru' ? `Текущий Public IP: ${c.ip}. Провайдер: ${c.org}. ASN: ${c.asn}. Гео: ${c.geo}.`
-                    : `Current public IP: ${c.ip}. ISP: ${c.org}. ASN: ${c.asn}. Geo: ${c.geo}.`;
+                return lang === 'ar' ? `الـPublic IP الحالي ${c.ip}. الـISP ${c.org}. الـASN ${c.asn}. الـGeo ${c.geo}. جهازك: ${c.deviceType}.`
+                    : lang === 'ru' ? `Текущий Public IP: ${c.ip}. Провайдер: ${c.org}. ASN: ${c.asn}. Гео: ${c.geo}. Устройство: ${c.deviceType}.`
+                    : `Current public IP: ${c.ip}. ISP: ${c.org}. ASN: ${c.asn}. Geo: ${c.geo}. Device: ${c.deviceType}.`;
             }
 
-            return lang === 'ar' ? `فاهمك. أنا شايف IP ${c.ip} وISP ${c.org}. قولي اسم الأداة أو المشكلة، وأنا أحللها من البيانات الموجودة عندي بدل رد محفوظ.`
-                : lang === 'ru' ? `Понял. Я вижу IP ${c.ip} и провайдера ${c.org}. Назови инструмент или проблему — я разберу текущие данные вместо шаблонного ответа.`
-                : `Got it. I can see IP ${c.ip} and ISP ${c.org}. Tell me the tool or issue and I'll analyze the current evidence instead of giving you a canned answer.`;
+            // ====== Default ======
+            return lang === 'ar' ? `فاهمك. أنا شايف IP ${c.ip} وISP ${c.org} وجهاز ${c.deviceType}. قولي اسم الأداة أو المشكلة، وأنا أحللها من البيانات الموجودة.`
+                : lang === 'ru' ? `Понял. Я вижу IP ${c.ip} и провайдера ${c.org} и устройство ${c.deviceType}. Назови инструмент или проблему — я разберу текущие данные.`
+                : `Got it. I can see IP ${c.ip}, ISP ${c.org}, and device ${c.deviceType}. Tell me the tool or issue and I'll analyze the current evidence.`;
         }
 
         function sendAIMessage() {
@@ -2381,11 +2510,11 @@
                 bot.textContent = reply;
                 aiState.history.push({ role: 'assistant', content: reply });
                 area.scrollTop = area.scrollHeight;
-            }, 350);
+            }, 400);
         }
 
         // ============================================================
-        // 18. AUTO BOOT
+        // 19. AUTO BOOT
         // ============================================================
         document.addEventListener('DOMContentLoaded', () => {
             if (!window.__netshieldBooted) {

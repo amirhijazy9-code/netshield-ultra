@@ -1,0 +1,1633 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<meta name="theme-color" content="#0a0e17">
+<meta name="description" content="بريد مؤقت سريع لاستقبال أكواد التحقق فوراً">
+<meta name="author" content="Kareem">
+
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<meta http-equiv="X-Frame-Options" content="DENY">
+<meta name="referrer" content="no-referrer">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
+
+<title>SnapMail — بريدك السريع</title>
+
+<style>
+/* =========================================================
+   SnapMail v2.5
+   - حركات ناعمة
+   - 5 ثيمات
+   - شريط تراجع عن تغيير الإيميل
+   ========================================================= */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #06070c;
+  --bg2: #0a0e17;
+  --srf: #12161f;
+  --srf2: #171c27;
+  --brd: #232a37;
+  --brd-b: #313a4a;
+  --txt: #e8eef5;
+  --dim: #8b949e;
+  --mute: #646c79;
+  --acc: #58a6ff;
+  --acc2: #79c0ff;
+  --grn: #2ea043;
+  --grn-b: #3fb950;
+  --pur: #a371f7;
+  --pnk: #f778ba;
+  --org: #ffa657;
+  --red: #f85149;
+  --r-lg: 18px;
+  --r-md: 12px;
+  --r-sm: 8px;
+  --sh-lg: 0 24px 60px -18px rgba(0,0,0,0.8);
+  --sh-md: 0 8px 24px -8px rgba(0,0,0,0.5);
+  --tr: cubic-bezier(.2,.9,.3,1.15);
+}
+
+[data-theme="blue"]   { --acc: #58a6ff; --acc2: #79c0ff; --pur: #a371f7; }
+[data-theme="purple"] { --acc: #a371f7; --acc2: #c8a2ff; --pur: #f778ba; }
+[data-theme="green"]  { --acc: #3fb950; --acc2: #56d364; --pur: #58a6ff; }
+[data-theme="pink"]   { --acc: #f778ba; --acc2: #ff9cc8; --pur: #a371f7; }
+[data-theme="orange"] { --acc: #ffa657; --acc2: #ffc078; --pur: #f778ba; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Cairo', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--txt);
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ============ BACKGROUND: mesh gradient + noise ============ */
+.bg-mesh {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.bg-mesh::before,
+.bg-mesh::after {
+  content: '';
+  position: absolute;
+  width: 60vw;
+  height: 60vw;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.35;
+  animation: floatBlob 22s ease-in-out infinite alternate;
+}
+.bg-mesh::before {
+  top: -20vh;
+  right: -15vw;
+  background: radial-gradient(circle, var(--acc) 0%, transparent 65%);
+}
+.bg-mesh::after {
+  bottom: -25vh;
+  left: -15vw;
+  background: radial-gradient(circle, var(--pur) 0%, transparent 65%);
+  animation-delay: -11s;
+}
+@keyframes floatBlob {
+  0%   { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(-6vw, 6vh) scale(1.15); }
+}
+
+/* grain overlay */
+.bg-mesh .grain {
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.06 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  opacity: 0.6;
+  mix-blend-mode: overlay;
+}
+
+/* ============ APP ============ */
+.app {
+  position: relative;
+  z-index: 1;
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 30px 16px 60px;
+}
+
+/* ============ TOP BAR ============ */
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 26px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.clock {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--dim);
+  padding: 9px 16px;
+  background: rgba(18,22,31,0.6);
+  border: 1px solid var(--brd);
+  border-radius: 100px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  letter-spacing: 0.5px;
+}
+.clock b { color: var(--acc2); font-weight: 800; }
+
+.actions { display: flex; gap: 8px; }
+
+.icon-btn {
+  width: 42px; height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(18,22,31,0.6);
+  border: 1px solid var(--brd);
+  border-radius: 13px;
+  color: var(--dim);
+  cursor: pointer;
+  transition: all 0.22s var(--tr);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.icon-btn:hover {
+  color: var(--acc2);
+  border-color: var(--acc);
+  transform: translateY(-2px);
+}
+.icon-btn svg { width: 18px; height: 18px; }
+
+.theme-picker {
+  display: none;
+  position: absolute;
+  top: 54px; left: 0;
+  background: var(--srf);
+  border: 1px solid var(--brd);
+  border-radius: 14px;
+  padding: 10px;
+  gap: 9px;
+  box-shadow: var(--sh-lg);
+  z-index: 100;
+}
+.theme-picker.open { display: flex; }
+.theme-dot {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s var(--tr);
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.05) inset;
+}
+.theme-dot:hover { transform: scale(1.15); }
+.theme-dot.active {
+  border-color: #fff;
+  box-shadow: 0 0 0 4px rgba(255,255,255,0.08);
+}
+
+/* ============ HERO ============ */
+.hero {
+  text-align: center;
+  margin-bottom: 34px;
+  animation: fadeDown 0.7s var(--tr);
+}
+@keyframes fadeDown {
+  from { opacity: 0; transform: translateY(-22px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 18px;
+  background: linear-gradient(135deg, rgba(88,166,255,0.1), rgba(163,113,247,0.1));
+  border: 1px solid rgba(88,166,255,0.28);
+  border-radius: 100px;
+  margin-bottom: 18px;
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--acc2);
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  backdrop-filter: blur(8px);
+}
+
+.dot {
+  width: 8px; height: 8px;
+  background: var(--grn-b);
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(63,185,80,0.75); }
+  70%  { box-shadow: 0 0 0 12px rgba(63,185,80,0); }
+  100% { box-shadow: 0 0 0 0 rgba(63,185,80,0); }
+}
+
+.hero h1 {
+  font-size: clamp(34px, 6.5vw, 52px);
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--acc2) 0%, var(--pur) 50%, var(--pnk) 100%);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -1.8px;
+  line-height: 1.1;
+  margin-bottom: 12px;
+  animation: gradientShift 8s ease infinite;
+}
+@keyframes gradientShift {
+  0%,100% { background-position: 0% 50%; }
+  50%     { background-position: 100% 50%; }
+}
+
+.hero p {
+  color: var(--dim);
+  font-size: 14.5px;
+  font-weight: 500;
+}
+
+/* ============ CARDS ============ */
+.card {
+  background: linear-gradient(180deg, rgba(18,22,31,0.75), rgba(10,14,23,0.85));
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--brd);
+  border-radius: var(--r-lg);
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: var(--sh-lg);
+  position: relative;
+  overflow: hidden;
+  animation: fadeUp 0.6s var(--tr) backwards;
+}
+.card:nth-of-type(1) { animation-delay: 0.1s; }
+.card:nth-of-type(2) { animation-delay: 0.2s; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 20%; right: 20%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--acc), transparent);
+  opacity: 0.7;
+}
+
+/* ============ SECTION LABEL ============ */
+.lbl {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--dim);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 14px;
+}
+.lbl svg { width: 14px; height: 14px; opacity: 0.75; }
+
+/* ============ EMAIL BAR ============ */
+.ebar {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: stretch;
+}
+
+.einput {
+  flex: 1;
+  min-width: 240px;
+  background: rgba(6,7,12,0.9);
+  border: 1.5px solid var(--brd);
+  color: var(--acc2);
+  padding: 15px 18px;
+  border-radius: var(--r-md);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 15px;
+  font-weight: 700;
+  direction: ltr;
+  text-align: left;
+  outline: none;
+  transition: all 0.25s var(--tr);
+  letter-spacing: 0.3px;
+}
+.einput:focus {
+  border-color: var(--acc);
+  box-shadow: 0 0 0 4px rgba(88,166,255,0.1);
+}
+.einput:disabled { opacity: 0.7; cursor: not-allowed; }
+.einput.error {
+  border-color: var(--red);
+  animation: shake 0.4s;
+}
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  75% { transform: translateX(6px); }
+}
+
+/* ============ BUTTONS ============ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 13px 20px;
+  border: none;
+  border-radius: var(--r-md);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.22s var(--tr);
+  position: relative;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.btn:active { transform: scale(0.96); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn svg { width: 15px; height: 15px; }
+
+.btn-primary {
+  background: linear-gradient(135deg, #238636, #2ea043);
+  color: #fff;
+  box-shadow: 0 6px 18px rgba(46,160,67,0.35);
+}
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 26px rgba(46,160,67,0.5);
+}
+
+.btn-ghost {
+  background: rgba(35,42,55,0.7);
+  color: var(--txt);
+  border: 1px solid var(--brd);
+}
+.btn-ghost:hover:not(:disabled) {
+  background: var(--srf2);
+  border-color: var(--brd-b);
+  transform: translateY(-2px);
+}
+
+.btn-warn {
+  background: linear-gradient(135deg, #9e6a03, #bb8009);
+  color: #fff;
+  box-shadow: 0 6px 18px rgba(187,128,9,0.35);
+}
+.btn-warn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 26px rgba(187,128,9,0.5);
+}
+
+.btn-sm {
+  padding: 9px 14px;
+  font-size: 12.5px;
+}
+
+/* ============ UNDO BAR ============ */
+.undo-bar {
+  display: none;
+  margin-top: 16px;
+  padding: 14px 18px;
+  background: linear-gradient(135deg, rgba(255,166,87,0.1), rgba(187,128,9,0.06));
+  border: 1.5px solid rgba(255,166,87,0.35);
+  border-radius: var(--r-md);
+  font-size: 13.5px;
+  color: var(--txt);
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  animation: slideDown 0.4s var(--tr);
+  position: relative;
+  overflow: hidden;
+}
+.undo-bar.show { display: flex; }
+.undo-bar b { color: var(--org); font-weight: 800; }
+
+/* progress line */
+.undo-bar::after {
+  content: '';
+  position: absolute;
+  bottom: 0; right: 0;
+  height: 2px;
+  width: 100%;
+  background: linear-gradient(90deg, var(--org), #bb8009);
+  transform-origin: right;
+  animation: undoTimer 10s linear forwards;
+}
+@keyframes undoTimer {
+  from { transform: scaleX(1); }
+  to   { transform: scaleX(0); }
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.undo-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.undo-timer {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 42px;
+  padding: 3px 9px;
+  background: rgba(255,166,87,0.15);
+  border: 1px solid rgba(255,166,87,0.3);
+  border-radius: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 800;
+  color: var(--org);
+  font-size: 12px;
+}
+
+/* ============ INBOX HEADER ============ */
+.ihead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--brd);
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--grn-b);
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 15px;
+  background: rgba(88,166,255,0.08);
+  border: 1px solid rgba(88,166,255,0.22);
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--acc2);
+}
+
+.btn-refresh {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 15px;
+  background: transparent;
+  border: 1px solid var(--brd);
+  border-radius: 10px;
+  color: var(--acc2);
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+.btn-refresh:hover:not(:disabled) {
+  background: rgba(88,166,255,0.08);
+  border-color: var(--acc);
+}
+.btn-refresh svg { width: 13px; height: 13px; }
+.btn-refresh.spin svg { animation: spin 0.9s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ============ MESSAGES ============ */
+.msgs {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--mute);
+  font-size: 14px;
+}
+.empty svg {
+  width: 68px; height: 68px;
+  opacity: 0.35;
+  margin-bottom: 18px;
+  animation: float 3.5s ease-in-out infinite;
+}
+@keyframes float {
+  0%,100% { transform: translateY(0); }
+  50%     { transform: translateY(-10px); }
+}
+
+.mail {
+  background: linear-gradient(180deg, rgba(6,7,12,0.5), rgba(13,17,23,0.4));
+  border: 1px solid var(--brd);
+  border-radius: 15px;
+  padding: 20px;
+  transition: all 0.3s var(--tr);
+  animation: slideIn 0.5s var(--tr) backwards;
+  position: relative;
+  overflow: hidden;
+}
+.mail::before {
+  content: '';
+  position: absolute;
+  top: 0; right: 0;
+  width: 3px;
+  height: 100%;
+  background: linear-gradient(180deg, var(--acc), var(--pur));
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.mail:hover {
+  border-color: var(--brd-b);
+  transform: translateY(-2px);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.5);
+}
+.mail:hover::before { opacity: 1; }
+.mail.fresh {
+  animation: slideIn 0.5s var(--tr), flash 1.4s ease-out;
+}
+@keyframes flash {
+  0%,100% { background: linear-gradient(180deg, rgba(6,7,12,0.5), rgba(13,17,23,0.4)); }
+  30%     { background: linear-gradient(180deg, rgba(46,160,67,0.15), rgba(46,160,67,0.05)); }
+}
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-24px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.mhead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  font-size: 12px;
+  flex-wrap: wrap;
+}
+
+.mfrom {
+  color: var(--acc2);
+  font-weight: 800;
+  direction: ltr;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  padding: 5px 11px;
+  background: rgba(88,166,255,0.08);
+  border-radius: 7px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 60%;
+  border: 1px solid rgba(88,166,255,0.15);
+}
+
+.mdate {
+  color: var(--mute);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.msubj {
+  font-size: 16.5px;
+  font-weight: 900;
+  color: var(--txt);
+  margin-bottom: 14px;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.service-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  background: rgba(163,113,247,0.12);
+  border: 1px solid rgba(163,113,247,0.3);
+  border-radius: 100px;
+  font-size: 10.5px;
+  font-weight: 800;
+  color: var(--pur);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin-bottom: 12px;
+}
+
+/* ============ OTP ============ */
+.otp-box {
+  background: linear-gradient(135deg, rgba(46,160,67,0.14), rgba(63,185,80,0.07));
+  border: 1.5px solid rgba(46,160,67,0.4);
+  border-radius: var(--r-md);
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 16px;
+  position: relative;
+  overflow: hidden;
+  animation: glow 3s ease-in-out infinite;
+}
+@keyframes glow {
+  0%,100% { box-shadow: 0 0 0 0 rgba(46,160,67,0.4); }
+  50%     { box-shadow: 0 0 24px 0 rgba(46,160,67,0.35); }
+}
+.otp-box::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+  animation: shimmer 3s infinite;
+}
+@keyframes shimmer { 100% { left: 100%; } }
+
+.otp-lbl {
+  font-size: 10px;
+  font-weight: 900;
+  color: var(--grn-b);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 3px;
+}
+.otp-code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: 5px;
+  color: var(--grn-b);
+  direction: ltr;
+  text-shadow: 0 0 24px rgba(63,185,80,0.5);
+  user-select: all;
+  cursor: pointer;
+}
+
+.btn-otp {
+  background: linear-gradient(135deg, #238636, #2ea043);
+  color: #fff;
+  border: none;
+  padding: 11px 18px;
+  border-radius: 11px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.22s var(--tr);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 6px 16px rgba(46,160,67,0.35);
+  white-space: nowrap;
+}
+.btn-otp:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 10px 24px rgba(46,160,67,0.55);
+}
+.btn-otp:active { transform: scale(0.95); }
+
+/* ============ BODY ============ */
+.mbody {
+  background: rgba(6,7,12,0.65);
+  border: 1px solid var(--brd);
+  border-radius: 11px;
+  padding: 16px 18px;
+  font-size: 13px;
+  line-height: 1.75;
+  color: #b8c2cc;
+  direction: ltr;
+  text-align: left;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 220px;
+  overflow-y: auto;
+  font-family: 'JetBrains Mono', monospace;
+}
+.mbody::-webkit-scrollbar { width: 6px; }
+.mbody::-webkit-scrollbar-track { background: transparent; }
+.mbody::-webkit-scrollbar-thumb {
+  background: var(--brd-b);
+  border-radius: 3px;
+}
+
+/* ============ TOASTS ============ */
+.toasts {
+  position: fixed;
+  bottom: 26px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none;
+  max-width: calc(100% - 32px);
+}
+.toast {
+  background: linear-gradient(135deg, rgba(46,160,67,0.95), rgba(35,134,54,0.95));
+  color: #fff;
+  padding: 13px 22px;
+  border-radius: 13px;
+  font-size: 14px;
+  font-weight: 800;
+  box-shadow: 0 14px 36px rgba(0,0,0,0.55), 0 0 24px rgba(46,160,67,0.4);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: toastIn 0.4s var(--tr);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.22);
+}
+.toast.error {
+  background: linear-gradient(135deg, rgba(248,81,73,0.95), rgba(218,54,51,0.95));
+  box-shadow: 0 14px 36px rgba(0,0,0,0.55), 0 0 24px rgba(248,81,73,0.4);
+}
+.toast.info {
+  background: linear-gradient(135deg, rgba(88,166,255,0.95), rgba(51,120,220,0.95));
+  box-shadow: 0 14px 36px rgba(0,0,0,0.55), 0 0 24px rgba(88,166,255,0.4);
+}
+.toast.warn {
+  background: linear-gradient(135deg, rgba(187,128,9,0.95), rgba(158,106,3,0.95));
+}
+@keyframes toastIn {
+  from { opacity: 0; transform: translateY(30px) scale(0.9); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ============ CONFETTI ============ */
+#confetti {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9998;
+}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width: 560px) {
+  .app { padding: 20px 12px 50px; }
+  .card { padding: 20px; }
+  .ebar { flex-direction: column; }
+  .einput { min-width: 100%; }
+  .ebar .btn { width: 100%; }
+  .otp-box { flex-direction: column; align-items: stretch; }
+  .otp-code { font-size: 26px; text-align: center; }
+  .btn-otp { width: 100%; justify-content: center; }
+  .mfrom { max-width: 100%; }
+  .undo-bar { flex-direction: column; align-items: stretch; }
+  .undo-bar button { width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+</head>
+<body data-theme="blue">
+
+<div class="bg-mesh">
+  <div class="grain"></div>
+</div>
+
+<canvas id="confetti"></canvas>
+
+<div class="app">
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="clock">🕐 <b id="clockTime">--:--:--</b></div>
+    <div class="actions" style="position: relative;">
+      <button class="icon-btn" id="themeBtn" title="تغيير اللون">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="13.5" cy="6.5" r="2.5"/>
+          <circle cx="17.5" cy="14.5" r="2.5"/>
+          <circle cx="8.5" cy="17.5" r="2.5"/>
+          <circle cx="6.5" cy="9.5" r="2.5"/>
+          <path d="M12 2a10 10 0 1 0 0 20"/>
+        </svg>
+      </button>
+      <button class="icon-btn" id="soundBtn" title="صوت الإشعار">
+        <svg id="soundIconOn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+          <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+        </svg>
+        <svg id="soundIconOff" style="display:none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+          <line x1="23" y1="9" x2="17" y2="15"/>
+          <line x1="17" y1="9" x2="23" y2="15"/>
+        </svg>
+      </button>
+      <div class="theme-picker" id="themePicker">
+        <div class="theme-dot active" data-t="blue"   style="background:#58a6ff"></div>
+        <div class="theme-dot" data-t="purple" style="background:#a371f7"></div>
+        <div class="theme-dot" data-t="green"  style="background:#3fb950"></div>
+        <div class="theme-dot" data-t="pink"   style="background:#f778ba"></div>
+        <div class="theme-dot" data-t="orange" style="background:#ffa657"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="hero-badge">
+      <span class="dot"></span>
+      LIVE • SnapMail
+    </div>
+    <h1>بريدك السريع ⚡</h1>
+    <p>أكواد التحقق توصلك فوراً — بدون تسجيل، بدون انتظار</p>
+  </header>
+
+  <!-- EMAIL CARD -->
+  <div class="card">
+    <div class="lbl">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+        <polyline points="22,6 12,13 2,6"/>
+      </svg>
+      بريدك الحالي
+    </div>
+    <div class="ebar">
+      <input type="text" id="emailDisplay" class="einput" value="جاري التحميل..." readonly spellcheck="false" autocomplete="off">
+      <button class="btn btn-primary" id="copyBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+        </svg>
+        نسخ
+      </button>
+      <button class="btn btn-ghost" id="newEmailBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12a9 9 0 1 1-9-9c2.5 0 4.8 1 6.5 2.6"/>
+          <polyline points="21 3 21 9 15 9"/>
+        </svg>
+        جديد
+      </button>
+    </div>
+
+    <div class="undo-bar" id="undoBar">
+      <div class="undo-info">
+        <span>⚠️ <b>غيّرت البريد بالغلط؟</b> فرصة للرجوع</span>
+        <span class="undo-timer" id="undoTimer">10s</span>
+      </div>
+      <button class="btn btn-warn btn-sm" id="undoBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="1 4 1 10 7 10"/>
+          <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
+        </svg>
+        رجّع القديم
+      </button>
+    </div>
+  </div>
+
+  <!-- INBOX CARD -->
+  <div class="card">
+    <div class="ihead">
+      <div class="status">
+        <span class="dot"></span>
+        <span>جاهز للاستقبال</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div class="pill" id="mailCount">0 رسالة</div>
+        <button class="btn-refresh" id="refreshBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12a9 9 0 1 1-9-9c2.5 0 4.8 1 6.5 2.6"/>
+            <polyline points="21 3 21 9 15 9"/>
+          </svg>
+          تحديث
+        </button>
+      </div>
+    </div>
+    <div class="msgs" id="messagesList">
+      <div class="empty">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3">
+          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+          <polyline points="22,6 12,13 2,6"/>
+        </svg>
+        <div style="font-weight: 800; margin-bottom: 6px;">صندوق الوارد فاضي</div>
+        <div style="font-size: 12px; opacity: 0.7;">الرسائل هتظهر هنا أوتوماتيك</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="toasts" id="toasts"></div>
+
+<script>
+/* =========================================================
+   SnapMail v2.5
+   - استقبال أكواد التحقق
+   - 5 ثيمات
+   - تراجع عن تغيير الإيميل
+   ========================================================= */
+
+(function () {
+'use strict';
+
+if (window.top !== window.self) { try { window.top.location = window.self.location; } catch(e){} }
+
+try {
+  Object.freeze(Object.prototype);
+  Object.freeze(Array.prototype);
+} catch(e) {}
+
+var API = 'https://api.guerrillamail.com/ajax.php';
+var FETCH_TIMEOUT = 12000;
+var MAX_MSGS = 30;
+var MAX_BODY = 5000;
+var UNDO_WINDOW = 10;
+var POLL_MS = 2500;
+
+var S = {
+  email: '',
+  sid: '',
+  msgs: [],
+  polling: false,
+  timer: null,
+  soundOn: false,
+  prevEmail: null,
+  prevSid: null,
+  prevMsgs: null,
+  undoTimer: null,
+  undoSecs: 0
+};
+
+function $(id) { return document.getElementById(id); }
+
+function validEmail(e) {
+  return typeof e === 'string' && e.length <= 320 &&
+    /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/.test(e);
+}
+function validSid(s) { return typeof s === 'string' && /^[a-zA-Z0-9]{4,128}$/.test(s); }
+function validId(i)  { return /^\d{1,15}$/.test(String(i)); }
+
+function clean(str) {
+  if (typeof str !== 'string') return '';
+  return str
+    .replace(/<style[\s\S]*?<\/style>/gi, '')
+    .replace(/<script[\s\S]*?<\/script>/gi, '')
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/&amp;/gi, '&')
+    .replace(/&lt;/gi, '<')
+    .replace(/&gt;/gi, '>')
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;/gi, "'")
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function findCode(text) {
+  if (typeof text !== 'string' || !text) return null;
+  var t = text.slice(0, 5000);
+
+  var m1 = t.match(/(?:code|otp|verify|verification|pin|كود|رمز|تأكيد|التحقق|التفعيل)[^\d]{0,25}(\d{4,8})\b/i);
+  if (m1) return m1[1];
+
+  var m2 = t.match(/(?::|is|هو|التالي)\s*(\d{4,8})\b/i);
+  if (m2) return m2[1];
+
+  return null;
+}
+
+function detectService(from) {
+  if (!from) return null;
+  var s = String(from).toLowerCase();
+  var map = {
+    'google': 'Google', 'gmail': 'Google',
+    'facebook': 'Facebook', 'meta': 'Meta',
+    'instagram': 'Instagram',
+    'twitter': 'Twitter', 'x.com': 'X',
+    'tiktok': 'TikTok',
+    'amazon': 'Amazon', 'aws': 'AWS',
+    'microsoft': 'Microsoft', 'outlook': 'Microsoft',
+    'apple': 'Apple', 'icloud': 'Apple',
+    'whatsapp': 'WhatsApp',
+    'telegram': 'Telegram',
+    'netflix': 'Netflix',
+    'paypal': 'PayPal',
+    'discord': 'Discord',
+    'github': 'GitHub',
+    'linkedin': 'LinkedIn',
+    'snapchat': 'Snapchat',
+    'uber': 'Uber',
+    'noon': 'Noon',
+    'vodafone': 'Vodafone',
+    'orange': 'Orange', 'etisalat': 'Etisalat',
+    'instapay': 'InstaPay',
+    'fawry': 'Fawry',
+    'valu': 'ValU',
+    'talabat': 'Talabat',
+    'careem': 'Careem'
+  };
+  for (var k in map) {
+    if (s.indexOf(k) !== -1) return map[k];
+  }
+  var at = s.indexOf('@');
+  return at > 0 ? s.slice(0, at) : null;
+}
+
+function toast(msg, type) {
+  var c = $('toasts');
+  var el = document.createElement('div');
+  el.className = 'toast' + (type ? ' ' + type : '');
+  el.textContent = msg;
+  c.appendChild(el);
+  setTimeout(function () {
+    el.style.transition = 'all 0.3s';
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(30px)';
+    setTimeout(function () { el.remove(); }, 300);
+  }, 2400);
+}
+
+var audioCtx = null;
+function beep() {
+  if (!S.soundOn) return;
+  try {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    var o = audioCtx.createOscillator();
+    var g = audioCtx.createGain();
+    o.connect(g); g.connect(audioCtx.destination);
+    o.frequency.value = 880;
+    o.type = 'sine';
+    g.gain.setValueAtTime(0.001, audioCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.15, audioCtx.currentTime + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.25);
+    o.start(); o.stop(audioCtx.currentTime + 0.3);
+  } catch (e) {}
+}
+
+function safeFetch(url) {
+  var ctrl = new AbortController();
+  var t = setTimeout(function () { ctrl.abort(); }, FETCH_TIMEOUT);
+  return fetch(url, {
+    signal: ctrl.signal,
+    credentials: 'omit',
+    cache: 'no-store',
+    referrerPolicy: 'no-referrer'
+  }).then(function (res) {
+    clearTimeout(t);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    return res.text();
+  }).then(function (txt) {
+    if (txt.length > 2000000) throw new Error('too large');
+    return JSON.parse(txt);
+  }).catch(function (e) {
+    clearTimeout(t);
+    throw e;
+  });
+}
+
+function persist() {
+  try {
+    var limited = S.msgs.slice(0, MAX_MSGS).map(function (m) {
+      return {
+        id: m.id,
+        from: String(m.from || '').slice(0, 200),
+        subject: String(m.subject || '').slice(0, 300),
+        body: String(m.body || '').slice(0, MAX_BODY),
+        date: String(m.date || '').slice(0, 50)
+      };
+    });
+    localStorage.setItem('snapmail_v25', JSON.stringify({
+      e: S.email, s: S.sid, m: limited, t: Date.now(),
+      theme: document.body.dataset.theme || 'blue'
+    }));
+  } catch (err) {}
+}
+
+function hydrate() {
+  try {
+    var raw = localStorage.getItem('snapmail_v25');
+    if (!raw) return;
+    var d = JSON.parse(raw);
+    if (!d || typeof d !== 'object') return;
+
+    if (d.t && (Date.now() - d.t > 86400000)) {
+      localStorage.removeItem('snapmail_v25');
+      return;
+    }
+
+    if (validEmail(d.e)) S.email = d.e;
+    if (validSid(d.s))  S.sid   = d.s;
+    if (Array.isArray(d.m)) {
+      S.msgs = d.m.filter(function (x) { return x && validId(x.id); }).slice(0, MAX_MSGS);
+    }
+    if (d.theme) {
+      document.body.dataset.theme = d.theme;
+      document.querySelectorAll('.theme-dot').forEach(function (el) {
+        el.classList.toggle('active', el.dataset.t === d.theme);
+      });
+    }
+  } catch (err) {}
+}
+
+function loadAccount(forceNew) {
+  var inp = $('emailDisplay');
+
+  if (!forceNew && S.email && S.sid) {
+    inp.value = S.email;
+    render();
+    startPoll();
+    check();
+    return;
+  }
+
+  inp.value = 'جاري التوليد...';
+  inp.disabled = true;
+  stopPoll();
+
+  safeFetch(API + '?f=get_email_address').then(function (data) {
+    if (!data || !validEmail(data.email_addr) || !validSid(data.sid_token)) {
+      throw new Error('bad data');
+    }
+    S.email = data.email_addr;
+    S.sid   = data.sid_token;
+    S.msgs  = [];
+    persist();
+    inp.disabled = false;
+    inp.value = S.email;
+    render();
+    startPoll();
+    check();
+    toast('✅ تم إنشاء بريد جديد');
+  }).catch(function (e) {
+    inp.disabled = false;
+    inp.value = 'فشل الاتصال — اضغط "جديد"';
+    inp.classList.add('error');
+    setTimeout(function () { inp.classList.remove('error'); }, 2000);
+    toast('تعذر إنشاء البريد', 'error');
+  });
+}
+
+function startPoll() {
+  stopPoll();
+  S.timer = setInterval(check, POLL_MS);
+}
+function stopPoll() {
+  if (S.timer) { clearInterval(S.timer); S.timer = null; }
+}
+
+function check() {
+  if (!S.sid || S.polling) return;
+  S.polling = true;
+
+  safeFetch(API + '?f=check_email&seq=0&sid_token=' + encodeURIComponent(S.sid))
+    .then(function (data) {
+      var list = (data && Array.isArray(data.list)) ? data.list : [];
+      var hasNew = false;
+      var chain = Promise.resolve();
+
+      list.forEach(function (msg) {
+        if (!msg || !validId(msg.mail_id)) return;
+        var from = String(msg.mail_from || '');
+        if (from.indexOf('no-reply@guerrillamail.com') !== -1) return;
+        var exists = S.msgs.some(function (x) { return x.id === msg.mail_id; });
+        if (exists) return;
+
+        chain = chain.then(function () {
+          return safeFetch(API + '?f=fetch_email&email_id=' +
+            encodeURIComponent(msg.mail_id) + '&sid_token=' +
+            encodeURIComponent(S.sid))
+            .then(function (bd) {
+              var bodyText = (msg.mail_excerpt || '');
+              if (bd && typeof bd.mail_body === 'string') {
+                bodyText = clean(bd.mail_body).slice(0, MAX_BODY);
+              } else {
+                bodyText = clean(bodyText).slice(0, MAX_BODY);
+              }
+              S.msgs.unshift({
+                id: String(msg.mail_id),
+                from: from.slice(0, 200),
+                subject: String(msg.mail_subject || '').slice(0, 300),
+                body: bodyText,
+                date: String(msg.mail_date || '').slice(0, 50),
+                fresh: true
+              });
+              hasNew = true;
+            })
+            .catch(function () {
+              S.msgs.unshift({
+                id: String(msg.mail_id),
+                from: from.slice(0, 200),
+                subject: String(msg.mail_subject || '').slice(0, 300),
+                body: clean(msg.mail_excerpt || '').slice(0, MAX_BODY),
+                date: String(msg.mail_date || '').slice(0, 50),
+                fresh: true
+              });
+              hasNew = true;
+            });
+        });
+      });
+
+      return chain.then(function () {
+        if (hasNew) {
+          S.msgs = S.msgs.slice(0, MAX_MSGS);
+          persist();
+          render();
+          beep();
+          toast('📬 وصلت رسالة جديدة!', 'info');
+        }
+      });
+    })
+    .catch(function (e) {})
+    .then(function () {
+      S.polling = false;
+    });
+}
+
+function render() {
+  var list = $('messagesList');
+  var count = $('mailCount');
+  count.textContent = S.msgs.length + (S.msgs.length === 1 ? ' رسالة' : ' رسائل');
+
+  list.innerHTML = '';
+
+  if (S.msgs.length === 0) {
+    var em = document.createElement('div');
+    em.className = 'empty';
+    em.innerHTML =
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3">' +
+      '<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>' +
+      '<polyline points="22,6 12,13 2,6"/></svg>' +
+      '<div style="font-weight: 800; margin-bottom: 6px;">صندوق الوارد فاضي</div>' +
+      '<div style="font-size: 12px; opacity: 0.7;">الرسائل هتظهر هنا أوتوماتيك</div>';
+    list.appendChild(em);
+    return;
+  }
+
+  S.msgs.forEach(function (m, i) {
+    var code = findCode((m.subject || '') + ' ' + (m.body || ''));
+    var service = detectService(m.from);
+
+    var card = document.createElement('div');
+    card.className = 'mail' + (m.fresh ? ' fresh' : '');
+    card.style.animationDelay = (i * 0.04) + 's';
+
+    var head = document.createElement('div');
+    head.className = 'mhead';
+
+    var fromEl = document.createElement('span');
+    fromEl.className = 'mfrom';
+    fromEl.textContent = m.from;
+    fromEl.title = m.from;
+
+    var dateEl = document.createElement('span');
+    dateEl.className = 'mdate';
+    dateEl.textContent = m.date;
+
+    head.appendChild(fromEl);
+    head.appendChild(dateEl);
+    card.appendChild(head);
+
+    if (service) {
+      var chip = document.createElement('div');
+      chip.className = 'service-chip';
+      chip.textContent = '🔖 ' + service;
+      card.appendChild(chip);
+    }
+
+    var subj = document.createElement('div');
+    subj.className = 'msubj';
+    subj.textContent = m.subject || '(بدون عنوان)';
+    card.appendChild(subj);
+
+    if (code) {
+      var box = document.createElement('div');
+      box.className = 'otp-box';
+
+      var inner = document.createElement('div');
+      var lbl = document.createElement('div');
+      lbl.className = 'otp-lbl';
+      lbl.textContent = 'كود التحقق';
+      var cd = document.createElement('div');
+      cd.className = 'otp-code';
+      cd.textContent = code;
+      cd.addEventListener('click', function () { copy(code, null, true); });
+
+      inner.appendChild(lbl);
+      inner.appendChild(cd);
+
+      var btn = document.createElement('button');
+      btn.className = 'btn-otp';
+      btn.textContent = '⚡ نسخ الكود';
+      btn.addEventListener('click', function () { copy(code, btn, true); });
+
+      box.appendChild(inner);
+      box.appendChild(btn);
+      card.appendChild(box);
+    }
+
+    var body = document.createElement('div');
+    body.className = 'mbody';
+    body.textContent = m.body || '(محتوى فارغ)';
+    card.appendChild(body);
+
+    list.appendChild(card);
+    m.fresh = false;
+  });
+}
+
+function copy(text, btn, celebrate) {
+  var t = String(text).slice(0, 500);
+  var done = function () {
+    if (btn) {
+      var old = btn.textContent;
+      btn.textContent = '✓ تم النسخ';
+      setTimeout(function () { btn.textContent = old; }, 1200);
+    }
+    toast('📋 تم النسخ');
+    if (celebrate) confetti();
+  };
+
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(t).then(done).catch(function () {
+      fallbackCopy(t);
+      done();
+    });
+  } else {
+    fallbackCopy(t);
+    done();
+  }
+}
+
+function fallbackCopy(t) {
+  var ta = document.createElement('textarea');
+  ta.value = t;
+  ta.style.position = 'fixed';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand('copy'); } catch (e) {}
+  document.body.removeChild(ta);
+}
+
+function confetti() {
+  var cv = $('confetti');
+  var ctx = cv.getContext('2d');
+  cv.width = window.innerWidth;
+  cv.height = window.innerHeight;
+
+  var colors = ['#58a6ff', '#a371f7', '#3fb950', '#f778ba', '#ffa657'];
+  var pieces = [];
+  for (var i = 0; i < 80; i++) {
+    pieces.push({
+      x: cv.width / 2 + (Math.random() - 0.5) * 200,
+      y: cv.height / 2,
+      vx: (Math.random() - 0.5) * 14,
+      vy: Math.random() * -14 - 4,
+      size: Math.random() * 8 + 4,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      rot: Math.random() * Math.PI,
+      vrot: (Math.random() - 0.5) * 0.3,
+      life: 1
+    });
+  }
+
+  var start = performance.now();
+  function loop(now) {
+    var elapsed = now - start;
+    ctx.clearRect(0, 0, cv.width, cv.height);
+
+    pieces.forEach(function (p) {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.45;
+      p.rot += p.vrot;
+      p.life = Math.max(0, 1 - elapsed / 1600);
+
+      ctx.save();
+      ctx.globalAlpha = p.life;
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
+      ctx.restore();
+    });
+
+    if (elapsed < 1600) requestAnimationFrame(loop);
+    else ctx.clearRect(0, 0, cv.width, cv.height);
+  }
+  requestAnimationFrame(loop);
+}
+
+function offerUndo() {
+  var bar = $('undoBar');
+  bar.classList.remove('show');
+  void bar.offsetWidth; // restart animation
+  bar.classList.add('show');
+  S.undoSecs = UNDO_WINDOW;
+  $('undoTimer').textContent = S.undoSecs + 's';
+
+  if (S.undoTimer) clearInterval(S.undoTimer);
+  S.undoTimer = setInterval(function () {
+    S.undoSecs--;
+    $('undoTimer').textContent = S.undoSecs + 's';
+    if (S.undoSecs <= 0) cancelUndo();
+  }, 1000);
+}
+
+function cancelUndo() {
+  if (S.undoTimer) clearInterval(S.undoTimer);
+  S.undoTimer = null;
+  $('undoBar').classList.remove('show');
+  S.prevEmail = null;
+  S.prevSid = null;
+  S.prevMsgs = null;
+}
+
+function doUndo() {
+  if (!S.prevEmail || !S.prevSid) return;
+  S.email = S.prevEmail;
+  S.sid = S.prevSid;
+  S.msgs = S.prevMsgs || [];
+  persist();
+
+  var inp = $('emailDisplay');
+  inp.value = S.email;
+  inp.disabled = false;
+  render();
+  startPoll();
+  check();
+
+  cancelUndo();
+  toast('↩️ تم استرجاع البريد القديم', 'warn');
+}
+
+function newEmailFlow() {
+  S.prevEmail = S.email;
+  S.prevSid = S.sid;
+  S.prevMsgs = S.msgs.slice();
+
+  S.email = '';
+  S.sid = '';
+  S.msgs = [];
+
+  try { localStorage.removeItem('snapmail_v25'); } catch (e) {}
+
+  loadAccount(true);
+
+  var wait = setInterval(function () {
+    if (S.email && S.sid) {
+      clearInterval(wait);
+      offerUndo();
+    }
+  }, 100);
+}
+
+function tickClock() {
+  var d = new Date();
+  var hh = String(d.getHours()).padStart(2, '0');
+  var mm = String(d.getMinutes()).padStart(2, '0');
+  var ss = String(d.getSeconds()).padStart(2, '0');
+  $('clockTime').textContent = hh + ':' + mm + ':' + ss;
+}
+
+function bindUI() {
+
+  $('copyBtn').addEventListener('click', function () {
+    if (validEmail(S.email)) {
+      copy(S.email, this, false);
+    } else {
+      toast('لا يوجد بريد للنسخ', 'error');
+    }
+  });
+
+  $('newEmailBtn').addEventListener('click', function () {
+    if (S.undoTimer) {
+      toast('انتظر انتهاء فرصة التراجع', 'warn');
+      return;
+    }
+    newEmailFlow();
+  });
+
+  $('undoBtn').addEventListener('click', doUndo);
+
+  $('refreshBtn').addEventListener('click', function () {
+    var b = this;
+    b.classList.add('spin');
+    b.disabled = true;
+    check();
+    setTimeout(function () {
+      b.classList.remove('spin');
+      b.disabled = false;
+    }, 900);
+  });
+
+  var picker = $('themePicker');
+  $('themeBtn').addEventListener('click', function (e) {
+    e.stopPropagation();
+    picker.classList.toggle('open');
+  });
+  document.addEventListener('click', function () {
+    picker.classList.remove('open');
+  });
+  picker.addEventListener('click', function (e) {
+    e.stopPropagation();
+    var dot = e.target.closest('.theme-dot');
+    if (!dot) return;
+    var theme = dot.dataset.t;
+    document.body.dataset.theme = theme;
+    picker.querySelectorAll('.theme-dot').forEach(function (d) {
+      d.classList.toggle('active', d === dot);
+    });
+    persist();
+    toast('🎨 تم تغيير اللون');
+  });
+
+  $('soundBtn').addEventListener('click', function () {
+    S.soundOn = !S.soundOn;
+    $('soundIconOn').style.display  = S.soundOn ? 'block' : 'none';
+    $('soundIconOff').style.display = S.soundOn ? 'none'  : 'block';
+    toast(S.soundOn ? '🔊 الصوت مفعّل' : '🔇 الصوت مكتوم');
+    if (S.soundOn) beep();
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (!e.ctrlKey) return;
+    var k = e.key.toLowerCase();
+    if (k === 'c' && window.getSelection().toString() === '' && validEmail(S.email)) {
+      e.preventDefault();
+      copy(S.email, $('copyBtn'), false);
+    } else if (k === 'r') {
+      e.preventDefault();
+      $('refreshBtn').click();
+    } else if (k === 'n') {
+      e.preventDefault();
+      $('newEmailBtn').click();
+    }
+  });
+
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) stopPoll();
+    else if (S.email) { startPoll(); check(); }
+  });
+
+  window.addEventListener('beforeunload', stopPoll);
+  window.addEventListener('pagehide', stopPoll);
+}
+
+function boot() {
+  hydrate();
+  bindUI();
+  tickClock();
+  setInterval(tickClock, 1000);
+
+  var inp = $('emailDisplay');
+  if (S.email && S.sid) {
+    inp.value = S.email;
+    render();
+    startPoll();
+    check();
+  } else {
+    loadAccount(false);
+  }
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', boot);
+} else {
+  boot();
+}
+
+})();
+</script>
+</body>
+</html>
